@@ -2,9 +2,9 @@
     <PropertyGroup>
         <Authors>Ian Johnson</Authors>
         <PackageTags>HTTP request framework</PackageTags>
-        <PackageProjectUrl>https://github.com/ipjohnson/SimpleRequests</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/ipjohnson/SimpleRequest</PackageProjectUrl>
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/ipjohnson/SimpleRequests</RepositoryUrl>
+        <RepositoryUrl>https://github.com/ipjohnson/SimpleRequest</RepositoryUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     </PropertyGroup>
