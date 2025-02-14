@@ -14,12 +14,16 @@
         <PackageDependencyModuleIncludeSource>true</PackageDependencyModuleIncludeSource>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
+    
     <PropertyGroup>
         <PackageCSharpAuthorIncludeSource>true</PackageCSharpAuthorIncludeSource>
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9070">
+        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9072">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
