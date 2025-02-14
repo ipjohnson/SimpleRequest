@@ -39,6 +39,10 @@ public class SystemTextJsonSerializer : IContentSerializer {
         return JsonSerializer.SerializeAsync(stream, value, _options, cancellationToken);
     }
 
+    public ValueTask<object?> Deserialize(Stream stream, Type type, CancellationToken cancellationToken = default) {
+        return JsonSerializer.DeserializeAsync(stream, type, _options, cancellationToken);
+    }
+
     public ValueTask<T?> Deserialize<T>(Stream stream, CancellationToken cancellationToken = default) {
         return JsonSerializer.DeserializeAsync<T>(stream, _options, cancellationToken);
     }
