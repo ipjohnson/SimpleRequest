@@ -58,7 +58,8 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
 
     private void GenerateFilterRegistrations(SourceProductionContext context,
         ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<AttributeFilterInfoModel> Right) data) {
-        if (!data.Left.Left.AttributeModels.Any(a => a.TypeDefinition.Equals(_entryPointAttributeType))) {
+        if (!data.Left.Left.AttributeModels.Any(
+                a => a.ImplementedInterfaces.Contains(KnownRequestTypes.ISimpleRequestEntryAttribute))) {
             return;
         }
 

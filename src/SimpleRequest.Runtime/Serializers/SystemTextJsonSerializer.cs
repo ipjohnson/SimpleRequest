@@ -19,8 +19,9 @@ public class SystemTextJsonSerializerOptionProvider : ISystemTextJsonSerializerO
     };
 }
 
-[SingletonService]
-public class SystemTextJsonSerializer : IContentSerializer {
+[SingletonService(ServiceType = typeof(IContentSerializer))]
+[SingletonService(ServiceType = typeof(IJsonSerializer))]
+public class SystemTextJsonSerializer : IContentSerializer, IJsonSerializer {
     private readonly JsonSerializerOptions _options;
 
     public SystemTextJsonSerializer(ISystemTextJsonSerializerOptionProvider options) {

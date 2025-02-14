@@ -4,7 +4,6 @@ namespace SimpleRequest.SourceGenerator.Impl;
 
 // ReSharper disable InconsistentNaming
 public static class KnownRequestTypes {
-    
     public const string InvokeNamespace = "SimpleRequest.Runtime.Invoke";
     public const string SerializersNamespace = "SimpleRequest.Runtime.Serializers";
     public const string AttributeNamespace = "SimpleRequest.Runtime.Attributes";
@@ -15,6 +14,13 @@ public static class KnownRequestTypes {
             TypeDefinitionEnum.ClassDefinition, 
             AttributeNamespace, 
             "RequestFilterAttribute");
+    
+    
+    public static readonly ITypeDefinition ISimpleRequestEntryAttribute =
+        TypeDefinition.Get(
+            TypeDefinitionEnum.InterfaceDefinition, 
+            AttributeNamespace, 
+            "ISimpleRequestEntryAttribute");
     
     public static readonly ITypeDefinition IRequestContext =
         TypeDefinition.Get(
