@@ -11,7 +11,12 @@
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
     <Import Project="../../build-props/nuget.props"/>
+
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
     
+
     <PropertyGroup>
         <PackageDependencyModuleIncludeSource>true</PackageDependencyModuleIncludeSource>
     </PropertyGroup>
