@@ -34,12 +34,36 @@ public interface IInvokeParameters {
     IInvokeParameters Clone();
 
     /// <summary>
+    /// Is the value set for specific index
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    bool HasValue(int index) {
+        return Get<object>(index) != null;
+    }
+    
+    /// <summary>
     /// Get value by index
     /// </summary>
     /// <param name="index"></param>
+    /// <param name="defaultValue"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    T Get<T>(int index);
+    T? Get<T>(int index, T? defaultValue = default);
+
+    /// <summary>
+    /// Get a required value from parameters 
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="defaultValue"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    T GetRequired<T>(int index, T? defaultValue = default) {
+        var value = Get(index, defaultValue);
+        
+        return value ?? throw new Exception($"Parameter {index} not set.");
+    }
 
     /// <summary>
     /// Set value by index

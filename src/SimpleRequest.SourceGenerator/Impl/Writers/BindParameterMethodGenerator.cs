@@ -37,6 +37,46 @@ public class BindParameterMethodGenerator {
         var parametersIf = 
             bindParameterInfoMethod.If(EqualsStatement(parameters, Null()));
         
+        AssignToNewParameters(requestModel, parametersIf, requestParameterType, contextParameter, parameters, requestData);
+        
+        AssignToExistingParameters(requestModel, parametersIf, requestParameterType, contextParameter, parameters, requestData);
+    }
+
+    private void AssignToExistingParameters(
+        RequestHandlerModel requestModel, IfElseLogicBlockDefinition parametersIf, ITypeDefinition requestParameterType, ParameterDefinition contextParameter, InstanceDefinition parameters, InstanceDefinition requestData) {
+        var elseBlock = parametersIf.Else();
+        
+        for (var i = 0; i < requestModel.RequestParameterInformationList.Count; i++) {
+            var parameterInformation = requestModel.RequestParameterInformationList[i];
+
+            IOutputComponent testStatement = NotEquals(
+                parameters.Invoke("HasValue", parameterInformation.ParameterIndex),
+                "true");
+            if (parameterInformation.BindingType == ParameterBindType.Body) {
+                testStatement = And(testStatement, 
+                    NotEquals(
+                        contextParameter.Property("RequestData").Property("Body"), 
+                        Null()));
+            }
+            
+            var ifBlock =
+                elseBlock.If(testStatement);
+            
+            switch (parameterInformation.BindingType) {
+                case ParameterBindType.Body:
+                    BindBodyParameter(
+                        ifBlock, contextParameter, requestData, parameters, parameterInformation, i);
+                    break;
+            }
+        }
+    }
+
+    private void AssignToNewParameters(RequestHandlerModel requestModel, 
+        IfElseLogicBlockDefinition parametersIf,
+        ITypeDefinition requestParameterType,
+        ParameterDefinition contextParameter,
+        InstanceDefinition parameters, InstanceDefinition requestData) {
+        
         parametersIf.Assign(New(requestParameterType)).To(parameters);
         parametersIf.Assign(parameters).To(contextParameter.Property("InvokeParameters"));
         
@@ -46,13 +86,13 @@ public class BindParameterMethodGenerator {
             switch (parameterInformation.BindingType) {
                 case ParameterBindType.Body:
                     BindBodyParameter(
-                        bindParameterInfoMethod, contextParameter, requestData, parameters, parameterInformation, i);
+                        parametersIf, contextParameter, requestData, parameters, parameterInformation, i);
                     break;
             }
         }
     }
 
-    private void BindBodyParameter(MethodDefinition bindParameterInfoMethod,
+    private void BindBodyParameter(BaseBlockDefinition bindParameterInfoMethod,
         ParameterDefinition contextParameter,
         InstanceDefinition requestData,
         InstanceDefinition parameters,

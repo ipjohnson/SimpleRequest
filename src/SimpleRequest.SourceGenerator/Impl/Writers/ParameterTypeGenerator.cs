@@ -11,6 +11,8 @@ public class ParameterTypeGenerator {
         
         var parameterClass = classDefinition.AddClass("InvokeParameters");
         parameterClass.AddBaseType(KnownRequestTypes.IInvokeParameters);
+        parameterClass.AddLeadingTrait(CodeOutputComponent.Get("#nullable enable", true));
+        parameterClass.AddTrailingTrait(CodeOutputComponent.Get("#nullable disable", true));
         
         var parameterFields = GetParameterFields(requestModel, parameterClass);
 
@@ -112,7 +114,7 @@ public class ParameterTypeGenerator {
         
         var indexParameter = method.AddParameter(typeof(string), "parameterName");
         
-        var outParameter = method.AddParameter(TypeDefinition.Get(typeof(object)), "value");
+        var outParameter = method.AddParameter(TypeDefinition.Get(typeof(object)).MakeNullable(), "value");
         outParameter.IsOut = true;
 
         if (requestModel.RequestParameterInformationList.Count > 0) {
@@ -126,12 +128,20 @@ public class ParameterTypeGenerator {
 
                 caseBlockDefinition.Assign(field.Instance).To(outParameter);
 
-                caseBlockDefinition.Return(CodeOutputComponent.Get("true"));
+                caseBlockDefinition.Break();
             }
+
+            var defaultBlock = switchBlockDefinition.AddDefault();
+            
+            defaultBlock.Assign(Null()).To(outParameter);
+            defaultBlock.Break();
+            
+        }
+        else {
+            method.Assign(Null()).To(outParameter);
         }
         
-        method.Assign(Null()).To(outParameter);
-        method.Return(CodeOutputComponent.Get("false"));
+        method.Return(NotEquals(outParameter, Null()));
     }
 
     private void ImplementCountParameter(RequestHandlerModel requestModel, ClassDefinition parameterClass) {
@@ -186,13 +196,18 @@ public class ParameterTypeGenerator {
         RequestHandlerModel requestModel, ClassDefinition parameterClass, Dictionary<RequestParameterInformation,FieldDefinition> parameterFields) {
         var method = parameterClass.AddMethod("Get");
         var genericType = TypeDefinition.Get("", "T");
+        var genericTypeNullable = genericType.MakeNullable();
         
-        method.SetReturnType(genericType);
+        method.SetReturnType(genericTypeNullable);
         method.AddGenericParameter(genericType);
         
         var indexParameter = method.AddParameter(typeof(int), "index");
-
+        var defaultValue = method.AddParameter(genericTypeNullable, "defaultValue");
+        
         if (requestModel.RequestParameterInformationList.Count > 0) {
+            var returnValue =
+                method.Assign(Null()).ToLocal(TypeDefinition.Get(typeof(object)).MakeNullable(), "returnValue");
+            
             var switchBlockDefinition = method.Switch(indexParameter);
 
             for (var i = 0; i < requestModel.RequestParameterInformationList.Count; i++) {
@@ -201,11 +216,17 @@ public class ParameterTypeGenerator {
 
                 var caseBlockDefinition =
                     switchBlockDefinition.AddCase(i);
-                var objectCast = new StaticCastComponent(TypeDefinition.Get(typeof(object)), field.Instance);
-                var tCast = new StaticCastComponent(genericType, objectCast);
-                caseBlockDefinition.Return(tCast);
+                caseBlockDefinition.Assign(field.Instance).To(returnValue);
+                
+                caseBlockDefinition.Break();
             }
+            
             switchBlockDefinition.AddDefault().Throw(typeof(ArgumentOutOfRangeException));
+            
+            method.Return(
+                new StaticCastComponent(
+                    genericTypeNullable,
+                    NullCoalesce( returnValue, defaultValue)));
         }
         else {
             method.Throw(typeof(ArgumentOutOfRangeException));
@@ -217,7 +238,7 @@ public class ParameterTypeGenerator {
         var fields = new Dictionary<RequestParameterInformation, FieldDefinition>();
 
         foreach (var parameter in requestModel.RequestParameterInformationList) {
-            var field = parameterClass.AddField(parameter.ParameterType, parameter.Name);
+            var field = parameterClass.AddField(parameter.ParameterType.MakeNullable(), parameter.Name);
             
             fields.Add(parameter, field);
         }
