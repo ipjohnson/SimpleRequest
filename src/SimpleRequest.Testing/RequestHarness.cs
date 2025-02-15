@@ -11,7 +11,9 @@ public class RequestHarness(IServiceProvider serviceProvider,
     IRequestInvocationEngine requestInvocationEngine,
     IMemoryStreamPool memoryStreamPool,
     IContentSerializerManager contentSerializer) {
-
+    
+    public IServiceProvider ServiceProvider => serviceProvider;
+    
     public async Task<ResponseModel> Invoke(string method, string path, object? payload = null) {
         using var requestStreamReservation = memoryStreamPool.Get();
         using var responseStreamReservation = memoryStreamPool.Get();
