@@ -58,17 +58,21 @@ public class RoutingTableGenerator {
             return ProcessEmptyPathNode(routingTableContext);
         }
 
-        return ProcessSingularNode(routingTableContext);
+        return ProcessSingularNode(routingTableContext, true);
     }
 
-    private MethodDefinition ProcessSingularNode(RoutingTableContext routingTableContext) {
+    private MethodDefinition ProcessSingularNode(RoutingTableContext routingTableContext, bool applyIf) {
         var method = CreatePathTestMethod(routingTableContext, GetNewMethodName(routingTableContext));
+        BaseBlockDefinition block;
+        
+        if (applyIf) {
+            var ifStatementLogic = CreateIfStatementLogic(routingTableContext);
 
-        var ifStatementLogic = CreateIfStatementLogic(routingTableContext);
-        
-        
-        
-        var block = method.If(And(ifStatementLogic));
+            block = method.If(And(ifStatementLogic));
+        }
+        else {
+            block = method;
+        }
         
         block.Assign(Add(_index, routingTableContext.Node.Path.Length)).To(_index);
         
@@ -111,10 +115,11 @@ public class RoutingTableGenerator {
     private MethodDefinition WriteSwitchChildNode(RoutingTableContext context) {
         var switchMethodName = GetNewMethodName(context);
         var method = CreatePathTestMethod(context, switchMethodName);
-        
-        var ifStatement = method.If("charSpan.Length > index");
 
-        var switchStatement = ifStatement.Switch("charSpan[index]");
+        var ifStatement = method.If(
+            GreaterThan(_pathSpan.Property("Length"), _index));
+
+        var switchStatement = ifStatement.Switch(_pathSpan.Index(_index));
 
         foreach (var childNode in context.Node.ChildNodes) {
             context.CancellationToken.ThrowIfCancellationRequested();
@@ -128,9 +133,9 @@ public class RoutingTableGenerator {
 
             var caseStatement = switchStatement.AddCase($"'{lowerChar}'");
 
-            var newMethodName = WriteCurrentNode(context with{ Node = childNode});
+            var newMethodName = ProcessSingularNode(context with{ Node = childNode}, false);
 
-            var invoke = Invoke(newMethodName.Name, _pathSpan,Add(_index , 1), _context);
+            var invoke = Invoke(newMethodName.Name, _pathSpan, _index , _context);
 
             caseStatement.Return(invoke);
         }
@@ -139,7 +144,6 @@ public class RoutingTableGenerator {
 
         return method;
     }
-
     
     private void ProcessWildCardNodes(
         RoutingTableContext newContext) {
@@ -349,7 +353,7 @@ public class RoutingTableGenerator {
     
     private MethodDefinition ProcessEmptyPathNode(RoutingTableContext routingTableContext) {
         if (routingTableContext.Node.ChildNodes.Count == 1) {
-            return ProcessSingularNode(routingTableContext);
+            return ProcessSingularNode(routingTableContext, true);
         }
 
         return WriteSwitchChildNode(routingTableContext);

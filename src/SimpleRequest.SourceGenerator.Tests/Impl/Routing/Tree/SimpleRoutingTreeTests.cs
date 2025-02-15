@@ -4,6 +4,7 @@ using SimpleRequest.SourceGenerator.Impl.Routing.Tree;
 namespace SimpleRequest.SourceGenerator.Tests.Impl.Routing.Tree;
 
 public class SimpleRoutingTreeTests {
+    
     [Fact]
     public void SimpleRoutesAllLeafs() {
         var routes = new List<RouteTreeGenerator<int>.Entry> {

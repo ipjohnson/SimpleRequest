@@ -243,7 +243,6 @@ public abstract class BaseRequestModelGenerator {
             isAsync = genericType.Name.Equals("Task") || genericType.Name.Equals("ValueTask");
         } else if (returnType?.Name == "Task") {
             isAsync = true;
-            returnType = TypeDefinition.Get(typeof(void));
         }
 
         var rawResponse = "";

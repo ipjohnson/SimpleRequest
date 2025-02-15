@@ -28,9 +28,7 @@ public class InvokeMethodGenerator {
         IOutputComponent invokeStatement = handler.Invoke(requestModel.HandlerMethod,
              generateParameterStatement.OfType<object>().ToArray());
         
-        if (
-            (requestModel.ResponseInformation.ReturnType?.Name?.StartsWith("Task") ?? false) &&
-            (requestModel.ResponseInformation.ReturnType?.Namespace.Equals("System.Threading.Tasks") ?? false)) {
+        if (requestModel.ResponseInformation.IsAsync) {
             invokeStatement = SyntaxHelpers.Await(invokeStatement);
         }
 

@@ -85,20 +85,23 @@ public class ParameterTypeGenerator {
         var indexParameter = method.AddParameter(typeof(string), "parameterName");
         
         var valueParameter = method.AddParameter(TypeDefinition.Get(typeof(object)), "value");
-        
-        var switchBlockDefinition = method.Switch(indexParameter);
-        
-        foreach (var parameter in requestModel.RequestParameterInformationList) {
-            var field = parameterFields[parameter];
 
-            var caseBlockDefinition = 
-                switchBlockDefinition.AddCase(QuoteString(parameter.Name));
-            
-            caseBlockDefinition.Assign(
-                new StaticCastComponent(field.TypeDefinition, valueParameter)).To(field.Instance);
-            
-            caseBlockDefinition.Return(CodeOutputComponent.Get("true"));
+        if (requestModel.RequestParameterInformationList.Count > 0) {
+            var switchBlockDefinition = method.Switch(indexParameter);
+
+            foreach (var parameter in requestModel.RequestParameterInformationList) {
+                var field = parameterFields[parameter];
+
+                var caseBlockDefinition =
+                    switchBlockDefinition.AddCase(QuoteString(parameter.Name));
+
+                caseBlockDefinition.Assign(
+                    new StaticCastComponent(field.TypeDefinition, valueParameter)).To(field.Instance);
+
+                caseBlockDefinition.Return(CodeOutputComponent.Get("true"));
+            }
         }
+        
         method.Return(CodeOutputComponent.Get("false"));
     }
 
@@ -111,19 +114,22 @@ public class ParameterTypeGenerator {
         
         var outParameter = method.AddParameter(TypeDefinition.Get(typeof(object)), "value");
         outParameter.IsOut = true;
-        
-        var switchBlockDefinition = method.Switch(indexParameter);
-        
-        foreach (var parameter in requestModel.RequestParameterInformationList) {
-            var field = parameterFields[parameter];
 
-            var caseBlockDefinition = 
-                switchBlockDefinition.AddCase(QuoteString(parameter.Name));
-            
-            caseBlockDefinition.Assign(field.Instance).To(outParameter);
-            
-            caseBlockDefinition.Return(CodeOutputComponent.Get("true"));
+        if (requestModel.RequestParameterInformationList.Count > 0) {
+            var switchBlockDefinition = method.Switch(indexParameter);
+
+            foreach (var parameter in requestModel.RequestParameterInformationList) {
+                var field = parameterFields[parameter];
+
+                var caseBlockDefinition =
+                    switchBlockDefinition.AddCase(QuoteString(parameter.Name));
+
+                caseBlockDefinition.Assign(field.Instance).To(outParameter);
+
+                caseBlockDefinition.Return(CodeOutputComponent.Get("true"));
+            }
         }
+        
         method.Assign(Null()).To(outParameter);
         method.Return(CodeOutputComponent.Get("false"));
     }
@@ -157,21 +163,23 @@ public class ParameterTypeGenerator {
         
         var objectParameter = method.AddParameter(typeof(object), "value");
         var indexParameter = method.AddParameter(typeof(int), "index");
-        
-        var switchBlockDefinition = method.Switch(indexParameter);
-        
-        for(var i = 0; i < requestModel.RequestParameterInformationList.Count; i++) {
-            var parameter = requestModel.RequestParameterInformationList[i];
-            var field = parameterFields[parameter];
 
-            var caseBlockDefinition = 
-                switchBlockDefinition.AddCase(i);
-            
-            caseBlockDefinition.Assign(new StaticCastComponent(field.TypeDefinition, objectParameter)).To(field.Instance);
-            
-            caseBlockDefinition.Break();
+        if (requestModel.RequestParameterInformationList.Count > 0) {
+            var switchBlockDefinition = method.Switch(indexParameter);
+
+            for (var i = 0; i < requestModel.RequestParameterInformationList.Count; i++) {
+                var parameter = requestModel.RequestParameterInformationList[i];
+                var field = parameterFields[parameter];
+
+                var caseBlockDefinition =
+                    switchBlockDefinition.AddCase(i);
+
+                caseBlockDefinition.Assign(new StaticCastComponent(field.TypeDefinition, objectParameter)).To(field.Instance);
+
+                caseBlockDefinition.Break();
+            }
+            switchBlockDefinition.AddDefault().Throw(typeof(ArgumentOutOfRangeException));
         }
-        switchBlockDefinition.AddDefault().Throw(typeof(ArgumentOutOfRangeException));
     }
 
     private void ImplementGetMethod(
@@ -181,20 +189,27 @@ public class ParameterTypeGenerator {
         
         method.SetReturnType(genericType);
         method.AddGenericParameter(genericType);
-        var indexParameter = method.AddParameter(typeof(int), "index");
-        var switchBlockDefinition = method.Switch(indexParameter);
         
-        for(var i = 0; i < requestModel.RequestParameterInformationList.Count; i++) {
-            var parameter = requestModel.RequestParameterInformationList[i];
-            var field = parameterFields[parameter];
+        var indexParameter = method.AddParameter(typeof(int), "index");
 
-            var caseBlockDefinition = 
-                switchBlockDefinition.AddCase(i);
-            var objectCast = new StaticCastComponent(TypeDefinition.Get(typeof(object)), field.Instance);
-            var tCast = new StaticCastComponent(genericType, objectCast);
-            caseBlockDefinition.Return(tCast);
+        if (requestModel.RequestParameterInformationList.Count > 0) {
+            var switchBlockDefinition = method.Switch(indexParameter);
+
+            for (var i = 0; i < requestModel.RequestParameterInformationList.Count; i++) {
+                var parameter = requestModel.RequestParameterInformationList[i];
+                var field = parameterFields[parameter];
+
+                var caseBlockDefinition =
+                    switchBlockDefinition.AddCase(i);
+                var objectCast = new StaticCastComponent(TypeDefinition.Get(typeof(object)), field.Instance);
+                var tCast = new StaticCastComponent(genericType, objectCast);
+                caseBlockDefinition.Return(tCast);
+            }
+            switchBlockDefinition.AddDefault().Throw(typeof(ArgumentOutOfRangeException));
         }
-        switchBlockDefinition.AddDefault().Throw(typeof(ArgumentOutOfRangeException));
+        else {
+            method.Throw(typeof(ArgumentOutOfRangeException));
+        }
     }
 
     private Dictionary<RequestParameterInformation,FieldDefinition> GetParameterFields(
