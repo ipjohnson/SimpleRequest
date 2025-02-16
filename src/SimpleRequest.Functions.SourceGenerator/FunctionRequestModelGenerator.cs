@@ -40,8 +40,7 @@ public class FunctionRequestModelGenerator : BaseRequestModelGenerator {
 
                             return GetParameterInfoWithBinding(generatorSyntaxContext, parameter,
                                 ParameterBindType.Header, headerName, parameterIndex);
-
-
+                        
                         default:
                             return DefaultGetParameterFromAttribute(
                                 attribute, generatorSyntaxContext, parameter, parameterIndex);

@@ -3,6 +3,7 @@ using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl.Models;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl.Models;
+using SimpleRequest.SourceGenerator.Impl.Utils;
 using static CSharpAuthor.SyntaxHelpers;
 
 namespace SimpleRequest.SourceGenerator.Impl.Writers;
@@ -69,7 +70,7 @@ public class SimpleRequestHandlerWriter {
             "InvokeParameters.ParameterInfoField"
         );
         
-        var attributeArray = GetAttributeArray(requestModel);
+        var attributeArray = AttributeArrayHelper.CreateAttributeArray(requestModel.Filters);
 
         var newStatement = New(
             KnownRequestTypes.RequestHandlerInfo,
@@ -85,26 +86,6 @@ public class SimpleRequestHandlerWriter {
         property.Get.Return(newStatement);
 
         return property;
-    }
-
-    private IOutputComponent GetAttributeArray(RequestHandlerModel requestModel) {
-        var attributeStatements = new List<object>();
-
-        foreach (var attributeModel in requestModel.Filters) {
-            var newStatement = New(attributeModel.TypeDefinition, attributeModel.ArgumentString);
-
-            if (attributeModel.Properties.Count > 0) {
-                newStatement.AddInitValue(attributeModel.PropertyString);
-            }
-            
-            attributeStatements.Add(newStatement);
-        }
-
-        if (attributeStatements.Count > 0) {
-            return NewArray(typeof(Attribute), attributeStatements.ToArray());
-        }
-        
-        return NewArray(typeof(Attribute), 0);
     }
 
     private void ConstructParameterInfoCreationMethod(

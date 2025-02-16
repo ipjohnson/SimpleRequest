@@ -3,7 +3,6 @@ using DependencyModules.SourceGenerator.Impl.Models;
 
 namespace SimpleRequest.SourceGenerator.Impl.Models;
 
-
 public enum ParameterBindType {
     Path,
     QueryString,
@@ -25,4 +24,4 @@ public record RequestParameterInformation(
     ParameterBindType BindingType,
     string BindingName,
     int ParameterIndex,
-    AttributeModel? CustomAttribute = null);
+    IReadOnlyList<AttributeModel> CustomAttributes);

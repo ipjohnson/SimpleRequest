@@ -119,7 +119,7 @@ public abstract class BaseRequestModelGenerator {
                 ParameterBindType.CustomAttribute,
                 "",
                 parameterIndex,
-                AttributeModelHelper.GetAttribute(generatorSyntaxContext, attribute)
+                new AttributeModel[0]
                 );
     }
 
@@ -181,7 +181,7 @@ public abstract class BaseRequestModelGenerator {
         int parameterIndex,
         bool? required = null,
         string? bindingName = null,
-        AttributeModel? customAttribute = null) {
+        IReadOnlyList<AttributeModel> customAttributes = null) {
         if (!parameterType.IsNullable && parameter.ToFullString().Contains("?")) {
             parameterType = parameterType.MakeNullable();
         }
@@ -200,7 +200,7 @@ public abstract class BaseRequestModelGenerator {
             parameterBindType,
             bindingName ?? string.Empty,
             parameterIndex,
-            customAttribute);
+            new AttributeModel[0]);
     }
 
     protected abstract RequestParameterInformation? GetParameterInfoFromAttributes(

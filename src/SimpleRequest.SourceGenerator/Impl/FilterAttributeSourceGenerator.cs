@@ -69,9 +69,12 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
     private void WriteAttributeRegistrations(SourceProductionContext context, ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<AttributeFilterInfoModel> Right) data) {
         var serviceModels =
             data.Right.Select(
-                model => new ServiceModel(model.FilterType, new[] {
-                    new ServiceRegistrationModel(model.FilterType, ServiceLifestyle.Transient)
-                }));
+                model => new ServiceModel(
+                    model.FilterType,
+                    null,
+                    new[] {
+                        new ServiceRegistrationModel(model.FilterType, ServiceLifestyle.Transient)
+                    }));
 
         var writeString =
             new DependencyFileWriter().Write(data.Left.Left, data.Left.Right, serviceModels, _uniqueName);
@@ -126,15 +129,15 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
                 foreach (var property in attributeModel.Properties) {
                     if (property.Name == "Order" && property.Value is int intValue) {
                         order = intValue;
-                    } else if (property.Name == "Reuse") {
-                        lifecycle = true.Equals(property.Value) ?
-                            RequestFilterAttributeLifeCycle.Reuse : RequestFilterAttributeLifeCycle.Transient;
+                    }
+                    else if (property.Name == "Reuse") {
+                        lifecycle = true.Equals(property.Value) ? RequestFilterAttributeLifeCycle.Reuse : RequestFilterAttributeLifeCycle.Transient;
                     }
                 }
             }
         }
 
-        return (lifecycle, order, ServiceModelUtility.GetServiceModel(context,cancellation));
+        return (lifecycle, order, ServiceModelUtility.GetServiceModel(context, cancellation));
     }
 
     private ITypeDefinition GetClassDefinition(GeneratorSyntaxContext context) {
@@ -148,7 +151,7 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
                     classDeclarationSyntax.GetNamespace(),
                     classDeclarationSyntax.Identifier.ToString(),
                     classDeclarationSyntax.TypeParameterList.Parameters.Select(
-                            _ => TypeDefinition.Get("", "")).ToArray()
+                        _ => TypeDefinition.Get("", "")).ToArray()
                 );
         }
         else {

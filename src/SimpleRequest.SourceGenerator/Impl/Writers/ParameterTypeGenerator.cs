@@ -1,5 +1,6 @@
 using CSharpAuthor;
 using SimpleRequest.SourceGenerator.Impl.Models;
+using SimpleRequest.SourceGenerator.Impl.Utils;
 using static  CSharpAuthor.SyntaxHelpers;
 
 namespace SimpleRequest.SourceGenerator.Impl.Writers;
@@ -59,6 +60,7 @@ public class ParameterTypeGenerator {
             parameterInfo.AddArgument(TypeOf(parameter.ParameterType));
             parameterInfo.AddArgument(
                 "ParameterBindType." + Enum.GetName(typeof(ParameterBindType), parameter.BindingType));
+            parameterInfo.AddArgument(AttributeArrayHelper.CreateAttributeArray(parameter.CustomAttributes));
             listOfNew.Add(parameterInfo);
         }
         

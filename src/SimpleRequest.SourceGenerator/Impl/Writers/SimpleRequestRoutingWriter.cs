@@ -23,23 +23,23 @@ public class SimpleRequestRoutingWriter {
 
     public void WriteRouteFile(
         SourceProductionContext context,
-        ModuleEntryPointModel entryPointModel, 
-        DependencyModuleConfigurationModel dependencyModuleConfiguration, 
+        ModuleEntryPointModel entryPointModel,
+        DependencyModuleConfigurationModel dependencyModuleConfiguration,
         ImmutableArray<RequestHandlerModel> requestModels) {
-        
+
         if (!entryPointModel.AttributeModels.Any(
                 a => a.ImplementedInterfaces.Contains(KnownRequestTypes.ISimpleRequestEntryAttribute))) {
             return;
         }
 
         var csharpFile = GenerateCsharpFile(entryPointModel);
-        
+
         WriteDependencyModuleConfiguration(context, entryPointModel, dependencyModuleConfiguration, requestModels);
 
         context.CancellationToken.ThrowIfCancellationRequested();
 
         GenerateCsharpClass(context, entryPointModel, requestModels, csharpFile);
-        
+
         WriteOutput(context, entryPointModel, csharpFile);
     }
 
@@ -48,7 +48,7 @@ public class SimpleRequestRoutingWriter {
         var entryClass = csharpFile.AddClass(entryPointModel.EntryPointType.Name);
 
         entryClass.Modifiers |= ComponentModifier.Public | ComponentModifier.Partial;
-        
+
         _routingClassGenerator.GenerateRoutingClass(context, entryPointModel, requestModels, entryClass);
     }
 
@@ -57,10 +57,10 @@ public class SimpleRequestRoutingWriter {
         DependencyModuleConfigurationModel dependencyModuleConfiguration,
         ImmutableArray<RequestHandlerModel> requestModels) {
         var serviceModels = GenerateServiceModels(requestModels);
-        
-        var output = 
+
+        var output =
             _dependencyFileWriter.Write(entryPointModel, dependencyModuleConfiguration, serviceModels, "SimpleRequest");
-        
+
         context.AddSource(
             $"{entryPointModel.EntryPointType.Name}.SimpleRequestDeps.g.cs",
             output);
@@ -68,7 +68,7 @@ public class SimpleRequestRoutingWriter {
 
     private List<ServiceModel> GenerateServiceModels(ImmutableArray<RequestHandlerModel> requestModels) {
         var handlerTypes = new List<ITypeDefinition>();
-        
+
         foreach (var requestModel in requestModels) {
             if (!handlerTypes.Contains(requestModel.HandlerType)) {
                 handlerTypes.Add(requestModel.HandlerType);
@@ -79,31 +79,35 @@ public class SimpleRequestRoutingWriter {
         foreach (var requestHandlerModel in handlerTypes) {
             serviceModels.Add(new ServiceModel(
                 requestHandlerModel,
+                null,
                 new ServiceRegistrationModel[] {
                     new(requestHandlerModel, ServiceLifestyle.Transient, RegistrationType.Add)
                 }));
         }
-        
-        serviceModels.Add(new ServiceModel(TypeDefinition.Get("", _routingClassName), new [] {
-            new ServiceRegistrationModel(KnownRequestTypes.IRequestHandlerProvider, ServiceLifestyle.Singleton)
-        }));
-        
+
+        serviceModels.Add(new ServiceModel(
+            TypeDefinition.Get("", _routingClassName),
+            null,
+            new[] {
+                new ServiceRegistrationModel(KnownRequestTypes.IRequestHandlerProvider, ServiceLifestyle.Singleton)
+            }));
+
         return serviceModels;
     }
 
     private void WriteOutput(SourceProductionContext context, ModuleEntryPointModel entryPointModel, CSharpFileDefinition csharpFile) {
         var outputContext = new OutputContext();
-        
+
         csharpFile.WriteOutput(outputContext);
-        
+
         context.AddSource(
-            $"{entryPointModel.EntryPointType.Name}.SimpleRequestRouting.g.cs", 
+            $"{entryPointModel.EntryPointType.Name}.SimpleRequestRouting.g.cs",
             outputContext.Output());
     }
 
     private CSharpFileDefinition GenerateCsharpFile(ModuleEntryPointModel entryPointModel) {
         var csharpFile = new CSharpFileDefinition(entryPointModel.EntryPointType.Namespace);
-        
+
         return csharpFile;
     }
 }

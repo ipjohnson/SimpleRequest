@@ -21,4 +21,6 @@ public interface IInvokeParameterInfo {
     Type Type { get; }
     
     ParameterBindType BindingType { get; }
+    
+    IReadOnlyList<Attribute> Attributes { get; }
 }
