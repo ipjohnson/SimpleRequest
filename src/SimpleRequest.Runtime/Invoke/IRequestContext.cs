@@ -20,5 +20,5 @@ public interface IRequestContext {
 
     CancellationToken CancellationToken { get; }
     
-    IRequestContext Clone();
+    IRequestContext Clone(IServiceProvider? serviceProvider = null);
 }

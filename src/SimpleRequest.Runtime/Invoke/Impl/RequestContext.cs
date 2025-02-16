@@ -142,9 +142,9 @@ public class RequestContext(IServiceProvider serviceProvider,
         get;
     } = cancellationToken;
 
-    public IRequestContext Clone() {
+    public IRequestContext Clone(IServiceProvider? serviceProvider = null) {
         return new RequestContext(
-            ServiceProvider, 
+            serviceProvider ?? ServiceProvider, 
             RequestData.Clone(),
             ResponseData.Clone(), 
             MetricLogger,
