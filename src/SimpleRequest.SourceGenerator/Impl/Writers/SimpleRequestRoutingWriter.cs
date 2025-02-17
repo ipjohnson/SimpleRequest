@@ -27,7 +27,8 @@ public class SimpleRequestRoutingWriter {
         DependencyModuleConfigurationModel dependencyModuleConfiguration,
         ImmutableArray<RequestHandlerModel> requestModels) {
 
-        if (!entryPointModel.AttributeModels.Any(
+        if (requestModels.Length == 0 ||
+            !entryPointModel.AttributeModels.Any(
                 a => a.ImplementedInterfaces.Contains(KnownRequestTypes.ISimpleRequestEntryAttribute))) {
             return;
         }

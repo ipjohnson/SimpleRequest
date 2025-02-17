@@ -181,7 +181,7 @@ public abstract class BaseRequestModelGenerator {
         int parameterIndex,
         bool? required = null,
         string? bindingName = null,
-        IReadOnlyList<AttributeModel> customAttributes = null) {
+        IReadOnlyList<AttributeModel>? customAttributes = default) {
         if (!parameterType.IsNullable && parameter.ToFullString().Contains("?")) {
             parameterType = parameterType.MakeNullable();
         }
