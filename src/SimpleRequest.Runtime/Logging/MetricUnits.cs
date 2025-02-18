@@ -1,11 +1,6 @@
 ﻿namespace SimpleRequest.Runtime.Logging;
 
-public class MetricUnits {
-    public MetricUnits(string name) {
-        Name = name;
-    }
-
-    public string Name { get; }
+public record MetricUnits(string Name) {
 
     public static readonly MetricUnits Milliseconds = new("Milliseconds");
 

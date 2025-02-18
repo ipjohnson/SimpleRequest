@@ -6,13 +6,4 @@ public interface IMetricDefinition {
     MetricUnits Units { get; }
 }
 
-public class MetricDefinition : IMetricDefinition {
-    public MetricDefinition(string name, MetricUnits units) {
-        Name = name;
-        Units = units;
-    }
-
-    public string Name { get; }
-
-    public MetricUnits Units { get; }
-}
+public record MetricDefinition(string Name, MetricUnits Units) : IMetricDefinition;

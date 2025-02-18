@@ -16,7 +16,11 @@ public class NullMetricsLogger : IMetricLogger {
 
     public void Tag(string tagName, object tagValue) { }
 
+    public void ClearTags(Func<KeyValuePair<string, object>, bool>? predicate = null) { }
+
     public void Data(string dataName, object dataValue) { }
+
+    public void ClearData(Func<KeyValuePair<string, object>, bool>? predicate = null) { }
 
     public IMetricLogger Clone() {
         return this;
