@@ -1,11 +1,14 @@
 ﻿namespace SimpleRequest.Runtime.Logging;
 
 public class NullMetricsLogger : IMetricLogger {
-    public void Dispose() { }
 
     public Task Flush() {
         return Task.CompletedTask;
     }
+
+    public void StartTimer(IMetricDefinition metricDefinition) { }
+
+    public void StopTimer(IMetricDefinition metricDefinition) { }
 
     public void Increment(IMetricDefinition metricDefinition, double amount = 1) { }
 
@@ -17,5 +20,9 @@ public class NullMetricsLogger : IMetricLogger {
 
     public IMetricLogger Clone() {
         return this;
+    }
+
+    public ValueTask DisposeAsync() {
+        return ValueTask.CompletedTask;
     }
 }

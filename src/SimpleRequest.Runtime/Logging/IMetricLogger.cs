@@ -2,8 +2,12 @@
 
 namespace SimpleRequest.Runtime.Logging;
 
-public interface IMetricLogger : IDisposable {
+public interface IMetricLogger : IAsyncDisposable {
     Task Flush();
+    
+    void StartTimer(IMetricDefinition metricDefinition);
+    
+    void StopTimer(IMetricDefinition metricDefinition);
     
     void Increment(IMetricDefinition metricDefinition, double amount = 1.0);
 
