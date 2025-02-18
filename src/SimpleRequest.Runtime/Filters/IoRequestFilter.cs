@@ -21,6 +21,7 @@ public class IoRequestFilter : IRequestFilter {
         }
         catch (Exception e) {
             context.ResponseData.ExceptionValue = e;
+            context.RequestLogger.RequestParameterBindFailed(context, e);
         }
         finally {
             context.MetricLogger.Record(

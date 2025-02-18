@@ -1,4 +1,6 @@
 using DependencyModules.Runtime.Attributes;
+using SimpleRequest.Runtime.Diagnostics;
+using SimpleRequest.Runtime.Logging;
 
 namespace SimpleRequest.Runtime.Invoke.Impl;
 
@@ -14,17 +16,40 @@ public class RequestInvocationEngine : IRequestInvocationEngine {
         _providers = providers.Reverse().ToArray();
     }
 
-    public Task Invoke(IRequestContext context) {
+    public async Task Invoke(IRequestContext context) {
+        var logger = context.RequestLogger;
+        var startTime = MachineTimestamp.Now;
+        
+        logger.RequestBegin(context);
+        
         for (var i = 0; i < _providers.Count; i++) {
             var handler = _providers[i].GetRequestHandler(context);
 
             if (handler != null) {
                 context.RequestHandlerInfo = handler.RequestHandlerInfo;
                 
-                return handler.Invoke(context);
+                logger.RequestMapped(context);
+                
+                try {
+                    await handler.Invoke(context);
+                }
+                catch (Exception ex) {
+                    context.ResponseData.ExceptionValue = ex;
+                }
+                finally {
+                    if (context.ResponseData.ExceptionValue != null) {
+                        logger.RequestFailed(context, context.ResponseData.ExceptionValue);
+                    }
+                    
+                    logger.RequestEnd(context);
+                }
+                
+                return;
             }
         }
         
-        return _notFoundHandler.Handle(context);
+        await _notFoundHandler.Handle(context);
+        logger.RequestEnd(context);
+        context.MetricLogger.Record(RequestMetrics.TotalRequestDuration, startTime);
     }
 }

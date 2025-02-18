@@ -16,6 +16,8 @@ public interface IRequestContext {
 
     IMetricLogger MetricLogger { get; }
     
+    IRequestLogger RequestLogger { get; }
+    
     IContentSerializerManager ContentSerializerManager { get; }
 
     CancellationToken CancellationToken { get; }

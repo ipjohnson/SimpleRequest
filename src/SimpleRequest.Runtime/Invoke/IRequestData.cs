@@ -1,6 +1,10 @@
+using SimpleRequest.Runtime.Diagnostics;
+
 namespace SimpleRequest.Runtime.Invoke;
 
 public interface IRequestData {
+    MachineTimestamp StartTime { get; }
+    
     string Path { get; }
     
     string Method { get; }

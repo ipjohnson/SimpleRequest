@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using SimpleRequest.Runtime.Diagnostics;
 using SimpleRequest.Runtime.Logging;
 using SimpleRequest.Runtime.Serializers;
 
@@ -10,6 +12,11 @@ public class RequestData : IRequestData {
         Body = body;
         ContentType = contentType;
         PathTokenCollection = pathTokenCollection;
+        StartTime = MachineTimestamp.Now;
+    }
+
+    public MachineTimestamp StartTime {
+        get;
     }
 
     public string Path {
@@ -105,7 +112,8 @@ public class RequestContext(IServiceProvider serviceProvider,
     IResponseData responseData,
     IMetricLogger metricLogger,
     IContentSerializerManager contentSerializerManager,
-    CancellationToken cancellationToken)
+    CancellationToken cancellationToken,
+    IRequestLogger requestLogger)
     : IRequestContext {
 
     public IServiceProvider ServiceProvider {
@@ -134,6 +142,10 @@ public class RequestContext(IServiceProvider serviceProvider,
         get;
     } = metricLogger;
 
+    public IRequestLogger RequestLogger {
+        get;
+    } = requestLogger;
+
     public IContentSerializerManager ContentSerializerManager {
         get;
     } = contentSerializerManager;
@@ -149,7 +161,8 @@ public class RequestContext(IServiceProvider serviceProvider,
             ResponseData.Clone(), 
             MetricLogger,
             ContentSerializerManager, 
-            CancellationToken) {
+            CancellationToken,
+            RequestLogger) {
             RequestHandlerInfo = RequestHandlerInfo,
             InvokeParameters = InvokeParameters?.Clone(),
         };

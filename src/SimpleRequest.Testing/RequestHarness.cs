@@ -1,5 +1,6 @@
 using CompiledTemplateEngine.Runtime.Utilities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Invoke.Impl;
 using SimpleRequest.Runtime.Logging;
@@ -48,7 +49,8 @@ public class RequestHarness(IServiceProvider serviceProvider,
             responseData,
             new NullMetricsLogger(),
             contentSerializer,
-            CancellationToken.None);
+            CancellationToken.None,
+            serviceProvider.GetRequiredService<IRequestLogger>());
         
         await requestInvocationEngine.Invoke(context);
 

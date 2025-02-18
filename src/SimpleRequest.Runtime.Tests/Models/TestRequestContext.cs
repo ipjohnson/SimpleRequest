@@ -14,7 +14,8 @@ public class TestRequestContext {
             new ResponseData() { Body = new MemoryStream()},
             new NullMetricsLogger(),
             serviceProvider.GetRequiredService<IContentSerializerManager>(),
-            CancellationToken.None
+            CancellationToken.None,
+            serviceProvider.GetRequiredService<IRequestLogger>()
         );
     }
 }
