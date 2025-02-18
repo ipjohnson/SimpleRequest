@@ -4,6 +4,8 @@ namespace SimpleRequest.Runtime.Logging;
 
 public interface IMetricLogger : IDisposable {
     Task Flush();
+    
+    void Increment(IMetricDefinition metricDefinition, double amount = 1.0);
 
     void Record(IMetricDefinition metric, MachineTimestamp timestamp) {
         Record(metric, timestamp.GetElapsedMilliseconds());

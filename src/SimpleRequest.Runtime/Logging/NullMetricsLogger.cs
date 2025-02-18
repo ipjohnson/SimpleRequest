@@ -7,6 +7,8 @@ public class NullMetricsLogger : IMetricLogger {
         return Task.CompletedTask;
     }
 
+    public void Increment(IMetricDefinition metricDefinition, double amount = 1) { }
+
     public void Record(IMetricDefinition metric, double value) { }
 
     public void Tag(string tagName, object tagValue) { }
