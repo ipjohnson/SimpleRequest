@@ -25,8 +25,6 @@ public partial class RequestLogger : IRequestLogger {
     }
 
     public void RequestEnd(IRequestContext context) {
-        var currentTime = DateTime.Now;
-
         LogRequestFinished(
             context.RequestData.Method,
             context.RequestData.Path,
@@ -67,7 +65,7 @@ public partial class RequestLogger : IRequestLogger {
     protected partial void LogRequestFinished(
         string httpMethod, string path, int? statusCode, TimeSpan durationMs);
 
-    [Microsoft.Extensions.Logging.LoggerMessage(
+    [LoggerMessage(
         EventId = 78003,
         Level = LogLevel.Information,
         Message = "{httpMethod} {path} Resource Not Found")]

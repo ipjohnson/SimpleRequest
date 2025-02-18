@@ -49,7 +49,7 @@ public class RequestInvocationEngine : IRequestInvocationEngine {
         }
         
         await _notFoundHandler.Handle(context);
-        logger.RequestEnd(context);
+        logger.ResourceNotFound(context);
         context.MetricLogger.Record(RequestMetrics.TotalRequestDuration, startTime);
     }
 }
