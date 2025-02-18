@@ -12,4 +12,8 @@ public class NullMetricsLogger : IMetricLogger {
     public void Tag(string tagName, object tagValue) { }
 
     public void Data(string dataName, object dataValue) { }
+
+    public IMetricLogger Clone() {
+        return this;
+    }
 }

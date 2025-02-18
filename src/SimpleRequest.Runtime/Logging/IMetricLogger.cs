@@ -14,4 +14,6 @@ public interface IMetricLogger : IDisposable {
     void Tag(string tagName, object tagValue);
 
     void Data(string dataName, object dataValue);
+
+    IMetricLogger Clone();
 }

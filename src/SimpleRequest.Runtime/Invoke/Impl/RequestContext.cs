@@ -159,7 +159,7 @@ public class RequestContext(IServiceProvider serviceProvider,
             serviceProvider ?? ServiceProvider, 
             RequestData.Clone(),
             ResponseData.Clone(), 
-            MetricLogger,
+            MetricLogger.Clone(),
             ContentSerializerManager, 
             CancellationToken,
             RequestLogger) {
