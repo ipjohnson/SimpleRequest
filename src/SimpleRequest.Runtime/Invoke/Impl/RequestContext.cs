@@ -158,7 +158,7 @@ public class RequestContext(IServiceProvider serviceProvider,
         return new RequestContext(
             serviceProvider ?? ServiceProvider, 
             RequestData.Clone(),
-            ResponseData.Clone(), 
+            ResponseData.Clone(),
             MetricLogger.Clone(),
             ContentSerializerManager, 
             CancellationToken,

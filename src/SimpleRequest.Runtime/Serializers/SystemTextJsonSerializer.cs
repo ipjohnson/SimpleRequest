@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DependencyModules.Runtime.Attributes;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SimpleRequest.Runtime.Serializers;
 
@@ -10,9 +11,8 @@ public interface ISystemTextJsonSerializerOptionProvider {
 
 [SingletonService]
 public class SystemTextJsonSerializerOptionProvider : ISystemTextJsonSerializerOptionProvider {
-
-    public JsonSerializerOptions Options => new JsonSerializerOptions(
-    ) {
+    
+    public JsonSerializerOptions Options => new () {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         AllowTrailingCommas = true,
@@ -21,12 +21,10 @@ public class SystemTextJsonSerializerOptionProvider : ISystemTextJsonSerializerO
 
 [SingletonService(ServiceType = typeof(IContentSerializer))]
 [SingletonService(ServiceType = typeof(IJsonSerializer))]
-public class SystemTextJsonSerializer : IContentSerializer, IJsonSerializer {
-    private readonly JsonSerializerOptions _options;
+public class SystemTextJsonSerializer(JsonSerializerOptions options) : IContentSerializer, IJsonSerializer {
 
-    public SystemTextJsonSerializer(ISystemTextJsonSerializerOptionProvider options) {
-        _options = options.Options;
-    }
+    [ActivatorUtilitiesConstructor]
+    public SystemTextJsonSerializer(ISystemTextJsonSerializerOptionProvider options) : this(options.Options) { }
 
     public bool IsDefault => true;
 
@@ -37,26 +35,26 @@ public class SystemTextJsonSerializer : IContentSerializer, IJsonSerializer {
     }
 
     public Task Serialize(Stream stream, object value, CancellationToken cancellationToken = default) {
-        return JsonSerializer.SerializeAsync(stream, value, _options, cancellationToken);
+        return JsonSerializer.SerializeAsync(stream, value, options, cancellationToken);
     }
 
     public string Serialize(object value) {
-        return JsonSerializer.Serialize(value, _options);
+        return JsonSerializer.Serialize(value, options);
     }
 
     public ValueTask<object?> Deserialize(Stream stream, Type type, CancellationToken cancellationToken = default) {
-        return JsonSerializer.DeserializeAsync(stream, type, _options, cancellationToken);
+        return JsonSerializer.DeserializeAsync(stream, type, options, cancellationToken);
     }
 
     public ValueTask<T?> Deserialize<T>(Stream stream, CancellationToken cancellationToken = default) {
-        return JsonSerializer.DeserializeAsync<T>(stream, _options, cancellationToken);
+        return JsonSerializer.DeserializeAsync<T>(stream, options, cancellationToken);
     }
 
     public object? Deserialize(string stringValue, Type type) {
-        return JsonSerializer.Deserialize(stringValue, type, _options);
+        return JsonSerializer.Deserialize(stringValue, type, options);
     }
 
     public T? Deserialize<T>(string stringValue) {
-        return JsonSerializer.Deserialize<T>(stringValue, _options);
+        return JsonSerializer.Deserialize<T>(stringValue, options);
     }
 }
