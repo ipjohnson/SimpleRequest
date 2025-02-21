@@ -5,7 +5,7 @@ using SimpleRequest.Runtime.Serializers;
 namespace SimpleRequest.Runtime.Filters;
 
 public interface IInvokeFilterProvider {
-    RequestFilterInfo ProvideFilter(IRequestHandlerInfo info);
+    RequestFilterInfo ProvideFilter(IServiceProvider services, IRequestHandlerInfo info);
 }
 
 [SingletonService]
@@ -17,7 +17,7 @@ public class InvokeFilterProvider : IInvokeFilterProvider {
         _invokeFilterInfo = new RequestFilterInfo(_ => filter, (int)RequestFilterOrder.Last);
     }
     
-    public RequestFilterInfo ProvideFilter(IRequestHandlerInfo info) {
+    public RequestFilterInfo ProvideFilter(IServiceProvider services, IRequestHandlerInfo info) {
         return _invokeFilterInfo;
     }
 }

@@ -38,7 +38,6 @@ public class FilterAttributeClassGenerator {
         classDefinition.AddBaseType(TypeDefinition.Get(typeof(Attribute)));
         classDefinition.AddBaseType(KnownRequestTypes.IRequestFilterProvider);
 
-
         GenerateProvideMethod(classDefinition, filterInfo);
     }
 
@@ -47,6 +46,7 @@ public class FilterAttributeClassGenerator {
         
         method.SetReturnType(TypeDefinition.Get("", "IEnumerable<RequestFilterInfo>"));
 
+        method.AddParameter(KnownTypes.Microsoft.DependencyInjection.IServiceProvider, "services");
         method.AddParameter(KnownRequestTypes.IRequestHandlerInfo, "handlerInfo");
 
         string locateStatement = "";
