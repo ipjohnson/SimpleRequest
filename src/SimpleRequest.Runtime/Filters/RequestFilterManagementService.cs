@@ -16,7 +16,6 @@ public class RequestFilterManagementService(IServiceProvider serviceProvider,
     IInvokeFilterProvider invokeFilterProvider,
     IIoFilterProvider ioFilterProvider)
     : IRequestFilterManagementService {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public IReadOnlyList<FilterProvider> GetFilters(IRequestHandlerInfo requestHandlerInfo, params object[] providers) {
         var allFilters = new List<RequestFilterInfo> {
