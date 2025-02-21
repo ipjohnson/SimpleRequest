@@ -1,6 +1,7 @@
 using DependencyModules.Runtime.Attributes;
 using DependencyModules.Runtime.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using SimpleRequest.Runtime.Invoke;
 
 namespace SimpleRequest.Runtime.ContextAccessor;
@@ -11,7 +12,7 @@ public partial class ContextAccessorSupport : IServiceCollectionConfiguration {
 
     public void ConfigureServices(IServiceCollection services) {
         if (ApplyToAllEndpoints) {
-            services.AddSingleton<IRequestFilterProvider, SingletonAccessorFilterProvider>();
+            services.TryAddSingleton<IRequestFilterProvider, SingletonAccessorFilterProvider>();
         }
     }
 }
