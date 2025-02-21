@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using SimpleRequest.Runtime.Invoke;
 
 namespace SimpleRequest.Runtime.Logging;
@@ -7,6 +8,8 @@ namespace SimpleRequest.Runtime.Logging;
 /// Logger called to record requests
 /// </summary>
 public interface IRequestLogger {
+    ILogger Instance { get; }
+    
     /// <summary>
     /// Called at the beginning of the request
     /// </summary>

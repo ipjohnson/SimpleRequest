@@ -12,6 +12,8 @@ public partial class RequestLogger : IRequestLogger {
         _logger = logger;
     }
 
+    public ILogger Instance => _logger;
+    
     public void RequestBegin(IRequestContext context) {
         LogRequestStarted(context.RequestData.Method, context.RequestData.Path);
     }

@@ -56,4 +56,12 @@ public readonly struct MachineTimestamp {
         var totalElapsedTime = currentTime - _timestamp;
         return new TimeSpan((long)(totalElapsedTime * SecondsToTicksRatio));
     }
+
+    /// <summary>
+    /// Get a new DateTime using the tick timestamp
+    /// </summary>
+    /// <returns></returns>
+    public DateTime GetDateTime() {
+        return new DateTime(_timestamp);
+    }
 }
