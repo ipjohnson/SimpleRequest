@@ -55,7 +55,7 @@ public class IoRequestFilter(IRequestContextSerializer requestContextSerializer,
             foreach (var requestLoggingData in loggingData) {
                 if ((requestLoggingData.Feature & LoggingDataFeature.MetricData) ==
                     LoggingDataFeature.MetricData) {
-                    context.MetricLogger.Data(requestLoggingData.Key, requestLoggingData.Value);
+                    context.MetricLogger.Data("context." + requestLoggingData.Key, requestLoggingData.Value);
                 }
 
                 if ((requestLoggingData.Feature & LoggingDataFeature.MetricTag) ==
@@ -64,7 +64,7 @@ public class IoRequestFilter(IRequestContextSerializer requestContextSerializer,
                 }
             }
 
-            if (loggingContextAccessor != null) {
+            if (loggingContextAccessor == null) {
                 return context.RequestLogger.Instance.BeginScope(
                     loggingData.Where(
                         d => (d.Feature & LoggingDataFeature.LogData) == LoggingDataFeature.LogData).Select(d => d.AsKeyValuePair()));
