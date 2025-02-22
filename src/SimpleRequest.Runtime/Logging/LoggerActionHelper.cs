@@ -15,7 +15,7 @@ public class LoggerActionHelper {
             .AddFilter("Microsoft", LogLevel.Warning)
             .AddFilter("System", LogLevel.Warning)
             .AddFilter("SimpleRequest", LogLevel.Information)
-            .SetMinimumLevel(LogLevel.Debug);
+            .SetMinimumLevel(_logLevel);
     }
 
     public static Action<ILoggingBuilder> CreateAction() {

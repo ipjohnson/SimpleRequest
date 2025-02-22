@@ -13,8 +13,8 @@
 
     <ItemGroup>
         <PackageReference Include="CompiledTemplateEngine.Runtime" Version="1.0.0-RC1007" />
-        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9076" />
-        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9076">
+        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9086" />
+        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9086">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
