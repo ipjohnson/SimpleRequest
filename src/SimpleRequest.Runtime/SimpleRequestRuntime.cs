@@ -16,7 +16,9 @@ public partial class SimpleRequestRuntime :
     IDependencyModuleFeature<ILoggingConfigurationImplementation>,
     ILoggingConfigurationImplementation {
     private ILoggingConfigurationImplementation? _implementation;
-
+    
+    int IDependencyModuleFeature<ILoggingConfigurationImplementation>.Order => -1000; 
+    
     public void HandleFeature(IServiceCollection collection, IEnumerable<ILoggingBuilderConfiguration> features) {
         _implementation?.Configure(collection, features);
     }

@@ -6,23 +6,17 @@ using SimpleRequest.Runtime.Serializers;
 
 namespace SimpleRequest.Runtime.Filters;
 
-public class IoRequestFilter : IRequestFilter {
-    private readonly IRequestContextSerializer _requestContextSerializer;
-    private readonly IRequestLoggingDataProvider _requestLoggingDataProvider;
-
-    public IoRequestFilter(
-        IRequestContextSerializer requestContextSerializer,
-        IRequestLoggingDataProvider requestLoggingDataProvider) {
-        _requestContextSerializer = requestContextSerializer;
-        _requestLoggingDataProvider = requestLoggingDataProvider;
-    }
+public class IoRequestFilter(IRequestContextSerializer requestContextSerializer,
+    IRequestLoggingDataProviderService requestLoggingDataProviderService,
+    ILoggingContextAccessor? loggingContextAccessor)
+    : IRequestFilter {
 
     public async Task Invoke(IRequestChain requestChain) {
         var context = requestChain.Context;
         var deserializeStartTime = MachineTimestamp.Now;
 
         try {
-            await _requestContextSerializer.DeserializeToParameters(requestChain.Context);
+            await requestContextSerializer.DeserializeToParameters(requestChain.Context);
         }
         catch (Exception e) {
             context.ResponseData.ExceptionValue = e;
@@ -42,7 +36,7 @@ public class IoRequestFilter : IRequestFilter {
         var responseStartTime = MachineTimestamp.Now;
 
         try {
-            await _requestContextSerializer.SerializeToResponse(requestChain.Context);
+            await requestContextSerializer.SerializeToResponse(requestChain.Context);
         }
         catch (Exception e) {
             context.ResponseData.ExceptionValue = e;
@@ -55,26 +49,30 @@ public class IoRequestFilter : IRequestFilter {
 
     private IDisposable? CreateLoggingScope(IRequestContext context) {
         var loggingData = 
-            _requestLoggingDataProvider.GetRequestLoggingData(context);
+            requestLoggingDataProviderService.GetRequestLoggingData(context);
 
         if (loggingData.Count > 0) {
             foreach (var requestLoggingData in loggingData) {
-                if ((requestLoggingData.Feature & LoggingDataFeature.MetricData) == 
+                if ((requestLoggingData.Feature & LoggingDataFeature.MetricData) ==
                     LoggingDataFeature.MetricData) {
                     context.MetricLogger.Data(requestLoggingData.Key, requestLoggingData.Value);
                 }
-                
-                if ((requestLoggingData.Feature & LoggingDataFeature.MetricTag) == 
+
+                if ((requestLoggingData.Feature & LoggingDataFeature.MetricTag) ==
                     LoggingDataFeature.MetricTag) {
                     context.MetricLogger.Tag(requestLoggingData.Key, requestLoggingData.Value);
                 }
             }
+
+            if (loggingContextAccessor != null) {
+                return context.RequestLogger.Instance.BeginScope(
+                    loggingData.Where(
+                        d => (d.Feature & LoggingDataFeature.LogData) == LoggingDataFeature.LogData).Select(d => d.AsKeyValuePair()));
+            }
             
-            return context.RequestLogger.Instance.BeginScope(
-                loggingData.Where(
-                    d => (d.Feature & LoggingDataFeature.LogData) == LoggingDataFeature.LogData).Select(d => d.AsKeyValuePair()));
+            loggingContextAccessor?.SetList(loggingData);
         }
-        
+
         return null;
     }
 }

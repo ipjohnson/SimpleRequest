@@ -15,9 +15,14 @@ public class IoFilterProvider : IIoFilterProvider {
     
     public IoFilterProvider(
         IRequestContextSerializer requestContextSerializer,
-        IRequestLoggingDataProvider requestLoggingDataProvider) {
-        var filter = new IoRequestFilter(requestContextSerializer, requestLoggingDataProvider);
-        _ioFilter = new RequestFilterInfo(_ => filter, (int)RequestFilterOrder.BindParameters);
+        IRequestLoggingDataProviderService requestLoggingDataProviderService,
+        ILoggingContextAccessor? loggingContextAccessor = null) {
+        var filter = new IoRequestFilter(
+            requestContextSerializer, 
+            requestLoggingDataProviderService,
+            loggingContextAccessor);
+        
+        _ioFilter = new RequestFilterInfo(_ => filter, RequestFilterOrder.BindParameters);
     }
 
     public RequestFilterInfo ProviderFilter(IServiceProvider services, IRequestHandlerInfo requestHandler) {
