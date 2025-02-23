@@ -49,7 +49,6 @@
         </PackageReference>
     </ItemGroup>
 
-
     <ItemGroup>
         <Compile Include="../SimpleRequest.SourceGenerator/Impl/**/*">
             <Link>SourceGeneratorImpl\%(RecursiveDir)/%(FileName)%(Extension)</Link>
