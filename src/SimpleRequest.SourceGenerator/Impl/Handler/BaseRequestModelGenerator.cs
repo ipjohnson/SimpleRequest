@@ -17,13 +17,15 @@ public abstract class BaseRequestModelGenerator {
         
         var methodDeclaration = (MethodDeclarationSyntax)context.Node;
 
+        var attributeModules = AttributeModelHelper.GetAttributeModels(context, methodDeclaration, cancellationToken);
+        
         var methodName = GetControllerMethod(methodDeclaration);
         var controllerType = GetControllerType(methodDeclaration);
         
         var response = GetResponseInformation(context, methodDeclaration);
-        var filters = GetFilters(context, methodDeclaration, cancellationToken);
+        var filters = GetFilters(context, methodDeclaration, attributeModules, cancellationToken);
 
-        var nameModel = GetRequestNameModel(context, methodDeclaration, cancellationToken);
+        var nameModel = GetRequestNameModel(context, methodDeclaration, attributeModules, cancellationToken);
         
         return new RequestHandlerModel(
             nameModel,
@@ -35,9 +37,9 @@ public abstract class BaseRequestModelGenerator {
             filters);
     }
 
-    protected abstract RequestHandlerNameModel GetRequestNameModel(
-        GeneratorSyntaxContext context,
+    protected abstract RequestHandlerNameModel GetRequestNameModel(GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclaration,
+        IReadOnlyList<AttributeModel> attributeModules,
         CancellationToken cancellation);
 
     protected virtual ITypeDefinition GetInvokeHandlerType(
@@ -97,10 +99,10 @@ public abstract class BaseRequestModelGenerator {
         return parameters;
     }
 
-    protected virtual RequestParameterInformation? DefaultGetParameterFromAttribute(
-        AttributeSyntax attribute, 
-        GeneratorSyntaxContext generatorSyntaxContext, 
-        ParameterSyntax parameter, 
+    protected virtual RequestParameterInformation? DefaultGetParameterFromAttribute(AttributeSyntax attribute,
+        AttributeModel attributeModel,
+        GeneratorSyntaxContext generatorSyntaxContext,
+        ParameterSyntax parameter,
         int parameterIndex) {
         var parameterType = parameter.Type?.GetTypeDefinition(generatorSyntaxContext)!;
         var name = parameter.Identifier.Text;
@@ -257,14 +259,14 @@ public abstract class BaseRequestModelGenerator {
         return new ResponseInformationModel(isAsync, returnType, template, null, rawResponse);
     }
 
-    protected virtual IReadOnlyList<AttributeModel> GetFilters(
-        GeneratorSyntaxContext context,
+    protected virtual IReadOnlyList<AttributeModel> GetFilters(GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclarationSyntax,
+        IReadOnlyList<AttributeModel> attributeModules,
         CancellationToken cancellationToken) {
         var filterList = new List<AttributeModel>();
 
         filterList.AddRange(
-            GetFiltersForMethod(context, methodDeclarationSyntax, cancellationToken));
+            attributeModules.Where(a => IsFilterAttribute(a.TypeDefinition.Name)));
         filterList.AddRange(GetFiltersForClass(context,
             methodDeclarationSyntax.Ancestors().OfType<ClassDeclarationSyntax>().FirstOrDefault(),
             cancellationToken));
@@ -283,8 +285,7 @@ public abstract class BaseRequestModelGenerator {
         return GetFiltersFromAttributes(context, parent.AttributeLists, cancellationToken);
     }
 
-    protected virtual bool IsFilterAttribute(AttributeSyntax attribute) {
-        var attributeName = attribute.Name.ToString();
+    protected virtual bool IsFilterAttribute(string attributeName) {
 
         if (attributeName.Contains("DependencyModule")) {
             return false;
@@ -316,6 +317,6 @@ public abstract class BaseRequestModelGenerator {
             context,
             attributeListSyntax,
             cancellationToken,
-            IsFilterAttribute);
+            a => IsFilterAttribute(a.Name.ToString()));
     }
 }

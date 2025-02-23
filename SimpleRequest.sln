@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp.FunctionHandlers.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp.WebHandlers", "tests\TestApp.WebHandlers\TestApp.WebHandlers.csproj", "{154D3661-3A91-47D8-B7C0-1EDF82F7E937}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp.WebHandlers.Tests", "tests\TestApp.WebHandlers.Tests\TestApp.WebHandlers.Tests.csproj", "{7F6B317F-5617-46CE-AB0E-12B1F64BC5FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,7 @@ Global
 		{16DD68A3-0092-4DE9-9206-19293CAAD920} = {076C405E-76A1-4B9E-B9CC-53EF01868D62}
 		{8BA20762-DDB9-4CC2-A7E9-7D3C8E136D79} = {076C405E-76A1-4B9E-B9CC-53EF01868D62}
 		{154D3661-3A91-47D8-B7C0-1EDF82F7E937} = {076C405E-76A1-4B9E-B9CC-53EF01868D62}
+		{7F6B317F-5617-46CE-AB0E-12B1F64BC5FB} = {076C405E-76A1-4B9E-B9CC-53EF01868D62}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{73169202-4EE1-442A-AEB6-688421F83095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -103,5 +106,9 @@ Global
 		{154D3661-3A91-47D8-B7C0-1EDF82F7E937}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{154D3661-3A91-47D8-B7C0-1EDF82F7E937}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{154D3661-3A91-47D8-B7C0-1EDF82F7E937}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F6B317F-5617-46CE-AB0E-12B1F64BC5FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F6B317F-5617-46CE-AB0E-12B1F64BC5FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F6B317F-5617-46CE-AB0E-12B1F64BC5FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F6B317F-5617-46CE-AB0E-12B1F64BC5FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>        
+    <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>10</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -8,8 +8,20 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsPackable>True</IsPackable>
         <Nullable>enable</Nullable>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
+
     <Import Project="../../build-props/nuget.props"/>
+
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
+
+
+    <PropertyGroup>
+        <PackageDependencyModuleIncludeSource>true</PackageDependencyModuleIncludeSource>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9086">
             <PrivateAssets>all</PrivateAssets>
@@ -37,4 +49,13 @@
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+
+    <ItemGroup>
+        <Compile Include="../SimpleRequest.SourceGenerator/Impl/**/*">
+            <Link>SourceGeneratorImpl\%(RecursiveDir)/%(FileName)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Compile>
+    </ItemGroup>
+
 </Project>

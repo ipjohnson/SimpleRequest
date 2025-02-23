@@ -58,7 +58,8 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
 
     private void GenerateFilterRegistrations(SourceProductionContext context,
         ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<AttributeFilterInfoModel> Right) data) {
-        if (!data.Left.Left.AttributeModels.Any(
+        if (data.Left.Left.AttributeModels.Count == 0 ||
+            !data.Left.Left.AttributeModels.Any(
                 a => a.ImplementedInterfaces.Contains(KnownRequestTypes.ISimpleRequestEntryAttribute))) {
             return;
         }
@@ -67,6 +68,10 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
     }
 
     private void WriteAttributeRegistrations(SourceProductionContext context, ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<AttributeFilterInfoModel> Right) data) {
+        if (data.Right.Length == 0) {
+            return;
+        }
+        
         var serviceModels =
             data.Right.Select(
                 model => new ServiceModel(
@@ -75,7 +80,7 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
                     new[] {
                         new ServiceRegistrationModel(model.FilterType, ServiceLifestyle.Transient)
                     }));
-
+        
         var writeString =
             new DependencyFileWriter().Write(data.Left.Left, data.Left.Right, serviceModels, _uniqueName);
 

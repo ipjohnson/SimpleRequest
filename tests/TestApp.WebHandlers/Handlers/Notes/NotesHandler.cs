@@ -6,7 +6,7 @@ namespace TestApp.WebHandlers.Handlers.Notes;
 #pragma warning disable CS1998 
 [BasePath("/notes")]
 public class NotesHandler {
-    [Get("")]
+    [Get]
     public async Task<List<NoteModel>> GetNotes() {
         var notes = new List<NoteModel> {
             new NoteModel(

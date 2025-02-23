@@ -1,6 +1,10 @@
 ﻿using DependencyModules.Runtime.Attributes;
+using SimpleRequest.Web.Runtime;
 
 namespace TestApp.WebHandlers;
 
 [DependencyModule]
-public partial class TestWebHandlers { }
+[SimpleRequestWeb.Attribute]
+public partial class TestWebHandlers {
+    
+}
