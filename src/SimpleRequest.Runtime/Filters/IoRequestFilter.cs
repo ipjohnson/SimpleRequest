@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using SimpleRequest.Runtime.Diagnostics;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Logging;
@@ -8,7 +7,7 @@ namespace SimpleRequest.Runtime.Filters;
 
 public class IoRequestFilter(IRequestContextSerializer requestContextSerializer,
     IRequestLoggingDataProviderService requestLoggingDataProviderService,
-    ILoggingContextAccessor? loggingContextAccessor)
+    ILoggingContextAccessor? loggingContextAccessor = null)
     : IRequestFilter {
 
     public async Task Invoke(IRequestChain requestChain) {
