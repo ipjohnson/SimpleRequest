@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
+        <OutputType>Library</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -14,14 +15,10 @@
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
     </ItemGroup>
-
+    
     <ItemGroup>
       <ProjectReference Include="..\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj" />
       <ProjectReference Include="..\SimpleRequest.Web.Runtime\SimpleRequest.Web.Runtime.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Impl\" />
     </ItemGroup>
     
 </Project>

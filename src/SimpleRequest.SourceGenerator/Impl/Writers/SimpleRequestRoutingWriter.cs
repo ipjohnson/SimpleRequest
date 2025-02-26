@@ -101,9 +101,13 @@ public class SimpleRequestRoutingWriter {
 
         csharpFile.WriteOutput(outputContext);
 
+        var output = outputContext.Output();
         context.AddSource(
             $"{entryPointModel.EntryPointType.Name}.SimpleRequestRouting.g.cs",
-            outputContext.Output());
+            output);
+#pragma warning disable RS1035
+        File.WriteAllText($"/tmp/{entryPointModel.EntryPointType.Name}.SimpleRequestRouting.g.cs", output);
+#pragma warning restore RS1035
     }
 
     private CSharpFileDefinition GenerateCsharpFile(ModuleEntryPointModel entryPointModel) {

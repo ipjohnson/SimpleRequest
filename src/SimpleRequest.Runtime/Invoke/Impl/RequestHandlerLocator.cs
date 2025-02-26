@@ -8,7 +8,8 @@ public class RequestHandlerLocator : IRequestHandlerLocator {
 
     public RequestHandlerLocator(
         IEnumerable<IRequestHandlerProvider> providers) {
-        _providers = providers.Reverse().ToArray();
+        _providers = 
+            providers.Reverse().OrderBy(x => x.Order).ToArray();
     }
 
     public IRequestHandler? GetHandler(IRequestContext context) {

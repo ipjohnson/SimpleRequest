@@ -28,8 +28,27 @@ public class RoutingClassGenerator {
 
         GenerateConstructor(classDefinition);
         
-        _routingTableGenerator.GenerateGetRequestHandlerMethod(
+        GenerateOrderProperty(classDefinition, moduleEntryPointModel);
+        
+        _routingTableGenerator.GenerateRoutingTableMethods(
             classDefinition, moduleEntryPointModel, requestModels, context.CancellationToken);
+    }
+
+    private void GenerateOrderProperty(ClassDefinition classDefinition, ModuleEntryPointModel moduleEntryPointModel) {
+        var orderAttribute = moduleEntryPointModel.AttributeModels.FirstOrDefault(
+            a => a.TypeDefinition.Equals(KnownRequestTypes.RoutingOrderAttribute));
+
+        if (orderAttribute is { Arguments.Count: > 0 }) {
+            var orderAttributeArgument = orderAttribute.Arguments[0].Value;
+
+            if (orderAttributeArgument != null) {
+                var property = classDefinition.AddProperty(typeof(int), "Order");
+
+                property.Get.LambdaSyntax = true;
+                property.Get.Return(orderAttributeArgument);
+                property.Set = null;
+            }
+        }
     }
 
     private void GenerateConstructor(ClassDefinition classDefinition) {

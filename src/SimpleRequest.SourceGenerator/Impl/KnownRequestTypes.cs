@@ -7,7 +7,6 @@ public static class KnownRequestTypes {
     public const string InvokeNamespace = "SimpleRequest.Runtime.Invoke";
     public const string SerializersNamespace = "SimpleRequest.Runtime.Serializers";
     public const string AttributeNamespace = "SimpleRequest.Runtime.Attributes";
-
     
     public static readonly ITypeDefinition RequestFilterAttribute =
         TypeDefinition.Get(
@@ -15,6 +14,11 @@ public static class KnownRequestTypes {
             AttributeNamespace, 
             "RequestFilterAttribute");
     
+    public static readonly ITypeDefinition RoutingOrderAttribute =
+        TypeDefinition.Get(
+            TypeDefinitionEnum.ClassDefinition, 
+            AttributeNamespace, 
+            "RoutingOrderAttribute");
     
     public static readonly ITypeDefinition ISimpleRequestEntryAttribute =
         TypeDefinition.Get(

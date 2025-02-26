@@ -45,7 +45,7 @@ public class SimpleRequestHandlerWriter {
 
         var requestParameterType =
             _parameterTypeGenerator.GenerateParameterType(requestModel, classDefinition);
-
+        
         ConstructParameterInfoCreationMethod(requestModel, classDefinition, requestParameterType);
 
         _bindParameterMethodGenerator.GenerateBindParameterMethod(requestModel, classDefinition, requestParameterType);
