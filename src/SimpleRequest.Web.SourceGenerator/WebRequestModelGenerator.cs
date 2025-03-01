@@ -31,10 +31,6 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
         if (attribute != null) {
             method = attribute.TypeDefinition.Name.Replace("Attribute", "").ToUpperInvariant();
             functionName = attribute.Arguments.FirstOrDefault()?.Value?.ToString() ?? "/";
-            
-#pragma warning disable RS1035
-            File.AppendAllText("/tmp/attr.txt", $"{functionName} {method} {attribute.Arguments.FirstOrDefault()?.Value}\n");
-#pragma warning restore RS1035
         }
 
         if (string.IsNullOrEmpty(functionName)) {
