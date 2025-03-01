@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9086" />
+        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9096" />
         <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9086">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>

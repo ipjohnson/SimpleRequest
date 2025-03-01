@@ -16,6 +16,9 @@ build/
 [Bb]in/
 [Oo]bj/
 
+src/SimpleRequest.Swagger/node_modules/
+src/SimpleRequest.Swagger/swagger-ui/
+
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
 

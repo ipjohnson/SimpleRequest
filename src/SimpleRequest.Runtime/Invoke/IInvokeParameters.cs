@@ -70,5 +70,5 @@ public interface IInvokeParameters {
     /// </summary>
     /// <param name="value"></param>
     /// <param name="index"></param>
-    void Set(object value, int index);
+    void Set(object? value, int index);
 }

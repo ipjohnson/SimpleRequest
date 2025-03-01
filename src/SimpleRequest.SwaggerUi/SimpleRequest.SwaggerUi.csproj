@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
+        <Exec Command="npm install" ContinueOnError="true">
+            <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+        </Exec>
+        <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project." />
+    </Target>
+
+    <ItemGroup>
+        <SwaggerDist Include="$(ProjectDir)node_modules\swagger-ui-dist\**\*" Exclude="**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*"/>
+    </ItemGroup>
+
+    <Target Name="CopyDist" BeforeTargets="BeforeBuild">
+        <Copy SourceFiles="@(SwaggerDist)" DestinationFolder="$(ProjectDir)swagger-ui\web-assets\" />
+    </Target>
+
+    <ItemGroup>
+        <None Remove="swagger-ui\web-assets.zip" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="swagger-ui\web-assets.zip" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj" />
+        <ProjectReference Include="..\SimpleRequest.Web.Runtime\SimpleRequest.Web.Runtime.csproj" />
+        <ProjectReference Include="..\SimpleRequest.Web.SourceGenerator\SimpleRequest.Web.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <ItemGroup>        
+        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9096">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>build</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj" />
+        <ProjectReference Include="..\SimpleRequest.Swagger\SimpleRequest.Swagger.csproj" />
+        <ProjectReference Include="..\SimpleRequest.Web.Runtime\SimpleRequest.Web.Runtime.csproj" />
+        <ProjectReference Include="..\SimpleRequest.Web.SourceGenerator\SimpleRequest.Web.SourceGenerator.csproj" />
+    </ItemGroup>
+
+    <Target Name="CreateZip" AfterTargets="CopyDist">
+        <PropertyGroup>
+            <WebAssetPath>$(ProjectDir)swagger-ui\web-assets\</WebAssetPath>
+            <WebAssetZip>$(ProjectDir)swagger-ui\web-assets.zip</WebAssetZip>
+        </PropertyGroup>
+        <Exec Command="dotnet ../../tools/ZipFilesTask.dll WebAssetPath=$(WebAssetPath) OutputFileName=$(WebAssetZip)" />
+    </Target>
+
+</Project>

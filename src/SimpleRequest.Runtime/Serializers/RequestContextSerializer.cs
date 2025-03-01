@@ -3,6 +3,7 @@ using CompiledTemplateEngine.Runtime.Interfaces;
 using CompiledTemplateEngine.Runtime.Utilities;
 using DependencyModules.Runtime.Attributes;
 using SimpleRequest.Runtime.Invoke;
+using SimpleRequest.Runtime.Models;
 
 namespace SimpleRequest.Runtime.Serializers;
 
@@ -48,8 +49,23 @@ public class RequestContextSerializer : IRequestContextSerializer {
         if (!string.IsNullOrEmpty(context.ResponseData.TemplateName)) {
             await WriteTemplateOutput(context);
         }
+        else if (context.ResponseData.ResponseValue is IContentResult contentResult) {
+            await WriteContentResult(context, contentResult);
+        }
         else if (context.ResponseData.ResponseValue != null) {
             await OutputSerializedData(context);
+        }
+    }
+
+    private async Task WriteContentResult(IRequestContext context, IContentResult contentResult) {
+        context.ResponseData.Status = contentResult.StatusCode ?? 
+                                      context.RequestHandlerInfo?.SuccessStatus ??
+                                      200;
+        context.ResponseData.ContentType = contentResult.ContentType;
+        context.ResponseData.IsBinary = contentResult.IsBinary;
+        
+        if (context.ResponseData.Body != null) {
+            await context.ResponseData.Body.WriteAsync(contentResult.Content);
         }
     }
 

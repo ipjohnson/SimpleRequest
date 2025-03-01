@@ -38,6 +38,7 @@ public class RequestData : IRequestData {
 
     public IPathTokenCollection PathTokenCollection {
         get;
+        set;
     }
 
     public IRequestData Clone() {

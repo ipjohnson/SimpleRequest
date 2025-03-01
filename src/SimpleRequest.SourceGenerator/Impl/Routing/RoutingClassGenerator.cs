@@ -45,7 +45,8 @@ public class RoutingClassGenerator {
                 var property = classDefinition.AddProperty(typeof(int), "Order");
 
                 property.Get.LambdaSyntax = true;
-                property.Get.Return(orderAttributeArgument);
+                property.Get.Add(
+                    new WrapStatement(CodeOutputComponent.Get(orderAttributeArgument), "",";"));
                 property.Set = null;
             }
         }

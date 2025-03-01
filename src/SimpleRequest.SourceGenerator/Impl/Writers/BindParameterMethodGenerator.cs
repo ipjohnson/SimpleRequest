@@ -65,10 +65,34 @@ public class BindParameterMethodGenerator {
             switch (parameterInformation.BindingType) {
                 case ParameterBindType.Body:
                     BindBodyParameter(
-                        ifBlock, contextParameter, requestData, parameters, parameterInformation, i);
+                        ifBlock, 
+                        contextParameter, 
+                        requestData,
+                        parameters,
+                        parameterInformation,
+                        i);
+                    break;
+                case ParameterBindType.Path:
+                    BindPathParameter(
+                        ifBlock, 
+                        contextParameter, 
+                        requestData,
+                        parameters,
+                        parameterInformation,
+                        i);
                     break;
             }
         }
+    }
+
+    private void BindPathParameter(IfElseLogicBlockDefinition block, ParameterDefinition contextParameter, InstanceDefinition requestData, InstanceDefinition parameters, RequestParameterInformation parameterInformation, int i) {
+        var invokeStatement =
+            contextParameter.Property("RequestData").Property("PathTokenCollection").Invoke("Get", QuoteString(parameterInformation.Name));
+        
+        var invoke = 
+            parameters.Invoke("Set", invokeStatement, i);
+        
+        block.AddIndentedStatement(invoke);
     }
 
     private void AssignToNewParameters(RequestHandlerModel requestModel, 
@@ -88,8 +112,19 @@ public class BindParameterMethodGenerator {
                     BindBodyParameter(
                         parametersIf, contextParameter, requestData, parameters, parameterInformation, i);
                     break;
+                case ParameterBindType.Path:
+                    BindPathParameter(
+                        parametersIf, contextParameter, requestData, parameters, parameterInformation, i);
+                    break;
+                case ParameterBindType.CustomAttribute:
+                    BindCustomParameter(parametersIf, contextParameter, requestData, parameters, parameterInformation, i);
+                    break;
             }
         }
+    }
+
+    private void BindCustomParameter(IfElseLogicBlockDefinition parametersIf, ParameterDefinition contextParameter, InstanceDefinition requestData, InstanceDefinition parameters, RequestParameterInformation parameterInformation, int i) {
+        
     }
 
     private void BindBodyParameter(BaseBlockDefinition bindParameterInfoMethod,

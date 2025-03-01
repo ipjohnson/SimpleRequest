@@ -100,7 +100,8 @@ public class ParameterTypeGenerator {
                     switchBlockDefinition.AddCase(QuoteString(parameter.Name));
 
                 caseBlockDefinition.Assign(
-                    new StaticCastComponent(field.TypeDefinition, valueParameter)).To(field.Instance);
+                    new StaticCastComponent(field.TypeDefinition, valueParameter)).
+                    To("this." + field.Name);
 
                 caseBlockDefinition.Return(CodeOutputComponent.Get("true"));
             }
@@ -128,7 +129,7 @@ public class ParameterTypeGenerator {
                 var caseBlockDefinition =
                     switchBlockDefinition.AddCase(QuoteString(parameter.Name));
 
-                caseBlockDefinition.Assign(field.Instance).To(outParameter);
+                caseBlockDefinition.Assign("this." + field.Name).To(outParameter);
 
                 caseBlockDefinition.Break();
             }
@@ -173,7 +174,7 @@ public class ParameterTypeGenerator {
     private void ImplementSetMethod(RequestHandlerModel requestModel, ClassDefinition parameterClass, Dictionary<RequestParameterInformation,FieldDefinition> parameterFields) {
         var method = parameterClass.AddMethod("Set");
         
-        var objectParameter = method.AddParameter(typeof(object), "value");
+        var objectParameter = method.AddParameter(TypeDefinition.Get( typeof(object)).MakeNullable(), "value");
         var indexParameter = method.AddParameter(typeof(int), "index");
 
         if (requestModel.RequestParameterInformationList.Count > 0) {
@@ -186,7 +187,7 @@ public class ParameterTypeGenerator {
                 var caseBlockDefinition =
                     switchBlockDefinition.AddCase(i);
 
-                caseBlockDefinition.Assign(new StaticCastComponent(field.TypeDefinition, objectParameter)).To(field.Instance);
+                caseBlockDefinition.Assign(new StaticCastComponent(field.TypeDefinition, objectParameter)).To("this." + field.Name);
 
                 caseBlockDefinition.Break();
             }
