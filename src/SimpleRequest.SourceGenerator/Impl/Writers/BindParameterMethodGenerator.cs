@@ -119,8 +119,19 @@ public class BindParameterMethodGenerator {
                 case ParameterBindType.CustomAttribute:
                     BindCustomParameter(parametersIf, contextParameter, requestData, parameters, parameterInformation, i);
                     break;
+                case ParameterBindType.RequestContext:
+                    BindContext(parametersIf, contextParameter, requestData, parameters, parameterInformation, i);
+
+                    break;
             }
         }
+    }
+
+    private void BindContext(IfElseLogicBlockDefinition parametersIf, ParameterDefinition contextParameter, InstanceDefinition requestData, InstanceDefinition parameters, RequestParameterInformation parameterInformation, int i) {
+        var invoke = 
+            parameters.Invoke("Set", contextParameter, i);
+
+        parametersIf.AddIndentedStatement(invoke);
     }
 
     private void BindCustomParameter(IfElseLogicBlockDefinition parametersIf, ParameterDefinition contextParameter, InstanceDefinition requestData, InstanceDefinition parameters, RequestParameterInformation parameterInformation, int i) {

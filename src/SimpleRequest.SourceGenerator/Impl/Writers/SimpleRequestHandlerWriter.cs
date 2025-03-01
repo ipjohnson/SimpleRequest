@@ -61,13 +61,28 @@ public class SimpleRequestHandlerWriter {
         property.Modifiers |= ComponentModifier.Static | ComponentModifier.Public;
         property.Set = null;
 
+        var responseType = TypeOf(TypeDefinition.Get("","void"));
+
+        if (requestModel.ResponseInformation.ReturnType != null) {
+            var t = requestModel.ResponseInformation.ReturnType;
+            if (requestModel.ResponseInformation.IsAsync) {
+                if (t.TypeArguments.Count > 0) {
+                    responseType = TypeOf(t.TypeArguments[0].MakeNullable(false));
+                }
+            }
+            else {
+                responseType = TypeOf(t.MakeNullable(false));
+            }
+        }
+        
         var newInvoke = New(
             KnownRequestTypes.RequestHandlerInfoMethods,
             QuoteString(requestModel.HandlerMethod),
             "Invoke",
             "CreateParameters",
             "BindParameterInfo",
-            "InvokeParameters.ParameterInfoField"
+            "InvokeParameters.ParameterInfoField",
+            responseType    
         );
         
         var attributeArray = AttributeArrayHelper.CreateAttributeArray(requestModel.Filters);

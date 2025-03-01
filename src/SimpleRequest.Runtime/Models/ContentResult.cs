@@ -11,6 +11,14 @@ public interface IContentResult {
 }
 
 public class ContentResult : IContentResult {
+    public static ContentResult Ok(string content, string contentType = "text/plain") {
+        return new ContentResult(content, contentType);
+    }
+    
+    public static ContentResult Ok(byte[] content, string contentType) {
+        return new ContentResult(content, contentType);
+    }
+    
     public ContentResult(string content, string contentType, bool isBinary = false, int? statusCode = null) {
         Content = Encoding.UTF8.GetBytes(content);
         ContentType = contentType;

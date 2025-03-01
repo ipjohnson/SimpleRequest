@@ -23,4 +23,12 @@ public class RequestHandlerLocator : IRequestHandlerLocator {
 
         return null;
     }
+
+    public IEnumerable<IRequestHandler> GetHandlers() {
+        foreach (var provider in _providers) {
+            foreach (var handler in provider.GetHandlers()) {
+                yield return handler;
+            }
+        }
+    }
 }

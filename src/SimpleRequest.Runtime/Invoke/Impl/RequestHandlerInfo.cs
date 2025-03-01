@@ -16,5 +16,6 @@ public record RequestHandlerInfoMethods(
     InvokeHandlerDelegate InvokeHandler,
     ParametersCreationDelegate CreateParameters,
     BindParametersDelegate BindParameters,
-    IReadOnlyList<IInvokeParameterInfo> Parameters
+    IReadOnlyList<IInvokeParameterInfo> Parameters,
+    Type ResponseType
     ) : IRequestHandlerInfoMethods;

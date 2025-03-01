@@ -16,6 +16,8 @@ public interface IRequestHandlerInfoMethods {
     BindParametersDelegate BindParameters { get; }
     
     IReadOnlyList<IInvokeParameterInfo> Parameters { get; }
+    
+    Type ResponseType { get; }
 }
 
 public interface IRequestHandlerInfo {

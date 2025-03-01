@@ -5,6 +5,8 @@ namespace SimpleRequest.Runtime.Serializers;
 
 public interface IContentSerializerManager {
     IContentSerializer? GetSerializer(string contentType);
+    
+    IReadOnlyList<IContentSerializer> Serializers { get; }
 }
 
 public static class ContentSerializerManagerExtensions {
@@ -34,7 +36,7 @@ public class ContentSerializerManager : IContentSerializerManager {
 
     public IContentSerializer? GetSerializer(string contentType) {
         IContentSerializer? defaultSerializer = null;
-        
+
         foreach (var serializer in _serializers) {
             if (serializer.CanSerialize(contentType)) {
                 return serializer;
@@ -44,7 +46,9 @@ public class ContentSerializerManager : IContentSerializerManager {
                 defaultSerializer = serializer;
             }
         }
-        
+
         return defaultSerializer;
     }
+
+    public IReadOnlyList<IContentSerializer> Serializers => _serializers;
 }
