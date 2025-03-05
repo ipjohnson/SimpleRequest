@@ -31,5 +31,10 @@ public class NotesHandler {
             DateTime.Now
         );
     }
+
+    [Put("/{id}")]
+    public async Task PostNote(NoteModel note) {
+        
+    }
 }
 #pragma warning restore CS1998 

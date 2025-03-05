@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using SimpleRequest.Runtime.Invoke;
 
 namespace SimpleRequest.Runtime.Attributes;

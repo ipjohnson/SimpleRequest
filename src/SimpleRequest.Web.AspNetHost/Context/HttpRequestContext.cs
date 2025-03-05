@@ -13,13 +13,13 @@ public class HttpRequestContext : IRequestContext {
         IResponseData responseData, 
         IMetricLogger metricLogger, 
         IRequestLogger requestLogger, 
-        IContentSerializerManager contentSerializerManager) {
+        RequestServices requestServices) {
         _httpContext = httpContext;
         RequestData = requestData;
         ResponseData = responseData;
         MetricLogger = metricLogger;
         RequestLogger = requestLogger;
-        ContentSerializerManager = contentSerializerManager;
+        RequestServices = requestServices;
     }
 
     public IServiceProvider ServiceProvider => _httpContext.RequestServices;
@@ -36,7 +36,7 @@ public class HttpRequestContext : IRequestContext {
 
     public IRequestLogger RequestLogger { get; }
 
-    public IContentSerializerManager ContentSerializerManager { get; }
+    public RequestServices RequestServices { get; }
 
     public CancellationToken CancellationToken => _httpContext.RequestAborted;
 
@@ -47,7 +47,7 @@ public class HttpRequestContext : IRequestContext {
             ResponseData.Clone(),
             MetricLogger.Clone(),
             RequestLogger,
-            ContentSerializerManager
+            RequestServices
         );
     }
 }

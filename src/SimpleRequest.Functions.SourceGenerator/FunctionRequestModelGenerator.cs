@@ -1,5 +1,3 @@
-using CSharpAuthor;
-using DependencyModules.SourceGenerator.Impl;
 using DependencyModules.SourceGenerator.Impl.Models;
 using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
@@ -11,7 +9,7 @@ namespace SimpleRequest.Functions.SourceGenerator;
 
 public class FunctionRequestModelGenerator : BaseRequestModelGenerator {
     private string _attributeName = KnownFunctionTypes.FunctionAttribute.Name;
-    
+
     protected override RequestHandlerNameModel GetRequestNameModel(GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclaration,
         IReadOnlyList<AttributeModel> attributes,
@@ -20,7 +18,7 @@ public class FunctionRequestModelGenerator : BaseRequestModelGenerator {
         var functionName = methodDeclaration.Identifier.Text;
         foreach (var attributeModel in attributes) {
             if (attributeModel.TypeDefinition.Name == _attributeName) {
-                var property = 
+                var property =
                     attributeModel.Properties.FirstOrDefault(p => p.Name == "Name");
 
                 functionName = property?.Value?.ToString() ?? functionName;
@@ -30,39 +28,46 @@ public class FunctionRequestModelGenerator : BaseRequestModelGenerator {
         return new RequestHandlerNameModel(
             functionName, "POST");
     }
-    
 
-    protected override RequestParameterInformation? GetParameterInfoFromAttributes(
-        GeneratorSyntaxContext generatorSyntaxContext, MethodDeclarationSyntax methodDeclarationSyntax, RequestHandlerNameModel requestHandlerNameModel,
-        ParameterSyntax parameter, int parameterIndex) {
-            foreach (var attributeList in parameter.AttributeLists) {
-                foreach (var attribute in attributeList.Attributes) {
-                    
-                    var attributeModel = AttributeModelHelper.GetAttribute(generatorSyntaxContext, attribute);
 
-                    if (attributeModel != null) {
-                        switch (attributeModel.TypeDefinition.Name) {
-                            default:
-                                return DefaultGetParameterFromAttribute(
-                                    attribute, attributeModel, generatorSyntaxContext, parameter, parameterIndex);
+    protected override RequestParameterInformation? GetParameterInfoFromAttributes(GeneratorSyntaxContext generatorSyntaxContext,
+        MethodDeclarationSyntax methodDeclarationSyntax,
+        RequestHandlerNameModel requestHandlerNameModel,
+        ParameterSyntax parameter,
+        IReadOnlyList<AttributeModel> attributeModels,
+        int parameterIndex) {
+
+        var models =
+            AttributeModelHelper.GetAttributeModels(generatorSyntaxContext, parameter, CancellationToken.None);
+
+        foreach (var attributeModel in models) {
+            if (attributeModel != null) {
+                switch (attributeModel.TypeDefinition.Name) {
+                    default:
+                        var result = DefaultGetParameterFromAttribute(
+                            attributeModel, generatorSyntaxContext, parameter, parameterIndex, models);
+
+                        if (result != null) {
+                            return result;
                         }
-                    }
+                        break;
                 }
             }
+        }
 
-            return null;
+        return null;
     }
 
     protected override IEnumerable<string> AttributeNames() {
         yield return "Function";
         yield return "FunctionAttribute";
     }
-    
+
     private static RequestParameterInformation GetParameterInfoWithBinding(
         GeneratorSyntaxContext generatorSyntaxContext,
         ParameterSyntax parameter,
         ParameterBindType bindingType,
-        string bindingName, 
+        string bindingName,
         int parameterIndex) {
         var parameterType = parameter.Type?.GetTypeDefinition(generatorSyntaxContext)!;
 

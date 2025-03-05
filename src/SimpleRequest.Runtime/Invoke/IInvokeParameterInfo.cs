@@ -22,5 +22,9 @@ public interface IInvokeParameterInfo {
     
     ParameterBindType BindingType { get; }
     
+    string? DefaultValue { get; }
+    
+    bool IsRequired { get; }
+    
     IReadOnlyList<Attribute> Attributes { get; }
 }

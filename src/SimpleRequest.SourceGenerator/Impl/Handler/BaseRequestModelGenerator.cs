@@ -4,7 +4,6 @@ using DependencyModules.SourceGenerator.Impl.Models;
 using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SimpleRequest.SourceGenerator.Impl;
 using SimpleRequest.SourceGenerator.Impl.Models;
 
 namespace SimpleRequest.SourceGenerator.Impl.Handler;
@@ -78,10 +77,14 @@ public abstract class BaseRequestModelGenerator {
             var parameter = methodDeclaration.ParameterList.Parameters[i];
             cancellationToken.ThrowIfCancellationRequested();
 
+            var attributeModels = 
+                AttributeModelHelper.GetAttributeModels(generatorSyntaxContext, parameter, CancellationToken.None);
+            
             RequestParameterInformation? parameterInformation =
                 GetParameterInfoFromAttributes(generatorSyntaxContext, methodDeclaration,
                     requestHandlerNameModel,
                     parameter,
+                    attributeModels,
                     i);
 
             if (parameterInformation == null) {
@@ -90,6 +93,7 @@ public abstract class BaseRequestModelGenerator {
                     methodDeclaration,
                     requestHandlerNameModel, 
                     parameter,
+                    attributeModels,
                     i);
             }
 
@@ -99,14 +103,19 @@ public abstract class BaseRequestModelGenerator {
         return parameters;
     }
 
-    protected virtual RequestParameterInformation? DefaultGetParameterFromAttribute(AttributeSyntax attribute,
+    protected virtual RequestParameterInformation? DefaultGetParameterFromAttribute(
         AttributeModel attributeModel,
         GeneratorSyntaxContext generatorSyntaxContext,
         ParameterSyntax parameter,
-        int parameterIndex) {
+        int parameterIndex,
+        IReadOnlyList<AttributeModel> parameterAttributes) {
         var parameterType = parameter.Type?.GetTypeDefinition(generatorSyntaxContext)!;
         var name = parameter.Identifier.Text;
 
+        if (!attributeModel.ImplementedInterfaces.Contains(KnownRequestTypes.IInvokeParameterValueProvider)) {
+            return null;
+        }
+        
         string? defaultValue = null;
 
         if (parameter.Default != null) {
@@ -121,16 +130,16 @@ public abstract class BaseRequestModelGenerator {
                 ParameterBindType.CustomAttribute,
                 "",
                 parameterIndex,
-                new AttributeModel[0]
+                parameterAttributes
                 );
     }
 
     
-    protected virtual RequestParameterInformation GetParameterInfo(
-        GeneratorSyntaxContext generatorSyntaxContext,
+    protected virtual RequestParameterInformation GetParameterInfo(GeneratorSyntaxContext generatorSyntaxContext,
         MethodDeclarationSyntax methodDeclarationSyntax,
         RequestHandlerNameModel requestHandlerNameModel,
         ParameterSyntax parameter,
+        IReadOnlyList<AttributeModel> attributeModels,
         int parameterIndex) {
         var parameterType = parameter.Type?.GetTypeDefinition(generatorSyntaxContext)!;
 
@@ -202,14 +211,14 @@ public abstract class BaseRequestModelGenerator {
             parameterBindType,
             bindingName ?? string.Empty,
             parameterIndex,
-            new AttributeModel[0]);
+            customAttributes ?? Array.Empty<AttributeModel>());
     }
 
-    protected abstract RequestParameterInformation? GetParameterInfoFromAttributes(
-        GeneratorSyntaxContext generatorSyntaxContext,
+    protected abstract RequestParameterInformation? GetParameterInfoFromAttributes(GeneratorSyntaxContext generatorSyntaxContext,
         MethodDeclarationSyntax methodDeclarationSyntax,
         RequestHandlerNameModel requestHandlerNameModel,
         ParameterSyntax parameter,
+        IReadOnlyList<AttributeModel> attributeModels,
         int parameterIndex);
 
     protected virtual string GetControllerMethod(MethodDeclarationSyntax methodDeclaration) {

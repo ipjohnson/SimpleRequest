@@ -3,7 +3,6 @@ using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl.Models;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl.Models;
-using static CSharpAuthor.SyntaxHelpers;
 
 namespace SimpleRequest.SourceGenerator.Impl.Routing;
 

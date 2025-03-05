@@ -34,6 +34,8 @@ public class ResponseModel(
             throw new Exception($"No response body");
         }
         
+        responseData.Body.Position = 0;
+        
         return await serializer.Deserialize<T>(responseData.Body) ?? throw new Exception($"Response could not be deserialized");
     }
 }

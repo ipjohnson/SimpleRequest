@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Microsoft.Extensions.Primitives;
 using SimpleRequest.Runtime.Diagnostics;
 using SimpleRequest.Runtime.Logging;
 using SimpleRequest.Runtime.Serializers;
@@ -6,12 +6,13 @@ using SimpleRequest.Runtime.Serializers;
 namespace SimpleRequest.Runtime.Invoke.Impl;
 
 public class RequestData : IRequestData {
-    public RequestData(string path, string method, Stream? body, string contentType, IPathTokenCollection pathTokenCollection) {
+    public RequestData(string path, string method, Stream? body, string contentType, IPathTokenCollection pathTokenCollection, IDictionary<string, StringValues> headers) {
         Path = path;
         Method = method;
         Body = body;
         ContentType = contentType;
         PathTokenCollection = pathTokenCollection;
+        Headers = headers;
         StartTime = MachineTimestamp.Now;
     }
 
@@ -36,17 +37,24 @@ public class RequestData : IRequestData {
         get;
     }
 
+    public IDictionary<string, StringValues> Headers {
+        get;
+    }
+
     public IPathTokenCollection PathTokenCollection {
         get;
         set;
     }
 
     public IRequestData Clone() {
-        return new RequestData(Path, Method, Body, ContentType, PathTokenCollection);
+        return new RequestData(Path, Method, Body, ContentType, PathTokenCollection, Headers);
     }
 }
 
 public class ResponseData : IResponseData {
+    public ResponseData(IDictionary<string,StringValues> headerCollection) {
+        Headers = headerCollection;
+    }
 
     public string? ContentType {
         get;
@@ -95,8 +103,12 @@ public class ResponseData : IResponseData {
         set;
     }
 
+    public IDictionary<string,StringValues> Headers {
+        get;
+    }
+
     public IResponseData Clone() {
-        return new ResponseData {
+        return new ResponseData(Headers) {
             Body = Body,
             ContentType = ContentType,
             ExceptionValue = ExceptionValue,
@@ -112,7 +124,7 @@ public class RequestContext(IServiceProvider serviceProvider,
     IRequestData requestData,
     IResponseData responseData,
     IMetricLogger metricLogger,
-    IContentSerializerManager contentSerializerManager,
+    RequestServices requestServices,
     CancellationToken cancellationToken,
     IRequestLogger requestLogger)
     : IRequestContext {
@@ -147,9 +159,9 @@ public class RequestContext(IServiceProvider serviceProvider,
         get;
     } = requestLogger;
 
-    public IContentSerializerManager ContentSerializerManager {
+    public RequestServices RequestServices {
         get;
-    } = contentSerializerManager;
+    } = requestServices;
 
     public CancellationToken CancellationToken {
         get;
@@ -161,7 +173,7 @@ public class RequestContext(IServiceProvider serviceProvider,
             RequestData.Clone(),
             ResponseData.Clone(),
             MetricLogger.Clone(),
-            ContentSerializerManager, 
+            RequestServices, 
             CancellationToken,
             RequestLogger) {
             RequestHandlerInfo = RequestHandlerInfo,

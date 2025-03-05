@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Primitives;
 using SimpleRequest.Runtime.Diagnostics;
 using SimpleRequest.Runtime.Invoke;
 
@@ -26,6 +27,8 @@ public class HttpRequestData : IRequestData {
     }
 
     public string ContentType=> _request.ContentType ?? string.Empty;
+
+    public IDictionary<string, StringValues> Headers => _request.Headers;
 
     public IPathTokenCollection PathTokenCollection {
         get;

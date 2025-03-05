@@ -1,5 +1,3 @@
-using SimpleRequest.Runtime.Invoke;
-
 namespace SimpleRequest.Runtime.Invoke;
 
 public interface IRequestHandler {

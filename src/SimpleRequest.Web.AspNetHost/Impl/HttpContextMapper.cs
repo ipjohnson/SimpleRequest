@@ -1,6 +1,5 @@
 using DependencyModules.Runtime.Attributes;
 using SimpleRequest.Runtime.Invoke;
-using SimpleRequest.Runtime.Invoke.Impl;
 using SimpleRequest.Runtime.Logging;
 using SimpleRequest.Runtime.Serializers;
 using SimpleRequest.Web.AspNetHost.Context;
@@ -13,8 +12,9 @@ public interface IHttpContextMapper {
 
 [SingletonService]
 public class HttpContextMapper(
+    
     IMetricLoggerProvider metricLoggerProvider,
-    IContentSerializerManager contentSerializerManager) : IHttpContextMapper {
+    RequestServices requestServices) : IHttpContextMapper {
     
     public IRequestContext MapContext(HttpContext context) {
         var request = MapRequest(context);
@@ -24,7 +24,7 @@ public class HttpContextMapper(
                 request,response,
                 metricLoggerProvider.CreateLogger(),
                 context.RequestServices.GetRequiredService<IRequestLogger>(),
-                contentSerializerManager
+                requestServices
         );
     }
 

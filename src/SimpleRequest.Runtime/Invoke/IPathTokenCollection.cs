@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Primitives;
-
 namespace SimpleRequest.Runtime.Invoke;
 
 public interface IPathTokenCollection {

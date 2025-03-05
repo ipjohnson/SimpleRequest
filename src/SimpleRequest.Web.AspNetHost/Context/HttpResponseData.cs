@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using SimpleRequest.Runtime.Invoke;
 
 namespace SimpleRequest.Web.AspNetHost.Context;
@@ -59,6 +59,8 @@ public class HttpResponseData : IResponseData {
         get;
         set;
     }
+
+    public IDictionary<string,StringValues> Headers => _response.Headers;
 
     public IResponseData Clone() {
         return new HttpResponseData(_response, _body);

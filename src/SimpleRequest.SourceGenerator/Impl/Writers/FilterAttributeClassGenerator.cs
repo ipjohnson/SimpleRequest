@@ -1,7 +1,5 @@
-using System.Collections.Immutable;
 using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl;
-using DependencyModules.SourceGenerator.Impl.Models;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl.Models;
 using static CSharpAuthor.SyntaxHelpers;

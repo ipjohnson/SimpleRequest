@@ -1,4 +1,5 @@
 using DependencyModules.xUnit.Attributes;
+using Microsoft.Extensions.Primitives;
 using SimpleRequest.Testing;
 using Xunit;
 
@@ -19,12 +20,13 @@ public class RouteTestHandlerTests {
     [ModuleTest]
     public async Task NestedRouteTest(RequestHarness harness) {
         var response = await harness.Get("/routing-test/route-value/nested-value");
-        
               
         response.AssertOk();
 
         var value = await response.Get<string>();
 
         Assert.Equal("route-value/nested-value", value);  
+        
+        harness.Invoke("", "", null, [("", "")]);
     }
 }

@@ -1,10 +1,7 @@
 ﻿using CompiledTemplateEngine.Runtime;
 using DependencyModules.Runtime.Attributes;
 using DependencyModules.Runtime.Features;
-using DependencyModules.Runtime.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using SimpleRequest.Runtime.Logging;
 
 namespace SimpleRequest.Runtime;

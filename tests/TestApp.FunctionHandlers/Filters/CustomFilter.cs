@@ -1,5 +1,3 @@
-using DependencyModules.Runtime.Attributes;
-using Microsoft.Extensions.DependencyInjection;
 using SimpleRequest.Runtime.Attributes;
 using SimpleRequest.Runtime.Invoke;
 

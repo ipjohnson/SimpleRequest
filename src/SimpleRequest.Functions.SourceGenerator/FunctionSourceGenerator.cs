@@ -1,5 +1,4 @@
 ﻿using DependencyModules.SourceGenerator.Impl;
-using DependencyModules.SourceGenerator.Impl.Models;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl;
 using ISourceGenerator = DependencyModules.SourceGenerator.Impl.ISourceGenerator;

@@ -41,15 +41,26 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
     }
 
     protected override RequestParameterInformation? GetParameterInfoFromAttributes(
-        GeneratorSyntaxContext generatorSyntaxContext, MethodDeclarationSyntax methodDeclarationSyntax, RequestHandlerNameModel requestHandlerNameModel,
-        ParameterSyntax parameter, int parameterIndex) {
-        foreach (var attributeList in parameter.AttributeLists) {
-            foreach (var attribute in attributeList.Attributes) {
-               
-                var attributeModel = AttributeModelHelper.GetAttribute(generatorSyntaxContext, attribute);
+        GeneratorSyntaxContext generatorSyntaxContext,
+        MethodDeclarationSyntax methodDeclarationSyntax,
+        RequestHandlerNameModel requestHandlerNameModel,
+        ParameterSyntax parameter, 
+        IReadOnlyList<AttributeModel> attributeModels,
+        int parameterIndex) {
+
+        foreach (var attributeModel in attributeModels) {
+            if (attributeModel.TypeDefinition.Name == "FromHeaderAttribute") {
+                var argument = attributeModel.Arguments.FirstOrDefault()?.Value?.ToString();
+                
+                var headerName = string.IsNullOrEmpty(argument) ? parameter.Identifier.ToString() : argument;
+                return GetParameterInfoWithBinding(
+                    generatorSyntaxContext,
+                    parameter,ParameterBindType.Header, 
+                    headerName!, 
+                    parameterIndex);
             }
         }
-
+        
         return null;
     }
 
@@ -62,13 +73,21 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
         string bindingName,
         int parameterIndex) {
         var parameterType = parameter.Type?.GetTypeDefinition(generatorSyntaxContext)!;
+        
+        if (!parameterType.IsNullable && parameter.ToFullString().Contains("?")) {
+            parameterType = parameterType.MakeNullable();
+        }
 
+        var attributeModels = 
+            AttributeModelHelper.GetAttributeModels(generatorSyntaxContext, parameter, CancellationToken.None);
+        
         return CreateRequestParameterInformation(parameter,
             parameterType,
             bindingType,
             parameterIndex,
-            null,
-            bindingName);
+            parameterType.IsNullable,
+            bindingName,
+            attributeModels);
     }
 
 }

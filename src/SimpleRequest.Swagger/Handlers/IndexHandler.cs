@@ -1,5 +1,4 @@
 using System.Text;
-using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Swagger.Services;

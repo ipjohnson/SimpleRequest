@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Primitives;
+
 namespace SimpleRequest.Runtime.Invoke;
 
 public interface IResponseData {
@@ -21,6 +23,8 @@ public interface IResponseData {
     bool IsBinary { get; set; }
 
     bool? ShouldSerialize { get; set; }
+    
+    IDictionary<string,StringValues> Headers { get; }
 
     IResponseData Clone();
 }

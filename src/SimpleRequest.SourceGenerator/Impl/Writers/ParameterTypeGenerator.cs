@@ -50,6 +50,9 @@ public class ParameterTypeGenerator {
         var readonlyType = new GenericTypeDefinition(typeof(IReadOnlyList<>), new []{KnownRequestTypes.IInvokeParameterInfo});
         var newList = New(TypeDefinition.List(KnownRequestTypes.IInvokeParameterInfo));
 
+        var staticParams = parameterClass.AddClass("StaticParams");
+        staticParams.Modifiers |= ComponentModifier.Static | ComponentModifier.Public;
+        
         var listOfNew = new List<IOutputComponent>();
         for (var i = 0; i < requestModel.RequestParameterInformationList.Count; i++) {
             var parameter = requestModel.RequestParameterInformationList[i];
@@ -60,8 +63,22 @@ public class ParameterTypeGenerator {
             parameterInfo.AddArgument(TypeOf(parameter.ParameterType));
             parameterInfo.AddArgument(
                 "ParameterBindType." + Enum.GetName(typeof(ParameterBindType), parameter.BindingType));
+
+            if (parameter.DefaultValue != null) {
+                parameterInfo.AddArgument(QuoteString(parameter.DefaultValue));
+            }
+            else {
+                parameterInfo.AddArgument(Null());
+            }
+            parameterInfo.AddArgument(parameter.Required.ToString().ToLower());
             parameterInfo.AddArgument(AttributeArrayHelper.CreateAttributeArray(parameter.CustomAttributes));
-            listOfNew.Add(parameterInfo);
+            
+            var field = staticParams.AddField(KnownRequestTypes.InvokeParameterInfo, "static_" + parameter.Name);
+            
+            field.Modifiers |= ComponentModifier.Static | ComponentModifier.Public | ComponentModifier.Readonly;
+            field.InitializeValue = parameterInfo;
+            
+            listOfNew.Add(CodeOutputComponent.Get("StaticParams.static_" + parameter.Name));
         }
         
         newList.AddInitValue(new CommaList(listOfNew));
@@ -70,7 +87,8 @@ public class ParameterTypeGenerator {
             parameterClass.AddField(
                 readonlyType,"ParameterInfoField");
 
-        parameterInfoField.Modifiers |= ComponentModifier.Static | ComponentModifier.Public;
+        parameterInfoField.Modifiers |=
+            ComponentModifier.Static | ComponentModifier.Public | ComponentModifier.Readonly;
 
         parameterInfoField.InitializeValue = newList;
 

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Invoke.Impl;
 using SimpleRequest.Runtime.Logging;
@@ -10,10 +11,16 @@ public class TestRequestContext {
     public static RequestContext GenerateTestContext(IServiceProvider serviceProvider) {
         return new RequestContext(
             serviceProvider,
-            new RequestData("/test", "GET", new MemoryStream(), "application/json", new PathTokenCollection()),
-            new ResponseData() { Body = new MemoryStream()},
+            new RequestData(
+                "/test", 
+                "GET",
+                new MemoryStream(), 
+                "application/json",
+                new PathTokenCollection(),
+                new Dictionary<string, StringValues>()),
+            new ResponseData(new Dictionary<string, StringValues>()) { Body = new MemoryStream()},
             new NullMetricsLogger(),
-            serviceProvider.GetRequiredService<IContentSerializerManager>(),
+            serviceProvider.GetRequiredService<RequestServices>(),
             CancellationToken.None,
             serviceProvider.GetRequiredService<IRequestLogger>()
         );

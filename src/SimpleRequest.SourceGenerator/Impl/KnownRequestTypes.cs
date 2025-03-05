@@ -118,7 +118,13 @@ public static class KnownRequestTypes {
 
     public static readonly ITypeDefinition  RequestFilterInfo  = 
         TypeDefinition.Get(
-            TypeDefinitionEnum.InterfaceDefinition, 
+            TypeDefinitionEnum.ClassDefinition, 
             InvokeNamespace, 
             "RequestFilterInfo");
+
+    public static readonly ITypeDefinition IInvokeParameterValueProvider = 
+        TypeDefinition.Get(
+            TypeDefinitionEnum.InterfaceDefinition, 
+            InvokeNamespace, 
+            "IInvokeParameterValueProvider");
 }

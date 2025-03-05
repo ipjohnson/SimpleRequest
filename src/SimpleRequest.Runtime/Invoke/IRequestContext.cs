@@ -18,7 +18,7 @@ public interface IRequestContext {
     
     IRequestLogger RequestLogger { get; }
     
-    IContentSerializerManager ContentSerializerManager { get; }
+    RequestServices RequestServices { get; }
 
     CancellationToken CancellationToken { get; }
     
