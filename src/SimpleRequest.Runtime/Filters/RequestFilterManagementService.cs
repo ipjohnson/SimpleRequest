@@ -44,7 +44,7 @@ public class RequestFilterManagementService(IServiceProvider serviceProvider,
         }
         
         allFilters.Sort(
-            (x,y) => x.Order - y.Order);
+            (x,y) => x.Order.CompareTo(y.Order));
         
         return allFilters.Select(f => f.FilterProvider).ToArray();
     }

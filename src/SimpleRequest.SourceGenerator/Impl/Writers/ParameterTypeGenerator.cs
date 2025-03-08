@@ -71,6 +71,7 @@ public class ParameterTypeGenerator {
                 parameterInfo.AddArgument(Null());
             }
             parameterInfo.AddArgument(parameter.Required.ToString().ToLower());
+            parameterInfo.AddArgument(QuoteString(parameter.BindingName));
             parameterInfo.AddArgument(AttributeArrayHelper.CreateAttributeArray(parameter.CustomAttributes));
             
             var field = staticParams.AddField(KnownRequestTypes.InvokeParameterInfo, "static_" + parameter.Name);

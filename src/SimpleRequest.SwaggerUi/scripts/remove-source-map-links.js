@@ -1,3 +1,6 @@
+// this script was borrowed from 
+// https://github.com/domaindrivendev/Swashbuckle.AspNetCore/
+
 const fs = require('fs');
 const path = require('path');
 

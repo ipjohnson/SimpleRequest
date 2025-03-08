@@ -11,11 +11,16 @@ public interface ISwaggerContentProvider {
 [SingletonService]
 public class SwaggerContentProvider(
     ISwaggerIndexProvider indexProvider,
+    ISwaggerInitializerProvider initializerProvider,
     ISwaggerCompressedFileProvider compressedFileProvider) : ISwaggerContentProvider {
     
     public Task<ContentResult?> GetContent(string path, IRequestContext requestContext) {
         if (path == "index.html") {
             return indexProvider.GetIndex(requestContext);
+        }
+
+        if (path == "swagger-initializer.js") {
+            return initializerProvider.GetInitializer(requestContext);
         }
         
         return compressedFileProvider.GetCompressedFile(path, requestContext);

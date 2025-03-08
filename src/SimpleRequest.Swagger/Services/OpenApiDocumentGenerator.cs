@@ -165,9 +165,11 @@ public class OpenApiDocumentGenerator(
             }
             
             var schema = schemaGenerator.GetSchemaType(parameter.Type);
+            var name = string.IsNullOrEmpty(parameter.BindingName) ?
+                parameter.Name : parameter.BindingName;
             
             var apiParameter = new OpenApiParameter {
-                Name = parameter.Name,
+                Name = name,
                 Schema = schema,
                 In = location
             };

@@ -20,6 +20,8 @@ public interface IInvokeParameterInfo {
 
     Type Type { get; }
     
+    string BindingName { get; }
+    
     ParameterBindType BindingType { get; }
     
     string? DefaultValue { get; }

@@ -114,13 +114,15 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
             }
         }
 
+        var classInfo = AttributeModelHelper.GetAttributeClassInfo(context, cancellation);
+        
         return new AttributeFilterInfoModel(
             GetClassDefinition(context),
             lifecycle,
             order,
             serviceModel,
-            Array.Empty<ParameterInfoModel>(),
-            Array.Empty<PropertyInfoModel>()
+            classInfo.ConstructorParameters,
+            classInfo.Properties
         );
     }
 

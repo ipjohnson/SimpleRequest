@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRequest.SwaggerUi", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRequest.SwaggerUi.Tests", "src\SimpleRequest.SwaggerUi.Tests\SimpleRequest.SwaggerUi.Tests.csproj", "{C4A7457C-E00C-49D3-80D6-8E8268A3C3CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRequest.Caching", "src\SimpleRequest.Caching\SimpleRequest.Caching.csproj", "{3B0538BB-D3C5-4C41-BF5D-103A4B63541A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,7 @@ Global
 		{3EF4A967-739C-4A34-BC0F-48885BFDDA2F} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
 		{C67BDC70-5FFE-457F-9FA9-BE3E45B57306} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
 		{C4A7457C-E00C-49D3-80D6-8E8268A3C3CD} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
+		{3B0538BB-D3C5-4C41-BF5D-103A4B63541A} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{73169202-4EE1-442A-AEB6-688421F83095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -138,5 +141,9 @@ Global
 		{C4A7457C-E00C-49D3-80D6-8E8268A3C3CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4A7457C-E00C-49D3-80D6-8E8268A3C3CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4A7457C-E00C-49D3-80D6-8E8268A3C3CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B0538BB-D3C5-4C41-BF5D-103A4B63541A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B0538BB-D3C5-4C41-BF5D-103A4B63541A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B0538BB-D3C5-4C41-BF5D-103A4B63541A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B0538BB-D3C5-4C41-BF5D-103A4B63541A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

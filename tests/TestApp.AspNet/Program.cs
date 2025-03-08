@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddModule<TestWebApp>();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

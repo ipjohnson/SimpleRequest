@@ -11,13 +11,16 @@ public interface ISwaggerIndexProvider {
 
 [SingletonService]
 public class SwaggerIndexProvider(
-    IEmbeddedCompressedFileAccessor accessor, IContentTypeHelper helper) : ISwaggerIndexProvider {
+    IEmbeddedCompressedFileAccessor accessor,
+    IContentTypeHelper helper,
+    ISwaggerIndexTransformer transformer) : ISwaggerIndexProvider {
 
     public async Task<ContentResult?> GetIndex(IRequestContext context) {
         var file = await accessor.ReadFile("index.html");
 
         return file != null ? 
-            ContentResult.Ok(file, helper.GetContentTypeFromExtension(".html")) : 
+            ContentResult.Ok(await transformer.Transform(file),
+                helper.GetContentTypeFromExtension(".html")) : 
             null;
     }
 }

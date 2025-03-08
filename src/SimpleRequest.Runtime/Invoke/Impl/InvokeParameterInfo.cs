@@ -7,4 +7,5 @@ public record InvokeParameterInfo(
     ParameterBindType BindingType,
     string? DefaultValue,
     bool IsRequired,
+    string BindingName,
     IReadOnlyList<Attribute> Attributes) : IInvokeParameterInfo;
