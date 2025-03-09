@@ -81,6 +81,7 @@ public class SimpleRequestRoutingWriter {
             serviceModels.Add(new ServiceModel(
                 requestHandlerModel,
                 null,
+                null,
                 new ServiceRegistrationModel[] {
                     new(requestHandlerModel, ServiceLifestyle.Transient, RegistrationType.Add)
                 }));
@@ -88,6 +89,7 @@ public class SimpleRequestRoutingWriter {
 
         serviceModels.Add(new ServiceModel(
             TypeDefinition.Get("", _routingClassName),
+            null,
             null,
             new[] {
                 new ServiceRegistrationModel(KnownRequestTypes.IRequestHandlerProvider, ServiceLifestyle.Singleton)

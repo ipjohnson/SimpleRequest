@@ -77,6 +77,7 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
                 model => new ServiceModel(
                     model.FilterType,
                     null,
+                    null,
                     new[] {
                         new ServiceRegistrationModel(model.FilterType, ServiceLifestyle.Transient)
                     }));
