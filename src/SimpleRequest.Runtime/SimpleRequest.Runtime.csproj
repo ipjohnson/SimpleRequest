@@ -12,13 +12,13 @@
 
     <ItemGroup>
         <PackageReference Include="CompiledTemplateEngine.Runtime" Version="1.0.0-RC1008" />
-        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9099" />
-        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9099">
+        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9102" />
+        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9102">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0-preview.1.25080.5" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.1.25080.5" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />

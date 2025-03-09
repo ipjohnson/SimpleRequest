@@ -3,28 +3,14 @@ using System.Text.Json.Serialization;
 using DependencyModules.Runtime.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SimpleRequest.Runtime.Serializers;
+namespace SimpleRequest.Runtime.Serializers.Json;
 
-public interface ISystemTextJsonSerializerOptionProvider {
-    JsonSerializerOptions Options { get; }
-}
 
-[SingletonService]
-public class SystemTextJsonSerializerOptionProvider : ISystemTextJsonSerializerOptionProvider {
-    
-    public JsonSerializerOptions Options => new () {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        AllowTrailingCommas = true,
-    };
-}
-
-[SingletonService(ServiceType = typeof(IContentSerializer))]
-[SingletonService(ServiceType = typeof(IJsonSerializer))]
+[CrossWireService(Lifetime = ServiceLifetime.Singleton)]
 public class SystemTextJsonSerializer(JsonSerializerOptions options) : IContentSerializer, IJsonSerializer {
 
     [ActivatorUtilitiesConstructor]
-    public SystemTextJsonSerializer(ISystemTextJsonSerializerOptionProvider options) : this(options.Options) { }
+    public SystemTextJsonSerializer(ISystemTextJsonSerializerOptionProvider options) : this(options.GetOptions()) { }
 
     public bool IsDefault => true;
 

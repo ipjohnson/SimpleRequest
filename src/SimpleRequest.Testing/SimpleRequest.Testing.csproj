@@ -13,7 +13,7 @@
       <ProjectReference Include="..\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="DependencyModules.xUnit" Version="1.0.0-RC9099" />
+      <PackageReference Include="DependencyModules.xUnit" Version="1.0.0-RC9102" />
     </ItemGroup>
 
 </Project>

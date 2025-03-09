@@ -3,6 +3,7 @@ using DependencyModules.Runtime.Attributes;
 using DependencyModules.Runtime.Features;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleRequest.Runtime.Logging;
+using SimpleRequest.Runtime.Serializers.Json;
 
 namespace SimpleRequest.Runtime;
 
@@ -11,9 +12,18 @@ namespace SimpleRequest.Runtime;
 public partial class SimpleRequestRuntime :
     IDependencyModuleFeature<ILoggingBuilderConfiguration>,
     IDependencyModuleFeature<ILoggingConfigurationImplementation>,
+    IDependencyModuleFeature<ISystemTextJsonConfiguration>,
     ILoggingConfigurationImplementation {
     private ILoggingConfigurationImplementation? _implementation;
-    
+
+    public void HandleFeature(IServiceCollection collection, 
+        IEnumerable<ISystemTextJsonConfiguration> features) {
+        var featuresList = features.ToList();
+
+        collection.AddSingleton<IReadOnlyList<ISystemTextJsonConfiguration>>(
+            _ => featuresList);
+    }
+
     int IDependencyModuleFeature<ILoggingConfigurationImplementation>.Order => -1000; 
     
     public void HandleFeature(IServiceCollection collection, IEnumerable<ILoggingBuilderConfiguration> features) {
