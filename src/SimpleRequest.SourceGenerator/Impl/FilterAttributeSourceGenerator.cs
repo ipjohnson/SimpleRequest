@@ -80,7 +80,7 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
                     null,
                     new[] {
                         new ServiceRegistrationModel(model.FilterType, ServiceLifestyle.Transient)
-                    }));
+                    }, RegistrationFeature.None));
         
         var writeString =
             new DependencyFileWriter().Write(data.Left.Left, data.Left.Right, serviceModels, _uniqueName);

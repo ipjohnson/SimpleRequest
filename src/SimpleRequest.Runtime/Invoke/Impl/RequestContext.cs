@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Immutable;
 using Microsoft.Extensions.Primitives;
 using SimpleRequest.Runtime.Diagnostics;
 using SimpleRequest.Runtime.Logging;
@@ -120,15 +122,41 @@ public class ResponseData : IResponseData {
     }
 }
 
+internal class RequestContextItem(ImmutableDictionary<object,object?> immutableDictionary) : IRequestContextItems {
+    private ImmutableDictionary<object, object?> _immutableDictionary = immutableDictionary;
+    
+    public IEnumerator<KeyValuePair<object, object?>> GetEnumerator() {
+        return _immutableDictionary.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() {
+        return GetEnumerator();
+    }
+
+    public IEnumerable<object> Keys => _immutableDictionary.Keys;
+
+    public int Count => _immutableDictionary.Count;
+
+    public object? Get(object key) => _immutableDictionary.GetValueOrDefault(key);
+    public void Set(object key, object value) {
+        _immutableDictionary = _immutableDictionary.SetItem(key, value);
+    }
+
+    public IRequestContextItems Clone() {
+        return new RequestContextItem(_immutableDictionary);
+    }
+}
+
 public class RequestContext(IServiceProvider serviceProvider,
     IRequestData requestData,
     IResponseData responseData,
     IMetricLogger metricLogger,
     RequestServices requestServices,
     CancellationToken cancellationToken,
-    IRequestLogger requestLogger)
+    IRequestLogger requestLogger,
+    IRequestContextItems? requestContextItem = null)
     : IRequestContext {
-
+    
     public IServiceProvider ServiceProvider {
         get;
     } = serviceProvider;
@@ -159,6 +187,7 @@ public class RequestContext(IServiceProvider serviceProvider,
         get;
     } = requestLogger;
 
+
     public RequestServices RequestServices {
         get;
     } = requestServices;
@@ -166,6 +195,9 @@ public class RequestContext(IServiceProvider serviceProvider,
     public CancellationToken CancellationToken {
         get;
     } = cancellationToken;
+
+    public IRequestContextItems Items { get; } =
+        requestContextItem ?? new RequestContextItem(ImmutableDictionary<object, object?>.Empty);
 
     public IRequestContext Clone(IServiceProvider? serviceProvider = null) {
         return new RequestContext(
@@ -175,7 +207,8 @@ public class RequestContext(IServiceProvider serviceProvider,
             MetricLogger.Clone(),
             RequestServices, 
             CancellationToken,
-            RequestLogger) {
+            RequestLogger,
+            Items.Clone()) {
             RequestHandlerInfo = RequestHandlerInfo,
             InvokeParameters = InvokeParameters?.Clone(),
         };

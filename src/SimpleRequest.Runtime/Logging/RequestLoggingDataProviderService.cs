@@ -11,8 +11,7 @@ public interface IRequestLoggingDataProviderService {
 public class RequestLoggingDataProviderService(IEnumerable<IRequestLoggingDataProvider> dataProviders) : 
     IRequestLoggingDataProviderService{
     private readonly IReadOnlyList<IRequestLoggingDataProvider> _dataProviders = dataProviders.ToArray();
-
-
+    
     public List<RequestLoggingData> GetRequestLoggingData(IRequestContext context) {
         var data = new List<RequestLoggingData>();
 

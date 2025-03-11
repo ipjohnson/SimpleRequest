@@ -3,6 +3,18 @@ using SimpleRequest.Runtime.Serializers;
 
 namespace SimpleRequest.Runtime.Invoke;
 
+public interface IRequestContextItems : IEnumerable<KeyValuePair<object,object?>> {
+    IEnumerable<object> Keys { get; }
+    
+    int Count { get; }
+    
+    object? Get(object key);
+    
+    void Set(object key, object value);
+
+    IRequestContextItems Clone();
+}
+
 public interface IRequestContext {
     IServiceProvider ServiceProvider { get; }
     
@@ -22,5 +34,8 @@ public interface IRequestContext {
 
     CancellationToken CancellationToken { get; }
     
+    IRequestContextItems Items { get; } 
+    
     IRequestContext Clone(IServiceProvider? serviceProvider = null);
+    
 }

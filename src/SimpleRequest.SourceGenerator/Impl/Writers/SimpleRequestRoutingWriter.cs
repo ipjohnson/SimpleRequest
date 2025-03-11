@@ -84,7 +84,7 @@ public class SimpleRequestRoutingWriter {
                 null,
                 new ServiceRegistrationModel[] {
                     new(requestHandlerModel, ServiceLifestyle.Transient, RegistrationType.Add)
-                }));
+                }, RegistrationFeature.None));
         }
 
         serviceModels.Add(new ServiceModel(
@@ -93,7 +93,7 @@ public class SimpleRequestRoutingWriter {
             null,
             new[] {
                 new ServiceRegistrationModel(KnownRequestTypes.IRequestHandlerProvider, ServiceLifestyle.Singleton)
-            }));
+            }, RegistrationFeature.None));
 
         return serviceModels;
     }
