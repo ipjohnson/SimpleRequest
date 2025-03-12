@@ -24,11 +24,7 @@ public class SystemTextJsonSerializerOptionProvider(
         };
 
         if (_resolvers.Count > 0) {
-            var resolverList = new List<IJsonTypeInfoResolver>(resolvers) {
-                new DefaultJsonTypeInfoResolver()
-            };
-
-            options.TypeInfoResolver = JsonTypeInfoResolver.Combine(resolverList.ToArray());
+            options.TypeInfoResolver = JsonTypeInfoResolver.Combine(_resolvers.ToArray());
         }
 
         foreach (var configuration in configurations) {
