@@ -1,5 +1,5 @@
 namespace SimpleRequest.Runtime.Attributes;
 
-public class FromServicesAttribute {
+public class FromServicesAttribute : Attribute {
     
 }

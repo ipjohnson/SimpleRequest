@@ -175,6 +175,11 @@ public abstract class BaseRequestModelGenerator {
                 ParameterBindType.FromServiceProvider,parameterIndex);
         }
 
+        if (attributeModels.Any(a => a.TypeDefinition.Name.Equals("FromServicesAttribute"))) {
+            return CreateRequestParameterInformation(parameter, parameterType,
+                ParameterBindType.FromServiceProvider,parameterIndex);
+        }
+        
         var id = parameter.Identifier.Text;
 
         if (requestHandlerNameModel.Path.Contains($"{{{id}}}")) {
