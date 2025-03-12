@@ -71,6 +71,7 @@ public class ParameterBindingService(IContentSerializerManager contentSerializer
                 var parameterValue = await provider.GetParameterValueAsync(context, parameterInfo);
 
                 if (parameterValue != null) {
+                    parameters.Set(parameterInfo.Name, parameterInfo.Index);
                     return;
                 }
             }
