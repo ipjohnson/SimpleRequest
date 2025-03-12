@@ -13,7 +13,7 @@ namespace TestApp.AspNet;
 [AspNetWebHost.Attribute]
 [SimpleRequestSwagger.Attribute]
 [SimpleRequestSwaggerUi.Attribute]
-public partial class TestWebApp :IServiceCollectionConfiguration {
+public partial class Application :IServiceCollectionConfiguration {
 
     public void ConfigureServices(IServiceCollection services) {
         services.AddSingleton<IMetricLoggerProvider, NullMetricLoggerProvider>();
