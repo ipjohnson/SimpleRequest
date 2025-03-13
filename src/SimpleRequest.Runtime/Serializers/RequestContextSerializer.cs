@@ -1,9 +1,7 @@
-using CompiledTemplateEngine.Runtime.Engine;
-using CompiledTemplateEngine.Runtime.Interfaces;
-using CompiledTemplateEngine.Runtime.Utilities;
 using DependencyModules.Runtime.Attributes;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Models;
+using SimpleRequest.Runtime.Pools;
 
 namespace SimpleRequest.Runtime.Serializers;
 
@@ -16,17 +14,14 @@ public interface IRequestContextSerializer {
 [SingletonService]
 public class RequestContextSerializer : IRequestContextSerializer {
     private readonly IContentSerializerManager _contentSerializerManager;
-    private readonly ITemplateExecutionService _templateExecutionService;
     private readonly IStringBuilderPool _stringBuilderPool;
     private readonly IRequestErrorHandler _requestErrorHandler;
 
     public RequestContextSerializer(
         IContentSerializerManager contentSerializerManager,
-        ITemplateExecutionService templateExecutionService,
         IStringBuilderPool stringBuilderPool,
         IRequestErrorHandler requestErrorHandler) {
         _contentSerializerManager = contentSerializerManager;
-        _templateExecutionService = templateExecutionService;
         _stringBuilderPool = stringBuilderPool;
         _requestErrorHandler = requestErrorHandler;
     }
@@ -87,12 +82,6 @@ public class RequestContextSerializer : IRequestContextSerializer {
     }
 
     private async Task WriteTemplateOutput(IRequestContext context) {
-        using var poolItem = _stringBuilderPool.Get();
-
-        var output = new StringBuilderTemplateOutputWriter(poolItem.Item, context.ResponseData.Body);
-
-        await _templateExecutionService.Execute(context.ResponseData.TemplateName!, context.ResponseData.ResponseValue);
-
-        await output.FlushWriter();
+        throw new NotImplementedException("Templates are not supported yet.");
     }
 }

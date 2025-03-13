@@ -9,10 +9,10 @@ using TestApp.WebHandlers;
 namespace TestApp.AspNet;
 
 [DependencyModule]
-[TestWebHandlers.Attribute]
-[AspNetWebHost.Attribute]
-[SimpleRequestSwagger.Attribute]
-[SimpleRequestSwaggerUi.Attribute]
+[TestWebHandlers]
+[AspNetWebHost]
+[SimpleRequestSwagger]
+[SimpleRequestSwaggerUi]
 public partial class Application :IServiceCollectionConfiguration {
 
     public void ConfigureServices(IServiceCollection services) {

@@ -4,10 +4,9 @@ using SimpleRequest.Runtime.Attributes;
 
 namespace SimpleRequest.Web.Runtime;
 
+
+public partial class SimpleRequestWebAttribute : ISimpleRequestEntryAttribute;
+
 [DependencyModule]
-[SimpleRequestRuntime.Attribute]
-public partial class SimpleRequestWeb {
-    public partial class Attribute : ISimpleRequestEntryAttribute {
-        
-    }
-}
+[SimpleRequestRuntime]
+public partial class SimpleRequestWeb;

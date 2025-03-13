@@ -5,6 +5,6 @@ using SimpleRequest.Web.Runtime;
 namespace SimpleRequest.SwaggerUi;
 
 [DependencyModule]
-[SimpleRequestWeb.Attribute]
+[SimpleRequestWeb]
 [RoutingOrder(1001)]
 public partial class SimpleRequestSwaggerUi { }

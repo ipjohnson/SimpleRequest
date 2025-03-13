@@ -7,7 +7,7 @@ using SimpleRequest.Web.Runtime;
 namespace SimpleRequest.Web.AspNetHost;
 
 [DependencyModule]
-[SimpleRequestWeb.Attribute]
+[SimpleRequestWeb]
 public partial class AspNetWebHost {
     public partial class Attribute : ISimpleRequestEntryAttribute { }
 

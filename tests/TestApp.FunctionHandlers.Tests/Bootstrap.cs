@@ -1,3 +1,3 @@
 using TestApp.FunctionHandlers;
 
-[assembly: TestFunctionHandlers.Attribute]
+[assembly: TestFunctionHandlers]

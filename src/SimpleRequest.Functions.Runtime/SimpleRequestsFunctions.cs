@@ -4,10 +4,8 @@ using SimpleRequest.Runtime.Attributes;
 
 namespace SimpleRequest.Functions.Runtime;
 
+public partial class SimpleRequestFunctionsAttribute : ISimpleRequestEntryAttribute;
+
 [DependencyModule]
-[SimpleRequestRuntime.Attribute]
-public partial class SimpleRequestFunctions {
-    public partial class Attribute : ISimpleRequestEntryAttribute {
-        
-    }
-}
+[SimpleRequestRuntime]
+public partial class SimpleRequestFunctions;

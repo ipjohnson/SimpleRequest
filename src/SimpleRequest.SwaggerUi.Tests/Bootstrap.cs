@@ -2,4 +2,4 @@
 using SimpleRequest.SwaggerUi;
 
 [assembly: NSubstituteSupport]
-[assembly: SimpleRequestSwaggerUi.Attribute]
+[assembly: SimpleRequestSwaggerUi]

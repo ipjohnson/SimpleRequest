@@ -1,11 +1,10 @@
-using CompiledTemplateEngine.Runtime.Utilities;
 using DependencyModules.xUnit.Impl;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Invoke.Impl;
 using SimpleRequest.Runtime.Logging;
-using SimpleRequest.Runtime.Serializers;
+using SimpleRequest.Runtime.Pools;
 using SimpleRequest.Testing.Interfaces;
 
 namespace SimpleRequest.Testing;

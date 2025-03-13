@@ -1,5 +1,5 @@
 ﻿using DependencyModules.xUnit.NSubstitute;
 using TestApp.WebHandlers;
 
-[assembly: TestWebHandlers.Attribute]
+[assembly: TestWebHandlers]
 [assembly: NSubstituteSupport]

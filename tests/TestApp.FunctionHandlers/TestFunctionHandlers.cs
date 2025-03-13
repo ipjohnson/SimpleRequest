@@ -4,5 +4,5 @@ using SimpleRequest.Functions.Runtime;
 namespace TestApp.FunctionHandlers;
 
 [DependencyModule]
-[SimpleRequestFunctions.Attribute]
+[SimpleRequestFunctions]
 public partial class TestFunctionHandlers { }

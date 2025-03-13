@@ -5,7 +5,7 @@ using SimpleRequest.Web.Runtime;
 namespace TestApp.WebHandlers;
 
 [DependencyModule]
-[SimpleRequestWeb.Attribute]
+[SimpleRequestWeb]
 [RoutingOrder(-1)]
 public partial class TestWebHandlers {
     

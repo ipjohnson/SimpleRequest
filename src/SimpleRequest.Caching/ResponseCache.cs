@@ -1,10 +1,10 @@
-using CompiledTemplateEngine.Runtime.Utilities;
 using DependencyModules.Runtime.Attributes;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using SimpleRequest.Caching.Impl;
 using SimpleRequest.Runtime.Attributes;
 using SimpleRequest.Runtime.Invoke;
+using SimpleRequest.Runtime.Pools;
 using SimpleRequest.Runtime.Utilities;
 
 namespace SimpleRequest.Caching;

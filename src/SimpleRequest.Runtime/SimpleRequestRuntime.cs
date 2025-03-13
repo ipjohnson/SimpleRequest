@@ -1,5 +1,4 @@
-﻿using CompiledTemplateEngine.Runtime;
-using DependencyModules.Runtime.Attributes;
+﻿using DependencyModules.Runtime.Attributes;
 using DependencyModules.Runtime.Features;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleRequest.Runtime.Logging;
@@ -8,7 +7,6 @@ using SimpleRequest.Runtime.Serializers.Json;
 namespace SimpleRequest.Runtime;
 
 [DependencyModule]
-[CompiledTemplateEngineRuntime.Attribute]
 public partial class SimpleRequestRuntime :
     IDependencyModuleFeature<ILoggingBuilderConfiguration>,
     IDependencyModuleFeature<ILoggingConfigurationImplementation>,

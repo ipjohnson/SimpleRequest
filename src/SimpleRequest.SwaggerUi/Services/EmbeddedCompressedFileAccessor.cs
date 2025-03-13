@@ -1,6 +1,6 @@
 using System.IO.Compression;
-using CompiledTemplateEngine.Runtime.Utilities;
 using DependencyModules.Runtime.Attributes;
+using SimpleRequest.Runtime.Pools;
 
 namespace SimpleRequest.SwaggerUi.Services;
 
