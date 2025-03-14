@@ -24,6 +24,7 @@ public class CshtmlFileModelConverter {
         var lines = toString.Split('\n');
 
         foreach (var line in lines) {
+            cancellation.ThrowIfCancellationRequested();
             if (line.StartsWith("@using ")) {
                 var stringValues = line.Split(' ');
                 var namespaceValue = stringValues.Last().TrimEnd(';');

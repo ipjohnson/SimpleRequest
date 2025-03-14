@@ -10,7 +10,21 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <Import Project="../../build-props/nuget.props"/>
-
+    
+    <ItemGroup>
+        <None Remove="Package\SimpleRequest.*"/>
+        <Content Include="Package\SimpleRequest.*">
+            <Pack>true</Pack>
+            <PackagePath>build\</PackagePath>
+            <PackageCopyToOutput>true</PackageCopyToOutput>
+        </Content>
+        <Content Include="**\*.cs" Exclude="**\obj\**;**\bin\**" Visible="true">
+            <Pack>true</Pack>
+            <PackagePath>src\SimpleRequest.RazorBlade.SourceGenerator\</PackagePath>
+            <PackageCopyToOutput>true</PackageCopyToOutput>
+        </Content>
+    </ItemGroup>
+    
     <PropertyGroup>
         <PackageDependencyModuleIncludeSource>true</PackageDependencyModuleIncludeSource>
     </PropertyGroup>

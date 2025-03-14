@@ -22,6 +22,8 @@ public class CsharpTemplateGenerator {
         var namespaceString = NamespaceUtility.GetTemplateNamespace(entryPoint, data.Left.FilePath);
         var className = Path.GetFileNameWithoutExtension(data.Left.FilePath);
 
+        context.CancellationToken.ThrowIfCancellationRequested();
+        
         var file = GenerateCSharpFile(context, data.Left, entryPoint, namespaceString, className);
 
         var output = new OutputContext();

@@ -12,12 +12,14 @@ public class EntryPointGenerator {
 
     public void GenerateTemplateEntry(SourceProductionContext context,
         ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<CshtmlFileModel> Right) data) {
+        context.CancellationToken.ThrowIfCancellationRequested();
+        
         if (!data.Left.Left.AttributeModels.Any(
                 a => a.ImplementedInterfaces.Any(i => i.Name == "ISimpleRequestEntryAttribute"))) {
             return;
         }
 
-        var csharpFile = GenerateCSharpFile(data.Left.Left, data.Right);
+        var csharpFile = GenerateCSharpFile(data.Left.Left, data.Right, context.CancellationToken);
 
         var output = new OutputContext();
 
@@ -28,13 +30,13 @@ public class EntryPointGenerator {
             output.Output());
     }
 
-    private CSharpFileDefinition GenerateCSharpFile(ModuleEntryPointModel entryPointModel, ImmutableArray<CshtmlFileModel> dataRight) {
+    private CSharpFileDefinition GenerateCSharpFile(ModuleEntryPointModel entryPointModel, ImmutableArray<CshtmlFileModel> dataRight, CancellationToken contextCancellationToken) {
         var csharpFile = new CSharpFileDefinition(entryPointModel.EntryPointType.Namespace);
 
         var classDefinition = csharpFile.AddClass(entryPointModel.EntryPointType.Name);
         classDefinition.Modifiers |= ComponentModifier.Public | ComponentModifier.Partial;
 
-        GenerateTemplateProviderClass(classDefinition, entryPointModel, dataRight);
+        GenerateTemplateProviderClass(classDefinition, entryPointModel, dataRight, contextCancellationToken);
 
         var field = classDefinition.AddField(typeof(int), "_templateRegistration");
 
@@ -60,7 +62,7 @@ public class EntryPointGenerator {
         return csharpFile;
     }
 
-    private void GenerateTemplateProviderClass(ClassDefinition classDefinition, ModuleEntryPointModel entryPointModel, ImmutableArray<CshtmlFileModel> dataRight) {
+    private void GenerateTemplateProviderClass(ClassDefinition classDefinition, ModuleEntryPointModel entryPointModel, ImmutableArray<CshtmlFileModel> dataRight, CancellationToken contextCancellationToken) {
         var templateProvider = classDefinition.AddClass("TemplateProvider");
 
         templateProvider.AddBaseType(TypeDefinition.Get("SimpleRequest.Runtime.Templates", "ITemplateProvider"));
@@ -81,6 +83,7 @@ public class EntryPointGenerator {
 
         if (dataRight.Length > 0) {
             foreach (var model in dataRight) {
+                contextCancellationToken.ThrowIfCancellationRequested();
                 var namespaceString = NamespaceUtility.GetTemplateNamespace(entryPointModel, model.FilePath);
                 var className = Path.GetFileNameWithoutExtension(model.FilePath);
 
