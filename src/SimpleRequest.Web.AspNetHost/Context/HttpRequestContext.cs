@@ -37,7 +37,7 @@ public class HttpRequestContext : IRequestContext {
         IResponseData responseData, 
         IMetricLogger metricLogger, 
         IRequestLogger requestLogger, 
-        RequestServices requestServices) {
+        DataServices requestServices) {
         _httpContext = httpContext;
         RequestData = requestData;
         ResponseData = responseData;
@@ -60,7 +60,7 @@ public class HttpRequestContext : IRequestContext {
 
     public IRequestLogger RequestLogger { get; }
 
-    public RequestServices RequestServices { get; }
+    public DataServices RequestServices { get; }
 
     public CancellationToken CancellationToken => _httpContext.RequestAborted;
 

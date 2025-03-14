@@ -14,7 +14,7 @@ public interface IHttpContextMapper {
 public class HttpContextMapper(
     
     IMetricLoggerProvider metricLoggerProvider,
-    RequestServices requestServices) : IHttpContextMapper {
+    DataServices requestServices) : IHttpContextMapper {
     
     public IRequestContext MapContext(HttpContext context) {
         var request = MapRequest(context);

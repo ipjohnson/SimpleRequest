@@ -20,7 +20,7 @@ public class TestRequestContext {
                 new Dictionary<string, StringValues>()),
             new ResponseData(new Dictionary<string, StringValues>()) { Body = new MemoryStream()},
             new NullMetricsLogger(),
-            serviceProvider.GetRequiredService<RequestServices>(),
+            serviceProvider.GetRequiredService<DataServices>(),
             CancellationToken.None,
             serviceProvider.GetRequiredService<IRequestLogger>()
         );

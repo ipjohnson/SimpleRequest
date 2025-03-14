@@ -12,7 +12,7 @@ namespace SimpleRequest.Testing;
 public class RequestHarness(IServiceProvider serviceProvider,
     IRequestInvocationEngine requestInvocationEngine,
     IMemoryStreamPool memoryStreamPool,
-    RequestServices requestServices,
+    DataServices requestServices,
     IEnumerable<IRequestDataEnrichment> enrichRequestData,
     IEnumerable<IResponseDataValidator> validateResponseData) {
     private readonly IReadOnlyList<IRequestDataEnrichment> _enrichRequestData = enrichRequestData.ToList();

@@ -7,3 +7,7 @@ public record NoteModel(
     DateTime Created,
     DateTime Modified
     );
+
+public class TestModel {
+    public string Title { get; set; }
+}

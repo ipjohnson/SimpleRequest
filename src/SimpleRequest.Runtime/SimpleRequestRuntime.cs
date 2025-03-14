@@ -1,10 +1,13 @@
 ﻿using DependencyModules.Runtime.Attributes;
 using DependencyModules.Runtime.Features;
 using Microsoft.Extensions.DependencyInjection;
+using SimpleRequest.Runtime.Attributes;
 using SimpleRequest.Runtime.Logging;
 using SimpleRequest.Runtime.Serializers.Json;
 
 namespace SimpleRequest.Runtime;
+
+public partial class SimpleRequestRuntimeAttribute : ISimpleRequestEntryAttribute;
 
 [DependencyModule]
 public partial class SimpleRequestRuntime :

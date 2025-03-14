@@ -151,7 +151,7 @@ public class RequestContext(IServiceProvider serviceProvider,
     IRequestData requestData,
     IResponseData responseData,
     IMetricLogger metricLogger,
-    RequestServices requestServices,
+    DataServices requestServices,
     CancellationToken cancellationToken,
     IRequestLogger requestLogger,
     IRequestContextItems? requestContextItem = null)
@@ -188,7 +188,7 @@ public class RequestContext(IServiceProvider serviceProvider,
     } = requestLogger;
 
 
-    public RequestServices RequestServices {
+    public DataServices RequestServices {
         get;
     } = requestServices;
 

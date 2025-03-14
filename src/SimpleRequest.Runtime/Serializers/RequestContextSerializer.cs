@@ -81,7 +81,7 @@ public class RequestContextSerializer : IRequestContextSerializer {
         }
     }
 
-    private async Task WriteTemplateOutput(IRequestContext context) {
-        throw new NotImplementedException("Templates are not supported yet.");
+    private Task WriteTemplateOutput(IRequestContext context) {
+        return context.RequestServices.TemplateInvocationEngine.Invoke(context);
     }
 }

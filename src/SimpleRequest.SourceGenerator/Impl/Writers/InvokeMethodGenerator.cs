@@ -15,6 +15,12 @@ public class InvokeMethodGenerator {
 
         invokeMethod.AddUsingNamespace(KnownTypes.Microsoft.DependencyInjection.Namespace);
 
+        if (!string.IsNullOrEmpty(requestModel.ResponseInformation.TemplateName)) {
+            invokeMethod.Assign(
+                SyntaxHelpers.QuoteString(requestModel.ResponseInformation.TemplateName!)).
+                To(context.Property("ResponseData").Property("TemplateName"));
+        }
+        
         var handler = invokeMethod.Assign(
             context.Property("ServiceProvider")
                 .InvokeGeneric("GetRequiredService", new[] {

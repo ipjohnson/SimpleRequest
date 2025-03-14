@@ -42,6 +42,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRequest.SwaggerUi.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRequest.Caching", "src\SimpleRequest.Caching\SimpleRequest.Caching.csproj", "{3B0538BB-D3C5-4C41-BF5D-103A4B63541A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRequest.RazorBlade.SourceGenerator", "src\SimpleRequest.RazorBlade.SourceGenerator\SimpleRequest.RazorBlade.SourceGenerator.csproj", "{6E56E793-8E97-4185-B3C2-948B5315204E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRequest.RazorBlade", "src\SimpleRequest.RazorBlade\SimpleRequest.RazorBlade.csproj", "{E1662A70-FBA8-45A3-B5A5-3CB9D963D60A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +71,8 @@ Global
 		{C67BDC70-5FFE-457F-9FA9-BE3E45B57306} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
 		{C4A7457C-E00C-49D3-80D6-8E8268A3C3CD} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
 		{3B0538BB-D3C5-4C41-BF5D-103A4B63541A} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
+		{6E56E793-8E97-4185-B3C2-948B5315204E} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
+		{E1662A70-FBA8-45A3-B5A5-3CB9D963D60A} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{73169202-4EE1-442A-AEB6-688421F83095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -145,5 +151,13 @@ Global
 		{3B0538BB-D3C5-4C41-BF5D-103A4B63541A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B0538BB-D3C5-4C41-BF5D-103A4B63541A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B0538BB-D3C5-4C41-BF5D-103A4B63541A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E56E793-8E97-4185-B3C2-948B5315204E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E56E793-8E97-4185-B3C2-948B5315204E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E56E793-8E97-4185-B3C2-948B5315204E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E56E793-8E97-4185-B3C2-948B5315204E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1662A70-FBA8-45A3-B5A5-3CB9D963D60A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1662A70-FBA8-45A3-B5A5-3CB9D963D60A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1662A70-FBA8-45A3-B5A5-3CB9D963D60A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1662A70-FBA8-45A3-B5A5-3CB9D963D60A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
