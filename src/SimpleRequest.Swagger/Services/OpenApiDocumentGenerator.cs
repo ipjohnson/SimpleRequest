@@ -158,6 +158,9 @@ public class OpenApiDocumentGenerator(
                 case ParameterBindType.QueryString:
                     location = ParameterLocation.Query;
                     break;
+                case ParameterBindType.Cookie:
+                    location = ParameterLocation.Cookie;
+                    break;
             }
 
             if (location == null) {
