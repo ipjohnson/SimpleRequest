@@ -1,7 +1,34 @@
 using Microsoft.Extensions.Primitives;
+using SimpleRequest.Runtime.Cookies;
 using SimpleRequest.Runtime.Invoke;
+using CookieOptions = SimpleRequest.Runtime.Cookies.CookieOptions;
+using IResponseCookies = SimpleRequest.Runtime.Cookies.IResponseCookies;
+using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace SimpleRequest.Web.AspNetHost.Context;
+
+public class HttpResponseCookies(HttpResponse response) : IResponseCookies {
+
+    public void Append(string key, string value) {
+        response.Cookies.Append(key, value);
+    }
+
+    public void Append(string key, string value, CookieOptions options) {
+        response.Cookies.Append(key, value, new Microsoft.AspNetCore.Http.CookieOptions {
+            Domain = options.Domain,
+            Path = options.Path,
+            Expires = options.Expires,
+            HttpOnly = options.HttpOnly,
+            Secure = options.Secure,
+            SameSite = (SameSiteMode)options.SameSite,
+            MaxAge = options.MaxAge,
+        });
+    }
+
+    public void Delete(string key) {
+        response.Cookies.Delete(key);
+    }
+}
 
 public class HttpResponseData : IResponseData {
     private readonly HttpResponse _response;
@@ -10,6 +37,7 @@ public class HttpResponseData : IResponseData {
     public HttpResponseData(HttpResponse response, Stream? body = null) {
         _response = response;
         _body = body ?? _response.Body;
+        Cookies = new HttpResponseCookies(_response);
     }
     public string? ContentType {
         get => _response.ContentType;
@@ -61,6 +89,10 @@ public class HttpResponseData : IResponseData {
     }
 
     public IDictionary<string,StringValues> Headers => _response.Headers;
+
+    public IResponseCookies Cookies {
+        get;
+    }
 
     public IResponseData Clone() {
         return new HttpResponseData(_response, _body);

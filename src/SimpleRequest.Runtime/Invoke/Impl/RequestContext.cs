@@ -1,20 +1,32 @@
 using System.Collections;
 using System.Collections.Immutable;
 using Microsoft.Extensions.Primitives;
+using SimpleRequest.Runtime.Cookies;
 using SimpleRequest.Runtime.Diagnostics;
 using SimpleRequest.Runtime.Logging;
+using SimpleRequest.Runtime.QueryParameters;
 using SimpleRequest.Runtime.Serializers;
 
 namespace SimpleRequest.Runtime.Invoke.Impl;
 
 public class RequestData : IRequestData {
-    public RequestData(string path, string method, Stream? body, string contentType, IPathTokenCollection pathTokenCollection, IDictionary<string, StringValues> headers) {
+    public RequestData(
+        string path, 
+        string method,
+        Stream? body, 
+        string contentType,
+        IPathTokenCollection pathTokenCollection, 
+        IDictionary<string, StringValues> headers, 
+        IQueryParametersCollection queryParameters, 
+        IRequestCookies cookies) {
         Path = path;
         Method = method;
         Body = body;
         ContentType = contentType;
         PathTokenCollection = pathTokenCollection;
         Headers = headers;
+        QueryParameters = queryParameters;
+        Cookies = cookies;
         StartTime = MachineTimestamp.Now;
     }
 
@@ -43,19 +55,28 @@ public class RequestData : IRequestData {
         get;
     }
 
+    public IQueryParametersCollection QueryParameters {
+        get;
+    }
+
+    public IRequestCookies Cookies {
+        get;
+    }
+
     public IPathTokenCollection PathTokenCollection {
         get;
         set;
     }
 
     public IRequestData Clone() {
-        return new RequestData(Path, Method, Body, ContentType, PathTokenCollection, Headers);
+        return new RequestData(Path, Method, Body, ContentType, PathTokenCollection, Headers, QueryParameters, Cookies);
     }
 }
 
 public class ResponseData : IResponseData {
-    public ResponseData(IDictionary<string,StringValues> headerCollection) {
+    public ResponseData(IDictionary<string,StringValues> headerCollection, IResponseCookies cookies) {
         Headers = headerCollection;
+        Cookies = cookies;
     }
 
     public string? ContentType {
@@ -109,8 +130,12 @@ public class ResponseData : IResponseData {
         get;
     }
 
+    public IResponseCookies Cookies {
+        get;
+    }
+
     public IResponseData Clone() {
-        return new ResponseData(Headers) {
+        return new ResponseData(Headers, Cookies) {
             Body = Body,
             ContentType = ContentType,
             ExceptionValue = ExceptionValue,

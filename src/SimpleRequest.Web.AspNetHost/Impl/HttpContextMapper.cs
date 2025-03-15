@@ -19,7 +19,7 @@ public class HttpContextMapper(
     public IRequestContext MapContext(HttpContext context) {
         var request = MapRequest(context);
         var response = MapResponse(context);
-
+        
         return new HttpRequestContext(context,
                 request,response,
                 metricLoggerProvider.CreateLogger(),

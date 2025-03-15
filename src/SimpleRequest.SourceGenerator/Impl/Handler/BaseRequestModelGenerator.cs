@@ -13,19 +13,19 @@ public abstract class BaseRequestModelGenerator {
         GeneratorSyntaxContext context,
         CancellationToken cancellationToken) {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         var methodDeclaration = (MethodDeclarationSyntax)context.Node;
 
         var attributeModules = AttributeModelHelper.GetAttributeModels(context, methodDeclaration, cancellationToken);
-        
+
         var methodName = GetControllerMethod(methodDeclaration);
         var controllerType = GetControllerType(methodDeclaration);
-        
+
         var response = GetResponseInformation(context, methodDeclaration);
         var filters = GetFilters(context, methodDeclaration, attributeModules, cancellationToken);
 
         var nameModel = GetRequestNameModel(context, methodDeclaration, attributeModules, cancellationToken);
-        
+
         return new RequestHandlerModel(
             nameModel,
             controllerType,
@@ -45,7 +45,7 @@ public abstract class BaseRequestModelGenerator {
         GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclaration,
         CancellationToken cancellation) {
-        
+
         var classDeclarationSyntax =
             methodDeclaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
 
@@ -73,13 +73,13 @@ public abstract class BaseRequestModelGenerator {
         RequestHandlerNameModel requestHandlerNameModel,
         CancellationToken cancellationToken) {
         var parameters = new List<RequestParameterInformation>();
-        for(var i = 0; i < methodDeclaration.ParameterList.Parameters.Count; i++) {
+        for (var i = 0; i < methodDeclaration.ParameterList.Parameters.Count; i++) {
             var parameter = methodDeclaration.ParameterList.Parameters[i];
             cancellationToken.ThrowIfCancellationRequested();
 
-            var attributeModels = 
+            var attributeModels =
                 AttributeModelHelper.GetAttributeModels(generatorSyntaxContext, parameter, CancellationToken.None);
-            
+
             RequestParameterInformation? parameterInformation =
                 GetParameterInfoFromAttributes(generatorSyntaxContext, methodDeclaration,
                     requestHandlerNameModel,
@@ -89,9 +89,9 @@ public abstract class BaseRequestModelGenerator {
 
             if (parameterInformation == null) {
                 parameterInformation = GetParameterInfo(
-                    generatorSyntaxContext, 
+                    generatorSyntaxContext,
                     methodDeclaration,
-                    requestHandlerNameModel, 
+                    requestHandlerNameModel,
                     parameter,
                     attributeModels,
                     i);
@@ -115,7 +115,7 @@ public abstract class BaseRequestModelGenerator {
         if (!attributeModel.ImplementedInterfaces.Contains(KnownRequestTypes.IInvokeParameterValueProvider)) {
             return null;
         }
-        
+
         string? defaultValue = null;
 
         if (parameter.Default != null) {
@@ -123,18 +123,18 @@ public abstract class BaseRequestModelGenerator {
         }
 
         return new RequestParameterInformation(
-                parameterType,
-                name,
-                !parameterType.IsNullable,
-                defaultValue,
-                ParameterBindType.CustomAttribute,
-                "",
-                parameterIndex,
-                parameterAttributes
-                );
+            parameterType,
+            name,
+            !parameterType.IsNullable,
+            defaultValue,
+            ParameterBindType.CustomAttribute,
+            "",
+            parameterIndex,
+            parameterAttributes
+        );
     }
 
-    
+
     protected virtual RequestParameterInformation GetParameterInfo(GeneratorSyntaxContext generatorSyntaxContext,
         MethodDeclarationSyntax methodDeclarationSyntax,
         RequestHandlerNameModel requestHandlerNameModel,
@@ -147,47 +147,101 @@ public abstract class BaseRequestModelGenerator {
             return CreateRequestParameterInformation(parameter, parameterType,
                 ParameterBindType.RequestContext,
                 parameterIndex,
-                true);
+                true,
+                null,
+                attributeModels);
         }
 
         if (KnownRequestTypes.IRequestData.Equals(parameterType)) {
             return CreateRequestParameterInformation(parameter, parameterType,
                 ParameterBindType.RequestData,
                 parameterIndex,
-                true);
+                true,
+                null,
+                attributeModels);
         }
 
         if (KnownRequestTypes.IResponseData.Equals(parameterType)) {
             return CreateRequestParameterInformation(parameter, parameterType,
                 ParameterBindType.ResponseData,
                 parameterIndex,
-                true);
+                true,
+                null,
+                attributeModels);
         }
 
-        
         if (KnownTypes.Microsoft.DependencyInjection.IServiceProvider.Equals(parameterType)) {
-            return CreateRequestParameterInformation(parameter, parameterType,
-                ParameterBindType.ServiceProvider,parameterIndex);
+            return CreateRequestParameterInformation(parameter,
+                parameterType,
+                ParameterBindType.ServiceProvider,
+                parameterIndex,
+                null,
+                null,
+                attributeModels);
         }
 
         if (parameterType.TypeDefinitionEnum == TypeDefinitionEnum.InterfaceDefinition) {
-            return CreateRequestParameterInformation(parameter, parameterType,
-                ParameterBindType.FromServiceProvider,parameterIndex);
+            return CreateRequestParameterInformation(parameter,
+                parameterType,
+                ParameterBindType.FromServiceProvider,
+                parameterIndex,
+                null,
+                null,
+                attributeModels);
         }
 
-        if (attributeModels.Any(a => a.TypeDefinition.Name.Equals("FromServicesAttribute"))) {
-            return CreateRequestParameterInformation(parameter, parameterType,
-                ParameterBindType.FromServiceProvider,parameterIndex);
+        foreach (var attributeModel in attributeModels) {
+            ParameterBindType? bindType = null;
+
+            switch (attributeModel.TypeDefinition.Name) {
+                case "FromServicesAttribute":
+                    return CreateRequestParameterInformation(parameter, parameterType,
+                        ParameterBindType.FromServiceProvider, parameterIndex);
+                case "FromHeaderAttribute":
+                    bindType = ParameterBindType.Header;
+                    break;
+                case "FromQueryAttribute":
+                    bindType = ParameterBindType.QueryString;
+                    break;
+                case "FromCookieAttribute":
+                    bindType = ParameterBindType.Cookie;
+                    break;
+            }
+
+            if (bindType != null) {
+                var argument = attributeModel.Arguments.FirstOrDefault()?.Value?.ToString();
+
+                var bindingName = string.IsNullOrEmpty(argument) ? parameter.Identifier.ToString() : argument;
+
+                return CreateRequestParameterInformation(parameter,
+                    parameterType,
+                    bindType.Value,
+                    parameterIndex,
+                    null,
+                    bindingName,
+                    attributeModels);
+            }
         }
-        
+
         var id = parameter.Identifier.Text;
 
         if (requestHandlerNameModel.Path.Contains($"{{{id}}}")) {
             return CreateRequestParameterInformation(parameter, parameterType,
-                ParameterBindType.Path,parameterIndex);
+                ParameterBindType.Path,
+                parameterIndex,
+                null,
+                id,
+                attributeModels);
         }
 
-        return CreateRequestParameterInformation(parameter, parameterType, ParameterBindType.Body, parameterIndex);
+        return CreateRequestParameterInformation(
+            parameter,
+            parameterType,
+            ParameterBindType.Body,
+            parameterIndex,
+            null,
+            null,
+            attributeModels);
     }
 
     public static RequestParameterInformation CreateRequestParameterInformation(
@@ -207,7 +261,7 @@ public abstract class BaseRequestModelGenerator {
         if (parameter.Default != null) {
             defaultValue = parameter.Default.Value.ToFullString();
         }
-        
+
         return new RequestParameterInformation(
             parameterType,
             parameter.Identifier.Text,
@@ -257,7 +311,8 @@ public abstract class BaseRequestModelGenerator {
 
         if (returnType is GenericTypeDefinition genericType) {
             isAsync = genericType.Name.Equals("Task") || genericType.Name.Equals("ValueTask");
-        } else if (returnType?.Name == "Task") {
+        }
+        else if (returnType?.Name == "Task") {
             isAsync = true;
         }
 
@@ -304,16 +359,16 @@ public abstract class BaseRequestModelGenerator {
         if (attributeName.Contains("DependencyModule")) {
             return false;
         }
-        
+
         if (attributeName.Contains(".Attribute")) {
             return false;
         }
-        
+
         return !AttributeNames().Contains(attributeName);
     }
 
     protected abstract IEnumerable<string> AttributeNames();
-    
+
     protected virtual IEnumerable<AttributeModel> GetFiltersForMethod(
         GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclarationSyntax,

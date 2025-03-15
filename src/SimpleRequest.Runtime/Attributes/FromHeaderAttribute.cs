@@ -1,9 +1,6 @@
 namespace SimpleRequest.Runtime.Attributes;
 
-public class FromHeaderAttribute : Attribute {
-    public FromHeaderAttribute(string? name = null) {
-        Name = name;
-    }
+public class FromHeaderAttribute(string? name = null) : Attribute {
 
-    public string? Name { get; }
+    public string? Name { get; } = name;
 }

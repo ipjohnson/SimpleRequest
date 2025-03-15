@@ -5,7 +5,7 @@ using Xunit;
 
 namespace TestApp.WebHandlers.Tests.Handlers.Binding;
 
-public class BindingControllerTests {
+public class HeaderBindingControllerTests {
     [ModuleTest]
     public async Task HeaderBindingTest(RequestHarness harness) {
         var response = await harness.Get("/Binding/GetHeader", [("Test-Value", "header-value")]);
@@ -15,7 +15,6 @@ public class BindingControllerTests {
         var value = await response.Get<string>();
         Assert.Equal("header-value", value);
     }
-
 
     [ModuleTest]
     [RequestHeader("Test-Value", "header-value")]

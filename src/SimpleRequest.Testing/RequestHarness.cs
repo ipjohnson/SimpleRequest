@@ -1,10 +1,12 @@
 using DependencyModules.xUnit.Impl;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
+using SimpleRequest.Runtime.Cookies;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Invoke.Impl;
 using SimpleRequest.Runtime.Logging;
 using SimpleRequest.Runtime.Pools;
+using SimpleRequest.Runtime.QueryParameters;
 using SimpleRequest.Testing.Interfaces;
 
 namespace SimpleRequest.Testing;
@@ -44,24 +46,45 @@ public class RequestHarness(IServiceProvider serviceProvider,
             requestStreamReservation.Item.Position = 0;
         }
 
+        var (newPath, queryParams) = ParsePath(path);
+        
         var requestData = new RequestData(
-            path,
+            newPath,
             method,
             requestStreamReservation.Item,
             "application/json",
             new PathTokenCollection(),
-            headerDictionary);
+            headerDictionary,
+            queryParams,
+            new RequestCookies());
         
         return await Invoke(requestData);
     }
-    
+
+    private (string newPath, IQueryParametersCollection queryParams) ParsePath(string path) {
+        var splitPath = path.Split('?');
+        var queryParams = new Dictionary<string, string>();
+
+        if (splitPath.Length > 1) {
+            var query = splitPath[1];
+            var queryParts = query.Split('&');
+            foreach (var queryPart in queryParts) {
+                var queryParam = queryPart.Split('=');
+                queryParams[queryParam[0]] = queryParam[1];
+            }
+        }
+        
+        return (splitPath[0], new QueryParametersCollection(queryParams));
+    }
+
     public async Task<ResponseModel> Invoke(IRequestData request) {        
         using var responseStreamReservation = memoryStreamPool.Get();
         await using var scope = serviceProvider.CreateAsyncScope();
         var testCaseInfo = scope.ServiceProvider.GetRequiredService<ITestCaseInfo>();
         request = ApplyEnrichments(scope.ServiceProvider, testCaseInfo, request);
 
-        var responseData = new ResponseData(new Dictionary<string, StringValues>()) {
+        var responseCookies = new ResponseCookies();
+        var responseData = new ResponseData(new Dictionary<string, StringValues>(), responseCookies) {
             Body = responseStreamReservation.Item,
         };
         

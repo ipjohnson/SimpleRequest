@@ -48,46 +48,8 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
         IReadOnlyList<AttributeModel> attributeModels,
         int parameterIndex) {
 
-        foreach (var attributeModel in attributeModels) {
-            if (attributeModel.TypeDefinition.Name == "FromHeaderAttribute") {
-                var argument = attributeModel.Arguments.FirstOrDefault()?.Value?.ToString();
-                
-                var headerName = string.IsNullOrEmpty(argument) ? parameter.Identifier.ToString() : argument;
-                return GetParameterInfoWithBinding(
-                    generatorSyntaxContext,
-                    parameter,ParameterBindType.Header, 
-                    headerName!, 
-                    parameterIndex);
-            }
-        }
-        
         return null;
     }
 
     protected override IEnumerable<string> AttributeNames() => _attributeNames;
-
-    private static RequestParameterInformation GetParameterInfoWithBinding(
-        GeneratorSyntaxContext generatorSyntaxContext,
-        ParameterSyntax parameter,
-        ParameterBindType bindingType,
-        string bindingName,
-        int parameterIndex) {
-        var parameterType = parameter.Type?.GetTypeDefinition(generatorSyntaxContext)!;
-        
-        if (!parameterType.IsNullable && parameter.ToFullString().Contains("?")) {
-            parameterType = parameterType.MakeNullable();
-        }
-
-        var attributeModels = 
-            AttributeModelHelper.GetAttributeModels(generatorSyntaxContext, parameter, CancellationToken.None);
-        
-        return CreateRequestParameterInformation(parameter,
-            parameterType,
-            bindingType,
-            parameterIndex,
-            parameterType.IsNullable,
-            bindingName,
-            attributeModels);
-    }
-
 }

@@ -12,7 +12,6 @@ public class PostAttribute(string path = "/") : WebRouteAttribute(path);
 
 public class PutAttribute(string path = "/") : WebRouteAttribute(path);
 
-
 public class WebRouteAttribute(string path) : Attribute {
     public string Path {
         get;

@@ -9,4 +9,9 @@ public class BindingController {
     public Task<string> GetHeader([FromHeader("Test-Value")]string header) {
         return Task.FromResult(header);
     }
+
+    [Get("/Binding/GetQueryParam")]
+    public string GetQueryParam([FromQuery("query-param")] string query) {
+        return query;
+    }
 }

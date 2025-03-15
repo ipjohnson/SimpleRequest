@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Primitives;
+using SimpleRequest.Runtime.Cookies;
 
 namespace SimpleRequest.Runtime.Invoke;
 
@@ -25,6 +26,8 @@ public interface IResponseData {
     bool? ShouldSerialize { get; set; }
     
     IDictionary<string,StringValues> Headers { get; }
-
+    
+    IResponseCookies Cookies { get; }
+    
     IResponseData Clone();
 }

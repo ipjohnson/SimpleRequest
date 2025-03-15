@@ -7,6 +7,7 @@ public enum ParameterBindType {
     Path,
     QueryString,
     Header,
+    Cookie,
     Body,
     ServiceProvider,
     FromServiceProvider,

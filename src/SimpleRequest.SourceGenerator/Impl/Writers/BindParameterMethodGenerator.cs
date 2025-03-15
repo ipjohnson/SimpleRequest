@@ -134,15 +134,26 @@ public class BindParameterMethodGenerator {
                 BindContext(parametersIf, contextParameter, requestData, parameters, parameterInformation, i);
                 break;
             case ParameterBindType.Header:
-                BindHeader(parametersIf, contextParameter, requestData, parameters, parameterInformation);
+                BindRequestValue("Headers", parametersIf, contextParameter, requestData, parameters, parameterInformation);
+                break;
+            case ParameterBindType.QueryString:
+                BindRequestValue("QueryParameters", parametersIf, contextParameter, requestData, parameters, parameterInformation);
+                break;
+            case ParameterBindType.Cookie:
+                BindRequestValue("Cookies", parametersIf, contextParameter, requestData, parameters, parameterInformation);
                 break;
         }
     }
 
-    private void BindHeader(
-        IfElseLogicBlockDefinition block, ParameterDefinition contextParameter, InstanceDefinition bindingService, InstanceDefinition parameters, RequestParameterInformation parameterInformation) {
+    
+    private void BindRequestValue(string collectionName,
+        IfElseLogicBlockDefinition block,
+        ParameterDefinition contextParameter, 
+        InstanceDefinition bindingService,
+        InstanceDefinition parameters,
+        RequestParameterInformation parameterInformation) {
         var tokenStatement = contextParameter.Property("RequestData")
-            .Property("Headers")
+            .Property(collectionName)
             .Invoke("GetValueOrDefault", QuoteString(parameterInformation.BindingName));
 
         tokenStatement.AddUsingNamespace("SimpleRequest.Runtime.Utilities");
