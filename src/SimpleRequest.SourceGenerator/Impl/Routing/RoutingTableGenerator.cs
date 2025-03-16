@@ -120,7 +120,7 @@ public class RoutingTableGenerator {
         return method;
     }
 
-    private void ProcessChildNodes(RoutingTableContext context) {
+    private void ProcessChildNodes(RoutingTableContext context, bool assignToVar = false) {
         if (context.Node.ChildNodes.Count == 0) {
             return;
         }
@@ -136,8 +136,12 @@ public class RoutingTableGenerator {
             childMethod = WriteSwitchChildNode(context);
         }
 
-        context.Block.Assign(Invoke(childMethod.Name, _pathSpan, _index, _context)).To(_handlerString);
-
+        if (assignToVar) {
+            context.Block.Assign(Invoke(childMethod.Name, _pathSpan, _index, _context)).ToVar(_handlerString);
+        }
+        else {
+            context.Block.Assign(Invoke(childMethod.Name, _pathSpan, _index, _context)).To(_handlerString);
+        }
         context.Block.If(NotEquals(_handlerString, Null())).Return(_handlerString);
     }
 
@@ -185,7 +189,7 @@ public class RoutingTableGenerator {
         var wildCardMethod = WriteWildCardMethod(newContext);
 
         object index = useCurrentIndex ? "currentIndex + 1" : _index;
-        
+
         var invoke = Invoke(wildCardMethod, _pathSpan, index, _context);
 
 
@@ -267,7 +271,7 @@ public class RoutingTableGenerator {
         var ifStatementDefinition = whileBlock.If(And(pathCheckList));
 
         if (wildCardNode.ChildNodes.Count > 0) {
-            GenerateWildCardChildMatch(context with {
+            ProcessChildNodes(context with {
                 Block = ifStatementDefinition
             });
         }
@@ -314,19 +318,33 @@ public class RoutingTableGenerator {
     private void GenerateWildCardLeafNode(RoutingTableContext context) {
         var wildCardMethod = context.Block;
         var wildCardNode = context.Node;
+        
         if (context.Node.LeafNodes.Count > 0) {
+            var handler = 
+                wildCardMethod.Assign(Null()).ToLocal(KnownRequestTypes.IRequestHandler, _handlerString);
             var switchBlock = context.Block.Switch(_context.Property("RequestData").Property("Method"));
 
-            foreach (var leafNode in wildCardNode.LeafNodes) {
-                var caseStatement = switchBlock.AddCase(QuoteString(leafNode.Method));
+            var caseEnumerable = GroupNodesByMethod(context);
 
-                AssignPathToken(null, caseStatement, wildCardNode);
+            foreach (var grouping in caseEnumerable) {
+                var caseStatement = switchBlock.AddCase(QuoteString(grouping.Key));
 
-                ReturnHandlerStatement(context with {
-                    Block = caseStatement
-                }, leafNode);
+                foreach (var leafNode in grouping) {
+                    var ifStatement =
+                        caseStatement.IfNotNullAssign(
+                            handler,
+                            InvokeHandlerStatement(context with {
+                                    Block = caseStatement
+                                }, leafNode
+                            )
+                        );
+                
+                    AssignPathToken(null, ifStatement, wildCardNode);
+                    ifStatement.Return(handler);
+                }
+                
+                caseStatement.Return(Null());
             }
-
             switchBlock.AddDefault().Return(Null());
         }
         else {
@@ -345,16 +363,56 @@ public class RoutingTableGenerator {
 
         var switchBlock = matchBlock.Switch(_context.Property("RequestData").Property("Method"));
 
-        foreach (var leafNode in newContext.Node.LeafNodes) {
-            var caseBlock = switchBlock.AddCase(QuoteString(leafNode.Method));
+        var caseEnumerable = GroupNodesByMethod(newContext);
 
-            ReturnHandlerStatement(newContext with {
-                Block = caseBlock
-            }, leafNode);
+        foreach (var methodGrouping in caseEnumerable) {
+            var caseBlock = switchBlock.AddCase(QuoteString(methodGrouping.Key));
+
+            var methodsList = methodGrouping.ToList();
+
+            IOutputComponent? returnStatement = null;
+
+            if (methodsList.Count > 1) {
+                var orderedEnumerable = OrderHandlersByExtraMatchAttribute(methodsList);
+
+                foreach (var node in orderedEnumerable) {
+                    var invokeStatement = InvokeHandlerStatement(newContext with {
+                        Block = caseBlock
+                    }, node);
+                    if (returnStatement == null) {
+                        returnStatement = invokeStatement;
+                    }
+                    else {
+                        returnStatement = NullCoalesce(
+                            invokeStatement,
+                            returnStatement
+                        );
+                    }
+                }
+            }
+            else {
+                returnStatement = InvokeHandlerStatement(newContext with {
+                    Block = caseBlock
+                }, methodsList.First());
+            }
+
+            caseBlock.Return(returnStatement);
         }
     }
 
-    private void ReturnHandlerStatement(RoutingTableContext routingTableContext, RouteTreeLeafNode<RequestHandlerModel> leafNode) {
+    private static IOrderedEnumerable<RouteTreeLeafNode<RequestHandlerModel>> OrderHandlersByExtraMatchAttribute(List<RouteTreeLeafNode<RequestHandlerModel>> methodsList) {
+        return methodsList.OrderBy(
+            leafNode => leafNode.Value.Filters.Count(a => a.ImplementedInterfaces.Any(
+                interfaceType => interfaceType.Equals(KnownRequestTypes.IExtendedRouteMatch))));
+    }
+
+    private static IEnumerable<IGrouping<string, RouteTreeLeafNode<RequestHandlerModel>>> GroupNodesByMethod(RoutingTableContext newContext) {
+        var caseEnumerable =
+            newContext.Node.LeafNodes.GroupBy(l => l.Method);
+        return caseEnumerable;
+    }
+
+    private IOutputComponent InvokeHandlerStatement(RoutingTableContext routingTableContext, RouteTreeLeafNode<RequestHandlerModel> leafNode) {
         var count = routingTableContext.ClassDefinition.Fields.Count;
         var field =
             routingTableContext.ClassDefinition.AddField(KnownRequestTypes.IRequestHandler, "_handler" + count);
@@ -364,7 +422,7 @@ public class RoutingTableGenerator {
         createMethod.Modifiers |= ComponentModifier.Private;
         createMethod.SetReturnType(KnownRequestTypes.IRequestHandler);
 
-        var assignStatement = NullCoalesceEqual(
+        IOutputComponent assignStatement = NullCoalesceEqual(
             field.Instance,
             _factoryField.Instance.Invoke("GetHandler",
                 new StaticPropertyStatement(leafNode.Value.GenerateInvokeType, "HandlerInfo") {
@@ -373,9 +431,25 @@ public class RoutingTableGenerator {
             )
         );
 
+        var parameters = new List<object>();
+        if (leafNode.Value.Filters.Any(
+                a => a.ImplementedInterfaces.Any(
+                    i => i.Equals(KnownRequestTypes.IExtendedRouteMatch)))) {
+            assignStatement = new WrapStatement(assignStatement, "(", ")");
+            
+            var parameter = createMethod.AddParameter(KnownRequestTypes.IRequestContext, "context");
+            
+            parameter.DefaultValue = Null();
+            
+            assignStatement = 
+                assignStatement.Invoke("ReturnMatch", parameter);
+            
+            parameters.Add(parameter);
+        }
+        
         createMethod.Return(assignStatement);
 
-        routingTableContext.Block.Return(Invoke("GetHandler" + count));
+        return Invoke("GetHandler" + count, parameters.ToArray());
     }
 
     private IReadOnlyList<IOutputComponent> CreateIfStatementLogic(RoutingTableContext routingTableContext, InstanceDefinition? indexValue = null) {

@@ -55,6 +55,12 @@ public static class KnownRequestTypes {
             TypeDefinitionEnum.InterfaceDefinition, 
             SerializersNamespace , 
             "IContentSerializerManager");
+        
+    public static readonly ITypeDefinition IExtendedRouteMatch =
+        TypeDefinition.Get(
+            TypeDefinitionEnum.InterfaceDefinition, 
+            InvokeNamespace , 
+            "IExtendedRouteMatch");
     
     public static readonly ITypeDefinition IInvokeParameterInfo = 
         TypeDefinition.Get(

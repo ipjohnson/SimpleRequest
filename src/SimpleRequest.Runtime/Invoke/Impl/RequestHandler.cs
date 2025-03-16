@@ -18,4 +18,14 @@ public class RequestHandler : IRequestHandler {
         
         return chain.Next();
     }
+
+    public bool CanHandle(IRequestContext context) {
+        foreach (var attribute in _requestHandlerInfo.Attributes) {
+            if (attribute is IExtendedRouteMatch match && !match.IsMatch(context)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
 }

@@ -21,6 +21,10 @@ public class RequestInvocationEngineTests {
             
             return Task.CompletedTask;
         }
+
+        public bool CanHandle(IRequestContext context) {
+            return true;
+        }
     }
     
     [ModuleTest]
