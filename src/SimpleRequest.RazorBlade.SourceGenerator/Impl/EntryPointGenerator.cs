@@ -79,7 +79,8 @@ public class EntryPointGenerator {
 
         var method = templateProvider.AddMethod("GetTemplates");
 
-        method.SetReturnType(TypeDefinition.IEnumerable(TypeDefinition.Get("", "TemplateInfo")));
+        method.SetReturnType(
+            TypeDefinition.IEnumerable(TypeDefinition.Get("SimpleRequest.Runtime.Templates", "TemplateInfo")));
 
         if (dataRight.Length > 0) {
             foreach (var model in dataRight) {
@@ -88,7 +89,7 @@ public class EntryPointGenerator {
                 var className = Path.GetFileNameWithoutExtension(model.FilePath);
 
                 var newStatement = New(
-                    TypeDefinition.Get("", "TemplateInfo"),
+                    TypeDefinition.Get("SimpleRequest.Runtime.Templates", "TemplateInfo"),
                     QuoteString(className),
                     engineField.Instance.Invoke("CreateInvocationDelegate", $"{namespaceString}.{className}.Create")
                 );

@@ -34,7 +34,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9111">
+        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9112">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
@@ -55,7 +55,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CSharpAuthor" Version="1.0.9">
+        <PackageReference Include="CSharpAuthor" Version="1.1.1001">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>

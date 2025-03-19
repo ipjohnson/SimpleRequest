@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9111" />
-        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9111">
+        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9112" />
+        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9112">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
