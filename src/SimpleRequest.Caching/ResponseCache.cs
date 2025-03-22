@@ -16,7 +16,7 @@ public enum ResponseCacheLocation {
 }
 
 [RequestFilter(Order = -5000)]
-[SingletonService(ServiceType = typeof(ResponseCache))]
+[SingletonService(As = typeof(ResponseCache))]
 public class ResponseCache(
     ICacheProfileProvider cacheProfileProvider,
     IMemoryCache memoryCache,
