@@ -6,6 +6,7 @@ using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimpleRequest.SourceGenerator.Impl.Models;
+using SimpleRequest.SourceGenerator.Impl.Utils;
 using SimpleRequest.SourceGenerator.Impl.Writers;
 using ISourceGenerator = DependencyModules.SourceGenerator.Impl.ISourceGenerator;
 
@@ -19,10 +20,11 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
         _entryPointAttributeType = entryPointAttributeType;
         _uniqueName = uniqueName;
     }
-
+    
     public void SetupGenerator(
         IncrementalGeneratorInitializationContext context,
         IncrementalValuesProvider<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> incrementalValueProvider) {
+        
         var methodSelector = new SyntaxSelector<ClassDeclarationSyntax>(
             KnownRequestTypes.RequestFilterAttribute
         );
@@ -36,7 +38,7 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
             requestModelProvider.Collect();
 
         context.RegisterSourceOutput(
-            incrementalValueProvider.Combine(collection),
+            incrementalValueProvider.Collect().Combine(collection),
             GenerateFilterRegistrations
         );
 
@@ -50,27 +52,36 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
     }
 
     private void GenerateFilterAttributes(SourceProductionContext context,
-        (AttributeFilterInfoModel Left, ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Right) data) {
+        (AttributeFilterInfoModel Left, ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Right) tuple) {
+        if (tuple.Right.Length == 0) {
+            return;
+        }
+
         var generator = new FilterAttributeClassGenerator();
 
-        generator.WriteClass(context, data.Left);
+        generator.WriteClass(context, tuple.Left);
     }
 
     private void GenerateFilterRegistrations(SourceProductionContext context,
-        ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<AttributeFilterInfoModel> Right) data) {
-        if (data.Left.Left.AttributeModels.Count == 0 ||
-            !data.Left.Left.AttributeModels.Any(
-                a => a.ImplementedInterfaces.Contains(KnownRequestTypes.ISimpleRequestEntryAttribute))) {
+        (ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Left, ImmutableArray<AttributeFilterInfoModel> Right) valueTuple) {
+        if (valueTuple.Left.Length == 0) {
             return;
         }
 
-        WriteAttributeRegistrations(context, data);
+        FileLogger.Wrap("RequestFilterRegistration",
+            valueTuple.Left.First().Right, logger => {
+                WriteAttributeRegistrations(context, valueTuple, logger);
+            });
     }
 
-    private void WriteAttributeRegistrations(SourceProductionContext context, ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<AttributeFilterInfoModel> Right) data) {
-        if (data.Right.Length == 0) {
+    private void WriteAttributeRegistrations(SourceProductionContext context,
+        (ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Left, ImmutableArray<AttributeFilterInfoModel> Right) data, FileLogger logger) {
+        if (data.Left.Length == 0) {
             return;
         }
+        
+        var entryPoint = data.Left.GetModel();
+        var configuration = data.Left.First().Right;
         
         var serviceModels =
             data.Right.Select(
@@ -83,9 +94,11 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
                     }, RegistrationFeature.None));
         
         var writeString =
-            new DependencyFileWriter().Write(data.Left.Left, data.Left.Right, serviceModels, _uniqueName);
+            new DependencyFileWriter(logger).Write(entryPoint,
+                configuration, serviceModels, _uniqueName);
 
-        context.AddSource($"{data.Left.Left.EntryPointType.Name}.{_uniqueName}.g.cs", writeString);
+        context.AddSource(
+            $"{entryPoint.EntryPointType.Namespace}.{entryPoint.EntryPointType.Name}.FilterReg.{_uniqueName}.g.cs", writeString);
     }
 
     private IEqualityComparer<AttributeFilterInfoModel> GetModelComparer() {

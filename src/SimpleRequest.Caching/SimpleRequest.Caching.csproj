@@ -15,7 +15,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1"/>
 
-        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9118">
+        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9119">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>

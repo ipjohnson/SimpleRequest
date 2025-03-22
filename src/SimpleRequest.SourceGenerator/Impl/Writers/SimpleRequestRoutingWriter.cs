@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl;
 using DependencyModules.SourceGenerator.Impl.Models;
+using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl.Models;
 using SimpleRequest.SourceGenerator.Impl.Routing;
@@ -10,7 +11,6 @@ namespace SimpleRequest.SourceGenerator.Impl.Writers;
 
 public class SimpleRequestRoutingWriter {
     private readonly ITypeDefinition _entryPointAttributeType;
-    private readonly DependencyFileWriter _dependencyFileWriter;
     private readonly RoutingClassGenerator _routingClassGenerator;
     private readonly string _routingClassName;
 
@@ -18,7 +18,7 @@ public class SimpleRequestRoutingWriter {
         _entryPointAttributeType = entryPointAttributeType;
         _routingClassName = routingClassName;
         _routingClassGenerator = new RoutingClassGenerator(routingClassName);
-        _dependencyFileWriter = new DependencyFileWriter();
+  
     }
 
     public void WriteRouteFile(
@@ -59,11 +59,13 @@ public class SimpleRequestRoutingWriter {
         ImmutableArray<RequestHandlerModel> requestModels) {
         var serviceModels = GenerateServiceModels(requestModels);
 
+        using var fileLogger = new FileLogger(dependencyModuleConfiguration, "SimpleRequestModule");
+        var dependencyFileWriter = new DependencyFileWriter(fileLogger);
         var output =
-            _dependencyFileWriter.Write(entryPointModel, dependencyModuleConfiguration, serviceModels, "SimpleRequest");
+            dependencyFileWriter.Write(entryPointModel, dependencyModuleConfiguration, serviceModels, "SimpleRequest");
 
         context.AddSource(
-            $"{entryPointModel.EntryPointType.Name}.SimpleRequestDeps.g.cs",
+            $"{entryPointModel.EntryPointType.Namespace}.{entryPointModel.EntryPointType.GetShortName()}.SimpleRequestDeps.g.cs",
             output);
     }
 

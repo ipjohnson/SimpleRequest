@@ -7,8 +7,10 @@ using static CSharpAuthor.SyntaxHelpers;
 namespace SimpleRequest.SourceGenerator.Impl.Writers;
 
 public class FilterAttributeClassGenerator {
-    public void WriteClass(SourceProductionContext context, 
+    
+    public void WriteClass(SourceProductionContext context,
         AttributeFilterInfoModel dataLeft) {
+
         var csharpFile = new CSharpFileDefinition(dataLeft.FilterType.Namespace);
 
         GenerateFilterAttributeClass(csharpFile, dataLeft);
