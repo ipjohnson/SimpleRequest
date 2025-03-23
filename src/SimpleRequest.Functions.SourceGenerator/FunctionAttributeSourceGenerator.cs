@@ -29,7 +29,7 @@ public class FunctionAttributeSourceGenerator : BaseRequestAttributeSourceGenera
         var configuration = valueTuple.Left.First().Right;
         var entryPoint = valueTuple.Left.GetModel();
 
-        _routingWriter.WriteRouteFile(context, entryPoint,configuration, valueTuple.Right);
+        _routingWriter.WriteRouteFile(context, entryPoint, configuration, valueTuple.Right);
     }
     
     protected override void GenerateRequestFile(SourceProductionContext context,

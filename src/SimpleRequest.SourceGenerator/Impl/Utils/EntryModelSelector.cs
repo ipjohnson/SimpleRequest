@@ -11,19 +11,29 @@ public static class EntryModelSelector {
             if (model.Left.AttributeModels.Any(
                     a => a.ImplementedInterfaces.Any(
                         i => i.Equals(KnownRequestTypes.ISimpleRequestEntryAttribute)))) {
-                return model.Left;
+                return AdjustModuleNamespace(model);
             }
         }
 
         foreach (var model in entryPoints) {
             if (model.Left.ModuleFeatures.HasFlag(ModuleEntryPointFeatures.AutoGenerateModule)) {
-                var modelValue = model.Left;
-                return modelValue with {
-                    EntryPointType = TypeDefinition.Get(model.Right.RootNamespace, modelValue.EntryPointType.Name)
-                };
+                return AdjustModuleNamespace(model);
             }
         }
         
         return entryPoints.First().Left;
+    }
+
+    private static ModuleEntryPointModel AdjustModuleNamespace((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) model) {
+        var entryPoint = model.Left;
+                
+        if (string.IsNullOrEmpty(entryPoint.EntryPointType.Namespace)) {
+            return entryPoint with {
+                EntryPointType = TypeDefinition.Get(
+                    model.Right.RootNamespace, entryPoint.EntryPointType.Name)
+            };
+        }
+                
+        return entryPoint;
     }
 }
