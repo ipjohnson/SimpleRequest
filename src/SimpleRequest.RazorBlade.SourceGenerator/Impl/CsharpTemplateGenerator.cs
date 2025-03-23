@@ -4,6 +4,7 @@ using DependencyModules.SourceGenerator.Impl.Models;
 using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.RazorBlade.SourceGenerator.Models;
+using SimpleRequest.RazorBlade.SourceGenerator.Utils;
 using static CSharpAuthor.SyntaxHelpers;
 
 namespace SimpleRequest.RazorBlade.SourceGenerator.Impl;
@@ -16,7 +17,7 @@ public class CsharpTemplateGenerator {
             return;
         }
 
-        var entryPoint = GetModel(data.Right);
+        var entryPoint = EntryPointSelector.GetModel(data.Right);
         
         var namespaceString = NamespaceUtility.GetTemplateNamespace(entryPoint, data.Left.FilePath);
         var className = Path.GetFileNameWithoutExtension(data.Left.FilePath);
@@ -88,32 +89,7 @@ public class CsharpTemplateGenerator {
         method.Return(New(classDef, model));
     }
     
-    public static ModuleEntryPointModel GetModel(IReadOnlyList<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> entryPoints) {
-        foreach (var model in entryPoints) {
-            if (model.Left.AttributeModels.Any(
-                    a => a.ImplementedInterfaces.Any(
-                        i => i.Equals(ISimpleRequestEntryAttribute)))) {
-                return model.Left;
-            }
-        }
-
-        foreach (var model in entryPoints) {
-            if (model.Left.ModuleFeatures.HasFlag(ModuleEntryPointFeatures.AutoGenerateModule)) {
-                var modelValue = model.Left;
-                return modelValue with {
-                    EntryPointType = TypeDefinition.Get(model.Right.RootNamespace, modelValue.EntryPointType.Name)
-                };
-            }
-        }
-        
-        return entryPoints.First().Left;
-    }
-    public static readonly ITypeDefinition ISimpleRequestEntryAttribute =
-        TypeDefinition.Get(
-            TypeDefinitionEnum.InterfaceDefinition, 
-            "SimpleRequest.Runtime.Attributes", 
-            "ISimpleRequestEntryAttribute");
-    
+   
     static readonly ITypeDefinition ITemplateContextAware = 
         TypeDefinition.Get(
             TypeDefinitionEnum.InterfaceDefinition, 

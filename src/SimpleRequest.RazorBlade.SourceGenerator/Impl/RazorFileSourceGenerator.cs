@@ -27,7 +27,7 @@ public class RazorFileSourceGenerator : ISourceGenerator {
         );
         
         context.RegisterSourceOutput(
-            incrementalValueProvider.Combine(combinedProvider.Collect()),
+            incrementalValueProvider.Collect().Combine(combinedProvider.Collect()),
             entryPoint.GenerateTemplateEntry
         );
     }

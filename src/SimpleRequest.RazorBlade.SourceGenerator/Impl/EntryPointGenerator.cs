@@ -2,8 +2,10 @@ using System.Collections.Immutable;
 using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl;
 using DependencyModules.SourceGenerator.Impl.Models;
+using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.RazorBlade.SourceGenerator.Models;
+using SimpleRequest.RazorBlade.SourceGenerator.Utils;
 using static CSharpAuthor.SyntaxHelpers;
 
 namespace SimpleRequest.RazorBlade.SourceGenerator.Impl;
@@ -11,22 +13,25 @@ namespace SimpleRequest.RazorBlade.SourceGenerator.Impl;
 public class EntryPointGenerator {
 
     public void GenerateTemplateEntry(SourceProductionContext context,
-        ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<CshtmlFileModel> Right) data) {
+        (ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Left, ImmutableArray<CshtmlFileModel> Right) valueTuple) {
         context.CancellationToken.ThrowIfCancellationRequested();
-        
-        if (!data.Left.Left.AttributeModels.Any(
-                a => a.ImplementedInterfaces.Any(i => i.Name == "ISimpleRequestEntryAttribute"))) {
+
+        if (valueTuple.Left.Length == 0 || valueTuple.Right.Length == 0) {
             return;
         }
+        
+        var entryPoint = EntryPointSelector.GetModel(valueTuple.Left);
 
-        var csharpFile = GenerateCSharpFile(data.Left.Left, data.Right, context.CancellationToken);
+        var csharpFile = GenerateCSharpFile(entryPoint, valueTuple.Right, context.CancellationToken);
 
         var output = new OutputContext();
 
         csharpFile.WriteOutput(output);
 
+        var configuration = valueTuple.Left.First().Right;
+        
         context.AddSource(
-            $"{data.Left.Left.EntryPointType.Namespace}.{data.Left.Left.EntryPointType.Name}.TemplateProvider.g.cs",
+            entryPoint.EntryPointType.GetFileNameHint(configuration.RootNamespace, "RazorTemplates"),
             output.Output());
     }
 

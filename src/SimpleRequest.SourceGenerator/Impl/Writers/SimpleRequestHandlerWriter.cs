@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl.Models;
+using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl.Models;
 using SimpleRequest.SourceGenerator.Impl.Utils;
@@ -17,17 +18,21 @@ public class SimpleRequestHandlerWriter {
         SourceProductionContext context,
         RequestHandlerModel requestModel,
         ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> entryPointModels) {
-
+        if (entryPointModels.Length == 0) {
+            return;
+        }
+        
         var outputFile = GenerateCsharpFile(requestModel);
 
         GenerateHandlerClass(outputFile, requestModel);
 
-        WriteOutputFile(context, requestModel, outputFile);
+        WriteOutputFile(context, requestModel, entryPointModels.First().Right, outputFile);
     }
 
     private void WriteOutputFile(
         SourceProductionContext context,
         RequestHandlerModel requestModel,
+        DependencyModuleConfigurationModel configurationModel,
         CSharpFileDefinition outputFile) {
 
         var outputContext = new OutputContext();
@@ -35,7 +40,9 @@ public class SimpleRequestHandlerWriter {
         outputFile.WriteOutput(outputContext);
 
         context.AddSource(
-            $"{requestModel.GenerateInvokeType.Name}.g.cs", outputContext.Output());
+            requestModel.HandlerType.GetFileNameHint(
+                configurationModel.RootNamespace, requestModel.HandlerMethod)
+            , outputContext.Output());
     }
 
     private void GenerateHandlerClass(CSharpFileDefinition outputFile, RequestHandlerModel requestModel) {
