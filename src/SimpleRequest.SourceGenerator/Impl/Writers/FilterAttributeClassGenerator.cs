@@ -1,5 +1,7 @@
 using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl;
+using DependencyModules.SourceGenerator.Impl.Models;
+using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl.Models;
 using static CSharpAuthor.SyntaxHelpers;
@@ -9,7 +11,8 @@ namespace SimpleRequest.SourceGenerator.Impl.Writers;
 public class FilterAttributeClassGenerator {
     
     public void WriteClass(SourceProductionContext context,
-        AttributeFilterInfoModel dataLeft) {
+        AttributeFilterInfoModel dataLeft,
+        DependencyModuleConfigurationModel configurationModel) {
 
         var csharpFile = new CSharpFileDefinition(dataLeft.FilterType.Namespace);
 
@@ -31,7 +34,8 @@ public class FilterAttributeClassGenerator {
             uniqueId += c;
         }
         
-        context.AddSource($"{dataLeft.FilterType.Name}_{uniqueId}.Generated.cs", outputString);
+        context.AddSource(
+            dataLeft.FilterType.GetFileNameHint(configurationModel.RootNamespace, "Filter"), outputString);
     }
 
     private void GenerateFilterAttributeClass(CSharpFileDefinition csharpFile, AttributeFilterInfoModel filterInfo) {

@@ -59,7 +59,7 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
 
         var generator = new FilterAttributeClassGenerator();
 
-        generator.WriteClass(context, tuple.Left);
+        generator.WriteClass(context, tuple.Left, tuple.Right.First().Right);
     }
 
     private void GenerateFilterRegistrations(SourceProductionContext context,
@@ -98,7 +98,7 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
                 configuration, serviceModels, _uniqueName);
 
         context.AddSource(
-            $"{entryPoint.EntryPointType.Namespace}.{entryPoint.EntryPointType.Name}.FilterReg.{_uniqueName}.g.cs", writeString);
+            entryPoint.EntryPointType.GetFileNameHint(configuration.RootNamespace, "FilterReg"), writeString);
     }
 
     private IEqualityComparer<AttributeFilterInfoModel> GetModelComparer() {

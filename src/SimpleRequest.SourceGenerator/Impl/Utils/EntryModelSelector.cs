@@ -1,9 +1,11 @@
+using System.Collections.Immutable;
 using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl.Models;
 
 namespace SimpleRequest.SourceGenerator.Impl.Utils;
 
 public static class EntryModelSelector {
+
     public static ModuleEntryPointModel GetModel(this IReadOnlyList<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> entryPoints) {
         foreach (var model in entryPoints) {
             if (model.Left.AttributeModels.Any(

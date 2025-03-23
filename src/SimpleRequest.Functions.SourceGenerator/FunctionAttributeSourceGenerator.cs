@@ -4,6 +4,7 @@ using DependencyModules.SourceGenerator.Impl.Models;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl;
 using SimpleRequest.SourceGenerator.Impl.Models;
+using SimpleRequest.SourceGenerator.Impl.Utils;
 using SimpleRequest.SourceGenerator.Impl.Writers;
 
 namespace SimpleRequest.Functions.SourceGenerator;
@@ -20,9 +21,15 @@ public class FunctionAttributeSourceGenerator : BaseRequestAttributeSourceGenera
     }
 
     protected override void GenerateRouteFile(SourceProductionContext context, 
-        ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<RequestHandlerModel> Right) modelData) {
-        
-        _routingWriter.WriteRouteFile(context, modelData.Left.Left, modelData.Left.Right, modelData.Right);
+        (ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Left, ImmutableArray<RequestHandlerModel> Right) valueTuple) {
+        if (valueTuple.Left.Length == 0) {
+            return;
+        }
+
+        var configuration = valueTuple.Left.First().Right;
+        var entryPoint = valueTuple.Left.GetModel();
+
+        _routingWriter.WriteRouteFile(context, entryPoint,configuration, valueTuple.Right);
     }
     
     protected override void GenerateRequestFile(SourceProductionContext context,

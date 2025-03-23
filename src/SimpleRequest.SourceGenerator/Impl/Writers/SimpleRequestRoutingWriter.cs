@@ -26,10 +26,8 @@ public class SimpleRequestRoutingWriter {
         ModuleEntryPointModel entryPointModel,
         DependencyModuleConfigurationModel dependencyModuleConfiguration,
         ImmutableArray<RequestHandlerModel> requestModels) {
-
-        if (requestModels.Length == 0 ||
-            !entryPointModel.AttributeModels.Any(
-                a => a.ImplementedInterfaces.Contains(KnownRequestTypes.ISimpleRequestEntryAttribute))) {
+        
+        if (requestModels.Length == 0) {
             return;
         }
 
@@ -41,7 +39,7 @@ public class SimpleRequestRoutingWriter {
 
         GenerateCsharpClass(context, entryPointModel, requestModels, csharpFile);
 
-        WriteOutput(context, entryPointModel, csharpFile);
+        WriteOutput(context, dependencyModuleConfiguration, entryPointModel, csharpFile);
     }
 
     private void GenerateCsharpClass(
@@ -65,8 +63,10 @@ public class SimpleRequestRoutingWriter {
             dependencyFileWriter.Write(entryPointModel, dependencyModuleConfiguration, serviceModels, "SimpleRequest");
 
         context.AddSource(
-            $"{entryPointModel.EntryPointType.Namespace}.{entryPointModel.EntryPointType.GetShortName()}.SimpleRequestDeps.g.cs",
-            output);
+            entryPointModel.EntryPointType.GetFileNameHint(
+                dependencyModuleConfiguration.RootNamespace,
+                "RequestDeps"
+                ),           output);
     }
 
     private List<ServiceModel> GenerateServiceModels(ImmutableArray<RequestHandlerModel> requestModels) {
@@ -100,7 +100,10 @@ public class SimpleRequestRoutingWriter {
         return serviceModels;
     }
 
-    private void WriteOutput(SourceProductionContext context, ModuleEntryPointModel entryPointModel, CSharpFileDefinition csharpFile) {
+    private void WriteOutput(SourceProductionContext context,
+        DependencyModuleConfigurationModel dependencyModuleConfiguration,
+        ModuleEntryPointModel entryPointModel,
+        CSharpFileDefinition csharpFile) {
         var outputContext = new OutputContext(
             new OutputContextOptions {
                 TypeOutputMode = TypeOutputMode.Global
@@ -111,7 +114,9 @@ public class SimpleRequestRoutingWriter {
 
         var output = outputContext.Output();
         context.AddSource(
-            $"{entryPointModel.EntryPointType.Name}.SimpleRequestRouting.g.cs",
+            entryPointModel.EntryPointType.GetFileNameHint(
+                dependencyModuleConfiguration.RootNamespace,
+                "Routing"),
             output);
     }
 

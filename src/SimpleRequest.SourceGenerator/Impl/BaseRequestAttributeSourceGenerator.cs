@@ -14,7 +14,7 @@ public abstract class BaseRequestAttributeSourceGenerator : ISourceGenerator {
     protected abstract IEnumerable<ITypeDefinition> AttributeTypes();
 
     protected abstract void GenerateRouteFile(SourceProductionContext context,
-        ((ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right) Left, ImmutableArray<RequestHandlerModel> Right) modelData);
+        (ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Left, ImmutableArray<RequestHandlerModel> Right) valueTuple);
 
 
     protected abstract void GenerateRequestFile(SourceProductionContext context, 
@@ -36,13 +36,14 @@ public abstract class BaseRequestAttributeSourceGenerator : ISourceGenerator {
         var collection =
             requestModelProvider.Collect();
 
-        context.RegisterSourceOutput(
-            incrementalValueProvider.Combine(collection),
-            GenerateRouteFile
-        );
 
         var modelEntryCollection = 
             incrementalValueProvider.Collect();
+        
+        context.RegisterSourceOutput(
+            modelEntryCollection.Combine(collection),
+            GenerateRouteFile
+        );
 
         context.RegisterSourceOutput(
             requestModelProvider.Combine(modelEntryCollection),

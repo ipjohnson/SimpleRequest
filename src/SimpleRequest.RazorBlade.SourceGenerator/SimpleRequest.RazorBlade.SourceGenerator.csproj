@@ -25,7 +25,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9119">
+        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9120">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
@@ -51,4 +51,5 @@
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
 </Project>
