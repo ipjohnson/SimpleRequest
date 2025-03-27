@@ -76,8 +76,11 @@ public class HttpResponseData : IResponseData {
 
     public bool ResponseStarted {
         get => _response.HasStarted;
+        set => Noop();
     }
 
+    private void Noop() { }
+    
     public bool IsBinary {
         get;
         set;

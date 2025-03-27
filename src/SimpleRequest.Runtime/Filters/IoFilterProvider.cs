@@ -1,4 +1,5 @@
 using DependencyModules.Runtime.Attributes;
+using SimpleRequest.Runtime.Compression;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Logging;
 using SimpleRequest.Runtime.Serializers;
@@ -14,10 +15,12 @@ public class IoFilterProvider : IIoFilterProvider {
     private readonly RequestFilterInfo _ioFilter;
     
     public IoFilterProvider(
+        IRequestCompressionService requestCompressionService,
         IRequestContextSerializer requestContextSerializer,
         IRequestLoggingDataProviderService requestLoggingDataProviderService,
         ILoggingContextAccessor? loggingContextAccessor = null) {
         var filter = new IoRequestFilter(
+            requestCompressionService,
             requestContextSerializer, 
             requestLoggingDataProviderService,
             loggingContextAccessor);

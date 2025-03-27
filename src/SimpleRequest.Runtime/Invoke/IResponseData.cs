@@ -19,7 +19,7 @@ public interface IResponseData {
 
     Exception? ExceptionValue { get; set; }
 
-    bool ResponseStarted { get; }
+    bool ResponseStarted { get; set; }
 
     bool IsBinary { get; set; }
 

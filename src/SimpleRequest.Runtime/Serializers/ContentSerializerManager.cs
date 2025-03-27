@@ -4,7 +4,7 @@ using SimpleRequest.Runtime.Invoke;
 namespace SimpleRequest.Runtime.Serializers;
 
 public interface IContentSerializerManager {
-    IContentSerializer? GetSerializer(string contentType);
+    IContentSerializer? GetSerializer(string? contentType);
     
     IReadOnlyList<IContentSerializer> Serializers { get; }
 }
@@ -29,25 +29,25 @@ public static class ContentSerializerManagerExtensions {
 [SingletonService]
 public class ContentSerializerManager : IContentSerializerManager {
     private readonly IReadOnlyList<IContentSerializer> _serializers;
+    private readonly IContentSerializer? _defaultSerializer;
 
     public ContentSerializerManager(IEnumerable<IContentSerializer> serializers) {
         _serializers = serializers.ToList();
+        _defaultSerializer = _serializers.FirstOrDefault(x => x.IsDefault);
     }
 
-    public IContentSerializer? GetSerializer(string contentType) {
-        IContentSerializer? defaultSerializer = null;
-
+    public IContentSerializer? GetSerializer(string? contentType) {
+        if (contentType == null) {
+            return _defaultSerializer;
+        }
+        
         foreach (var serializer in _serializers) {
             if (serializer.CanSerialize(contentType)) {
                 return serializer;
             }
-
-            if (serializer.IsDefault && defaultSerializer == null) {
-                defaultSerializer = serializer;
-            }
         }
 
-        return defaultSerializer;
+        return _defaultSerializer;
     }
 
     public IReadOnlyList<IContentSerializer> Serializers => _serializers;

@@ -1,3 +1,4 @@
+using SimpleRequest.Runtime.Compression;
 using SimpleRequest.Runtime.Diagnostics;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Logging;
@@ -5,7 +6,9 @@ using SimpleRequest.Runtime.Serializers;
 
 namespace SimpleRequest.Runtime.Filters;
 
-public class IoRequestFilter(IRequestContextSerializer requestContextSerializer,
+public class IoRequestFilter(
+    IRequestCompressionService requestCompressionService,
+    IRequestContextSerializer requestContextSerializer,
     IRequestLoggingDataProviderService requestLoggingDataProviderService,
     ILoggingContextAccessor? loggingContextAccessor = null)
     : IRequestFilter {
@@ -13,7 +16,9 @@ public class IoRequestFilter(IRequestContextSerializer requestContextSerializer,
     public async Task Invoke(IRequestChain requestChain) {
         var context = requestChain.Context;
         var deserializeStartTime = MachineTimestamp.Now;
-
+        var requestStream = 
+            requestCompressionService.DecompressRequest(context);
+        
         try {
             await requestContextSerializer.DeserializeToParameters(requestChain.Context);
         }
@@ -33,7 +38,9 @@ public class IoRequestFilter(IRequestContextSerializer requestContextSerializer,
         }
         
         var responseStartTime = MachineTimestamp.Now;
-
+        
+        var responseStream = requestCompressionService.CompressResponse(context);
+        
         try {
             await requestContextSerializer.SerializeToResponse(requestChain.Context);
         }
@@ -43,6 +50,14 @@ public class IoRequestFilter(IRequestContextSerializer requestContextSerializer,
         finally {
             context.MetricLogger.Record(RequestMetrics.ResponseDuration, responseStartTime);
             loggingScope?.Dispose();
+
+            if (requestStream != null) {
+                await requestStream.DisposeAsync();
+            }
+            
+            if (responseStream != null) {
+                await responseStream.DisposeAsync();
+            }
         }
     }
 

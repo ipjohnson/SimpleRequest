@@ -114,7 +114,10 @@ public class ResponseData : IResponseData {
         set;
     }
 
-    public bool ResponseStarted => (Body?.Position ?? 1) > 0;
+    public bool ResponseStarted {
+        get;
+        set;
+    }
 
     public bool IsBinary {
         get;

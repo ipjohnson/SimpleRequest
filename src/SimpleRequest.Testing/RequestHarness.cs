@@ -1,6 +1,8 @@
+using System.IO.Compression;
 using DependencyModules.xUnit.Impl;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
+using SimpleRequest.Runtime.Compression;
 using SimpleRequest.Runtime.Cookies;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Invoke.Impl;
@@ -11,10 +13,12 @@ using SimpleRequest.Testing.Interfaces;
 
 namespace SimpleRequest.Testing;
 
-public class RequestHarness(IServiceProvider serviceProvider,
+public class RequestHarness(
+    IServiceProvider serviceProvider,
     IRequestInvocationEngine requestInvocationEngine,
     IMemoryStreamPool memoryStreamPool,
     DataServices requestServices,
+    IStreamCompressionService streamCompressionService,
     IEnumerable<IRequestDataEnrichment> enrichRequestData,
     IEnumerable<IResponseDataValidator> validateResponseData) {
     private readonly IReadOnlyList<IRequestDataEnrichment> _enrichRequestData = enrichRequestData.ToList();
@@ -29,16 +33,31 @@ public class RequestHarness(IServiceProvider serviceProvider,
                 headerDictionary[tuple.Item1] = tuple.Item2;
             }
         }
+        IAsyncDisposable? compressedRequestStream = null;
         
         using var requestStreamReservation = memoryStreamPool.Get();
 
         requestStreamReservation.Item.SetLength(0);
         
+        if (!headerDictionary.TryGetValue("Content-Type", out var contentType)) {
+            contentType = "application/json";
+        }
+        
         if (payload != null) {
-            var serializer = requestServices.ContentSerializerManager.GetSerializer("application/json");
+            var serializer = requestServices.ContentSerializerManager.GetSerializer(contentType);
 
             if (serializer == null) {
                 throw new Exception("Could not find content serializer for " + method);
+            }
+
+            var body = requestStreamReservation.Item as Stream;
+            if (headerDictionary.TryGetValue("Content-Encoding", out var encoding)) {
+                var stream = streamCompressionService.GetStream(body, encoding.ToString(), CompressionMode.Compress);
+                
+                if (stream != null) {
+                    body = stream;
+                    compressedRequestStream = body as IAsyncDisposable;
+                }
             }
             
             await serializer.Serialize(requestStreamReservation.Item, payload);
@@ -52,13 +71,19 @@ public class RequestHarness(IServiceProvider serviceProvider,
             newPath,
             method,
             requestStreamReservation.Item,
-            "application/json",
+            contentType.ToString(),
             new PathTokenCollection(),
             headerDictionary,
             queryParams,
             new RequestCookies());
         
-        return await Invoke(requestData);
+        var response = await Invoke(requestData);
+
+        if (compressedRequestStream != null) {
+            await compressedRequestStream.DisposeAsync();
+        }
+        
+        return response;
     }
 
     private (string newPath, IQueryParametersCollection queryParams) ParsePath(string path) {
@@ -108,7 +133,11 @@ public class RequestHarness(IServiceProvider serviceProvider,
         var response = context.ResponseData.Clone();
         response.Body = memoryStream;
         
-        var responseModel = new ResponseModel(response, requestServices.ContentSerializerManager);
+        var responseModel = new ResponseModel(
+            streamCompressionService, 
+            serviceProvider,
+            response,
+            requestServices.ContentSerializerManager);
         
         await ValidateResponse(scope.ServiceProvider, testCaseInfo, responseModel);
         

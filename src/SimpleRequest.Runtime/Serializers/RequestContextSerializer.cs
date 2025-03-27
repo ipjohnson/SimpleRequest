@@ -13,14 +13,17 @@ public interface IRequestContextSerializer {
 
 [SingletonService]
 public class RequestContextSerializer : IRequestContextSerializer {
+    private readonly RequestResponseConfiguration _responseConfiguration;
     private readonly IContentSerializerManager _contentSerializerManager;
     private readonly IStringBuilderPool _stringBuilderPool;
     private readonly IRequestErrorHandler _requestErrorHandler;
 
     public RequestContextSerializer(
+        RequestResponseConfiguration responseConfiguration,
         IContentSerializerManager contentSerializerManager,
         IStringBuilderPool stringBuilderPool,
         IRequestErrorHandler requestErrorHandler) {
+        _responseConfiguration = responseConfiguration;
         _contentSerializerManager = contentSerializerManager;
         _stringBuilderPool = stringBuilderPool;
         _requestErrorHandler = requestErrorHandler;
@@ -41,6 +44,12 @@ public class RequestContextSerializer : IRequestContextSerializer {
             await _requestErrorHandler.HandleError(context);
         }
 
+        if (context.ResponseData.ResponseStarted) {
+            return;
+        }
+
+        context.ResponseData.ResponseStarted = true;
+        
         if (!string.IsNullOrEmpty(context.ResponseData.TemplateName)) {
             await WriteTemplateOutput(context);
         }
@@ -53,21 +62,23 @@ public class RequestContextSerializer : IRequestContextSerializer {
     }
 
     private async Task WriteContentResult(IRequestContext context, IContentResult contentResult) {
-        context.ResponseData.Status = contentResult.StatusCode ?? 
+        context.ResponseData.Status = contentResult.StatusCode ??
                                       context.RequestHandlerInfo?.SuccessStatus ??
                                       200;
+        
         context.ResponseData.ContentType = contentResult.ContentType;
         context.ResponseData.IsBinary = contentResult.IsBinary;
-        
+
         if (context.ResponseData.Body != null) {
             await context.ResponseData.Body.WriteAsync(contentResult.Content);
         }
     }
 
     private async Task OutputSerializedData(IRequestContext context) {
-        var serializer = _contentSerializerManager.GetSerializer(
-            context.ResponseData.ContentType ??
-            context.RequestData.ContentType);
+        var contentType = context.ResponseData.ContentType ??
+                          GetContentTypeFromResponse(context);
+        
+        var serializer = _contentSerializerManager.GetSerializer(contentType);
 
         if (serializer != null && context.ResponseData.Body != null) {
             context.ResponseData.ContentType = serializer.ContentType;
@@ -79,6 +90,19 @@ public class RequestContextSerializer : IRequestContextSerializer {
         else {
             // log error
         }
+    }
+
+    private string? GetContentTypeFromResponse(IRequestContext context) {
+        if (!string.IsNullOrEmpty(context.RequestData.ContentType)) {
+            return context.RequestData.ContentType;
+        }
+        
+        if (context.ResponseData.ResponseValue is string ||
+            context.ResponseData.ResponseValue is IAsyncEnumerable<string>) {
+            return _responseConfiguration.DefaultStingContentType;
+        }
+
+        return null;
     }
 
     private Task WriteTemplateOutput(IRequestContext context) {
