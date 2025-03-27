@@ -55,11 +55,6 @@ public class ResponseModel(
                 streamCompressionService.GetStream(body, value.ToString(), CompressionMode.Decompress) ?? body;
         }
 
-        if (typeof(T) == typeof(string) && 
-            serviceProvider.GetRequiredService<RequestResponseConfiguration>().DefaultStingContentType == "text/plain") {
-            return (T)(object)await new StreamReader(body).ReadToEndAsync();
-        }
-        
-        return await serializer.Deserialize<T>(body) ?? throw new Exception($"Response could not be deserialized");
+        return (await serializer.Deserialize<T>(body))!;
     }
 }

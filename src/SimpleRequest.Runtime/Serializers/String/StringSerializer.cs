@@ -37,12 +37,30 @@ public class StringSerializer : IContentSerializer {
         return value?.ToString() ?? string.Empty;
     }
 
-    public ValueTask<object?> Deserialize(Stream stream, Type type, CancellationToken cancellationToken = default) {
-        return new ValueTask<object?>();
+    public async ValueTask<object?> Deserialize(Stream stream, Type type, CancellationToken cancellationToken = default) {
+        var stringValue = 
+            await new StreamReader(
+                stream,
+                Encoding.UTF8, 
+                true, 
+                1024, true).ReadToEndAsync(cancellationToken);
+        
+        return new ValueTask<object?>(stringValue);
     }
 
-    public ValueTask<T?> Deserialize<T>(Stream stream, CancellationToken cancellationToken = default) {
-        return new ValueTask<T?>();
+    public async ValueTask<T?> Deserialize<T>(Stream stream, CancellationToken cancellationToken = default) {
+        if (typeof(T) == typeof(string)) {
+            var stringValue = 
+                await new StreamReader(
+                    stream,
+                    Encoding.UTF8, 
+                    true, 
+                    1024, true).ReadToEndAsync(cancellationToken);
+        
+            return (T)(object)stringValue;
+        }
+        
+        return default;
     }
 
     public object? Deserialize(string stringValue, Type type) {
@@ -50,6 +68,10 @@ public class StringSerializer : IContentSerializer {
     }
 
     public T? Deserialize<T>(string stringValue) {
+        if (typeof(T) == typeof(string)) {
+            return (T)(object)stringValue;
+        }
+        
         return default;
     }
 
