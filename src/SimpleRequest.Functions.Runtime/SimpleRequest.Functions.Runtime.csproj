@@ -16,8 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9121" />
-        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9121">
+        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9124" />
+        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9124">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>

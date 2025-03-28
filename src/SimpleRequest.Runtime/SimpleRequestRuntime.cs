@@ -10,7 +10,7 @@ namespace SimpleRequest.Runtime;
 
 public partial class SimpleRequestRuntimeAttribute : ISimpleRequestEntryAttribute;
 
-[DependencyModule]
+[DependencyModule(GenerateFactories = true)]
 public partial class SimpleRequestRuntime :
     IDependencyModuleFeature<ILoggingBuilderConfiguration>,
     IDependencyModuleFeature<ILoggingConfigurationImplementation>,

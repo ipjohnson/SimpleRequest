@@ -30,6 +30,7 @@ public abstract class BaseRequestModelGenerator {
             nameModel,
             controllerType,
             methodName,
+            ServiceModelUtility.GetConstructorInfo(context, cancellationToken),
             GetInvokeHandlerType(context, methodDeclaration, cancellationToken),
             GetParameters(context, methodDeclaration, nameModel, cancellationToken),
             response,

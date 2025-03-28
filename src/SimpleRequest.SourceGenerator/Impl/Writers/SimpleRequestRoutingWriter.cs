@@ -70,27 +70,28 @@ public class SimpleRequestRoutingWriter {
     }
 
     private List<ServiceModel> GenerateServiceModels(ImmutableArray<RequestHandlerModel> requestModels) {
-        var handlerTypes = new List<ITypeDefinition>();
-
+        var handlerTypes = new Dictionary<ITypeDefinition, ConstructorInfoModel>();
         foreach (var requestModel in requestModels) {
-            if (!handlerTypes.Contains(requestModel.HandlerType)) {
-                handlerTypes.Add(requestModel.HandlerType);
+            if (!handlerTypes.ContainsKey(requestModel.HandlerType)) {
+                handlerTypes[ requestModel.HandlerType] = requestModel.ConstructorInfo;
             }
         }
 
         var serviceModels = new List<ServiceModel>();
-        foreach (var requestHandlerModel in handlerTypes) {
+        foreach (var kvp in handlerTypes) {
             serviceModels.Add(new ServiceModel(
-                requestHandlerModel,
+                kvp.Key,
+                kvp.Value,
                 null,
                 null,
                 new ServiceRegistrationModel[] {
-                    new(requestHandlerModel, ServiceLifestyle.Transient, RegistrationType.Add)
+                    new(kvp.Key, ServiceLifestyle.Transient, RegistrationType.Add)
                 }, RegistrationFeature.None));
         }
 
         serviceModels.Add(new ServiceModel(
             TypeDefinition.Get("", _routingClassName),
+            null,
             null,
             null,
             new[] {

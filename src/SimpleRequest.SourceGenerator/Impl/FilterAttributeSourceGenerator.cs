@@ -87,6 +87,7 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
             data.Right.Select(
                 model => new ServiceModel(
                     model.FilterType,
+                    model.ConstructorInfo,
                     null,
                     null,
                     new[] {
@@ -132,6 +133,7 @@ public class FilterAttributeSourceGenerator : ISourceGenerator {
         
         return new AttributeFilterInfoModel(
             GetClassDefinition(context),
+            ServiceModelUtility.GetConstructorInfo(context, cancellation),
             lifecycle,
             order,
             serviceModel,

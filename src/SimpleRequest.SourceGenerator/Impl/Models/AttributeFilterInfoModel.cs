@@ -16,6 +16,7 @@ public enum RequestFilterAttributeLifeCycle {
 
 public record AttributeFilterInfoModel(
     ITypeDefinition FilterType,
+    ConstructorInfoModel? ConstructorInfo,
     RequestFilterAttributeLifeCycle LifeCycle,
     int Order,
     ServiceModel? ServiceModel,
