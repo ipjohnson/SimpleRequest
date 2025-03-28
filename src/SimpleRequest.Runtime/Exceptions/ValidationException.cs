@@ -14,3 +14,9 @@ public class ValidationException : GeneralRequestException {
         get;
     }
 }
+
+public class MissingValueValidationException(string fieldName) :
+    ValidationException($"Missing value for field '{fieldName}'", fieldName);
+    
+public class InvalidValueValidationException(string fieldName) : 
+    ValidationException($"{fieldName} is invalid value", fieldName);
