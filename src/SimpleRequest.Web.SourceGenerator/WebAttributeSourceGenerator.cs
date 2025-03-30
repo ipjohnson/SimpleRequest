@@ -11,11 +11,12 @@ namespace SimpleRequest.Web.SourceGenerator;
 
 public class WebAttributeSourceGenerator : BaseRequestAttributeSourceGenerator {
     private readonly IEqualityComparer<RequestHandlerModel> _comparer = new RequestHandlerModelComparer();
-    private readonly SimpleRequestHandlerWriter _simpleRequestWriter = new ();
-    private readonly WebRequestModelGenerator _webRequestModelGenerator = new ();
-    private readonly SimpleRequestRoutingWriter _routingWriter = 
-        new (KnownWebTypes.SimpleRequestWebModuleAttribute, "FunctionRouting");
-    
+    private readonly SimpleRequestHandlerWriter _simpleRequestWriter = new();
+    private readonly WebRequestModelGenerator _webRequestModelGenerator = new();
+
+    private readonly SimpleRequestRoutingWriter _routingWriter =
+        new(KnownWebTypes.SimpleRequestWebModuleAttribute, "FunctionRouting");
+
     protected override IEnumerable<ITypeDefinition> AttributeTypes() {
         yield return KnownWebTypes.Attributes.Delete;
         yield return KnownWebTypes.Attributes.Get;
@@ -25,19 +26,27 @@ public class WebAttributeSourceGenerator : BaseRequestAttributeSourceGenerator {
     }
 
     protected override void GenerateRouteFile(SourceProductionContext context,
-        (ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Left, ImmutableArray<RequestHandlerModel> Right) valueTuple) {
-        if (valueTuple.Left.Length == 0) {
+        ((ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Left, ImmutableArray<RequestHandlerModel> Right) tuple) {
+        if (tuple.Left == null) {
             return;
         }
-        
-        var configuration = valueTuple.Left.First().Right;
-        var entryPoint = valueTuple.Left.GetModel();
-        
-        _routingWriter.WriteRouteFile(context,entryPoint, configuration, valueTuple.Right);
+
+        var entryPoint = tuple.Left.Value.model;
+        var configuration = tuple.Left.Value.configurationModel;
+        var handlerModels = tuple.Right;
+
+        _routingWriter.WriteRouteFile(context, entryPoint, configuration, handlerModels);
     }
 
-    protected override void GenerateRequestFile(SourceProductionContext context, (RequestHandlerModel Left, ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Right) modelData) {
-        _simpleRequestWriter.WriteRequestFile(context, modelData.Left, modelData.Right);
+    protected override void GenerateRequestFile(SourceProductionContext context,
+        (RequestHandlerModel Left, (ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Right) valueTuple) {
+        var model = valueTuple.Left;
+        var entryPointInfo = valueTuple.Right;
+        if (entryPointInfo == null) {
+            return;
+        }
+
+        _simpleRequestWriter.WriteRequestFile(context, model, entryPointInfo.Value);
     }
 
 

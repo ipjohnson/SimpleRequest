@@ -6,6 +6,7 @@ using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl.Models;
 using SimpleRequest.SourceGenerator.Impl.Routing;
+using SimpleRequest.SourceGenerator.Impl.Utils;
 
 namespace SimpleRequest.SourceGenerator.Impl.Writers;
 
@@ -31,19 +32,20 @@ public class SimpleRequestRoutingWriter {
             return;
         }
 
+        var basePath = entryPointModel.GetEntryPointBasePath();
+
         var csharpFile = GenerateCsharpFile(entryPointModel);
 
-        WriteDependencyModuleConfiguration(context, entryPointModel, dependencyModuleConfiguration, requestModels);
+        WriteDependencyModuleConfiguration(context, entryPointModel, dependencyModuleConfiguration, requestModels, basePath);
 
         context.CancellationToken.ThrowIfCancellationRequested();
 
-        GenerateCsharpClass(context, entryPointModel, requestModels, csharpFile);
+        GenerateCsharpClass(context, entryPointModel, requestModels, basePath, csharpFile);
 
         WriteOutput(context, dependencyModuleConfiguration, entryPointModel, csharpFile);
     }
 
-    private void GenerateCsharpClass(
-        SourceProductionContext context, ModuleEntryPointModel entryPointModel, ImmutableArray<RequestHandlerModel> requestModels, CSharpFileDefinition csharpFile) {
+    private void GenerateCsharpClass(SourceProductionContext context, ModuleEntryPointModel entryPointModel, IReadOnlyList<RequestHandlerModel> requestModels, string basePath, CSharpFileDefinition csharpFile) {
         var entryClass = csharpFile.AddClass(entryPointModel.EntryPointType.Name);
 
         entryClass.Modifiers |= ComponentModifier.Public | ComponentModifier.Partial;
@@ -54,7 +56,7 @@ public class SimpleRequestRoutingWriter {
     private void WriteDependencyModuleConfiguration(SourceProductionContext context,
         ModuleEntryPointModel entryPointModel,
         DependencyModuleConfigurationModel dependencyModuleConfiguration,
-        ImmutableArray<RequestHandlerModel> requestModels) {
+        IReadOnlyList<RequestHandlerModel> requestModels, string basePath) {
         var serviceModels = GenerateServiceModels(requestModels);
 
         using var fileLogger = new FileLogger(dependencyModuleConfiguration, "SimpleRequestModule");
@@ -69,7 +71,7 @@ public class SimpleRequestRoutingWriter {
                 ),           output);
     }
 
-    private List<ServiceModel> GenerateServiceModels(ImmutableArray<RequestHandlerModel> requestModels) {
+    private List<ServiceModel> GenerateServiceModels(IReadOnlyList<RequestHandlerModel> requestModels) {
         var handlerTypes = new Dictionary<ITypeDefinition, ConstructorInfoModel>();
         foreach (var requestModel in requestModels) {
             if (!handlerTypes.ContainsKey(requestModel.HandlerType)) {

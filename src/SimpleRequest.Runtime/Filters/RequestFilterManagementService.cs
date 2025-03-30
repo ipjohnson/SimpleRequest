@@ -4,6 +4,8 @@ using SimpleRequest.Runtime.Invoke;
 namespace SimpleRequest.Runtime.Filters;
 
 public interface IRequestFilterManagementService {
+    IReadOnlyList<FilterProvider> GetFiltersWithoutDefaults(IRequestHandlerInfo requestHandlerInfo, params object[] providers);
+    
     IReadOnlyList<FilterProvider> GetFilters(
         IRequestHandlerInfo requestHandlerInfo,
         params object[] providers
@@ -17,12 +19,22 @@ public class RequestFilterManagementService(IServiceProvider serviceProvider,
     IIoFilterProvider ioFilterProvider)
     : IRequestFilterManagementService {
 
-    public IReadOnlyList<FilterProvider> GetFilters(IRequestHandlerInfo requestHandlerInfo, params object[] providers) {
-        var allFilters = new List<RequestFilterInfo> {
-            ioFilterProvider.ProviderFilter(serviceProvider, requestHandlerInfo),
-            invokeFilterProvider.ProvideFilter(serviceProvider, requestHandlerInfo)
-        };
+    public IReadOnlyList<FilterProvider> GetFiltersWithoutDefaults(IRequestHandlerInfo requestHandlerInfo, params object[] providers) {
+        return InternalGetFilters(requestHandlerInfo, false, providers);
+    }
 
+    public IReadOnlyList<FilterProvider> GetFilters(IRequestHandlerInfo requestHandlerInfo, params object[] providers) {
+        return InternalGetFilters(requestHandlerInfo, true, providers);
+    }
+
+    private IReadOnlyList<FilterProvider> InternalGetFilters(IRequestHandlerInfo requestHandlerInfo, bool includeDefaults, object[] providers) {
+        var allFilters = new List<RequestFilterInfo>();
+
+        if (includeDefaults) {
+            allFilters.Add(ioFilterProvider.ProviderFilter(serviceProvider, requestHandlerInfo));
+            allFilters.Add(invokeFilterProvider.ProvideFilter(serviceProvider, requestHandlerInfo));
+        }
+        
         foreach (var filterInfo in globalFilterService.ProviderFilters(requestHandlerInfo)) {
             allFilters.Add(filterInfo);
         }
@@ -40,6 +52,10 @@ public class RequestFilterManagementService(IServiceProvider serviceProvider,
                 foreach (var info in requestFilterProvider.ProviderFilters(serviceProvider, requestHandlerInfo)) {
                     allFilters.Add(info);
                 }
+            } else if (provider is IRequestFilter filter) {
+                allFilters.Add(new RequestFilterInfo(_ => filter, RequestFilterOrder.Normal));
+            } else if (provider is RequestFilterInfo info) {
+                allFilters.Add(info);
             }
         }
         

@@ -9,8 +9,14 @@ public interface IContentTypeHelper {
 
 [SingletonService]
 public class ContentTypeHelper : IContentTypeHelper {
-
+    
     public string GetContentTypeFromExtension(string extension) {
+        var custom = CustomContentType(extension);
+
+        if (custom != null) {
+            return custom;
+        }
+        
         switch (extension) {
             case ".json":
                 return "application/json";
@@ -22,8 +28,21 @@ public class ContentTypeHelper : IContentTypeHelper {
                 return "application/javascript";
             case ".png":
                 return "image/png";
+            case ".jpg":
+            case ".jpeg":
+                return "image/jpeg";
+            case ".gif":
+                return "image/gif";
+            case ".svg":
+                return "image/svg+xml";
+            case ".xml":
+                return "application/xml";
             
             default: return "text/plain";
         }
+    }
+
+    protected virtual string? CustomContentType(string extension) {
+        return null;
     }
 }

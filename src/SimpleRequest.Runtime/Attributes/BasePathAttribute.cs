@@ -1,4 +1,4 @@
-namespace SimpleRequest.Web.Runtime.Attributes;
+namespace SimpleRequest.Runtime.Attributes;
 
 public class BasePathAttribute : Attribute {
     public BasePathAttribute(string path) {

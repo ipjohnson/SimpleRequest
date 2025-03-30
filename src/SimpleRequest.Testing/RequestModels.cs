@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using SimpleRequest.Runtime.Compression;
 using SimpleRequest.Runtime.Cookies;

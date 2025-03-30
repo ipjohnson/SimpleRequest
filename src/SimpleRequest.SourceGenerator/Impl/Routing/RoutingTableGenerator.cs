@@ -27,14 +27,14 @@ public class RoutingTableGenerator {
         CancellationToken CancellationToken);
 
     public void GenerateRoutingTableMethods(
-        ClassDefinition classDefinition, ModuleEntryPointModel moduleEntry, ImmutableArray<RequestHandlerModel> requestModels, CancellationToken cancellationToken) {
+        ClassDefinition classDefinition, ModuleEntryPointModel moduleEntry, IReadOnlyList<RequestHandlerModel> requestModels, CancellationToken cancellationToken) {
 
         GenerateGetRequestHandlerMethod(classDefinition, moduleEntry, requestModels, cancellationToken);
 
         GenerateGetHandlersMethod(classDefinition, moduleEntry, requestModels, cancellationToken);
     }
 
-    private void GenerateGetHandlersMethod(ClassDefinition classDefinition, ModuleEntryPointModel moduleEntry, ImmutableArray<RequestHandlerModel> requestModels, CancellationToken cancellationToken) {
+    private void GenerateGetHandlersMethod(ClassDefinition classDefinition, ModuleEntryPointModel moduleEntry, IReadOnlyList<RequestHandlerModel> requestModels, CancellationToken cancellationToken) {
         var handlerMethods =
             classDefinition.Methods.Where(m => m.Name.StartsWith("GetHandler")).ToArray();
 
@@ -53,7 +53,7 @@ public class RoutingTableGenerator {
         }
     }
 
-    private void GenerateGetRequestHandlerMethod(ClassDefinition classDefinition, ModuleEntryPointModel moduleEntry, ImmutableArray<RequestHandlerModel> requestModels, CancellationToken cancellationToken) {
+    private void GenerateGetRequestHandlerMethod(ClassDefinition classDefinition, ModuleEntryPointModel moduleEntry, IReadOnlyList<RequestHandlerModel> requestModels, CancellationToken cancellationToken) {
         var routingTree = GetRoutingTree(moduleEntry, requestModels, cancellationToken);
         var handlerMethod = classDefinition.AddMethod("GetRequestHandler");
 

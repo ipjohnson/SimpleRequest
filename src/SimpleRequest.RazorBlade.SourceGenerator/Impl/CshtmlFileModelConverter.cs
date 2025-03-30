@@ -1,4 +1,3 @@
-using CSharpAuthor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using SimpleRequest.RazorBlade.SourceGenerator.Models;

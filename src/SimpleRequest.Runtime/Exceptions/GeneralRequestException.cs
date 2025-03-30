@@ -1,4 +1,3 @@
-using System.Net;
 using SimpleRequest.Runtime.Invoke;
 
 namespace SimpleRequest.Runtime.Exceptions;

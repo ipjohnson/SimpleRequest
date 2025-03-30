@@ -17,16 +17,13 @@ public class SimpleRequestHandlerWriter {
     public void WriteRequestFile(
         SourceProductionContext context,
         RequestHandlerModel requestModel,
-        ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> entryPointModels) {
-        if (entryPointModels.Length == 0) {
-            return;
-        }
+        (ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel) entryPointModel) {
         
         var outputFile = GenerateCsharpFile(requestModel);
 
         GenerateHandlerClass(outputFile, requestModel);
 
-        WriteOutputFile(context, requestModel, entryPointModels.First().Right, outputFile);
+        WriteOutputFile(context, requestModel, entryPointModel.configurationModel, outputFile);
     }
 
     private void WriteOutputFile(

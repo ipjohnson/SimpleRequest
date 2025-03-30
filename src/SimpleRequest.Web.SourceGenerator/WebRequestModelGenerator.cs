@@ -1,5 +1,4 @@
 using DependencyModules.SourceGenerator.Impl.Models;
-using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimpleRequest.SourceGenerator.Impl.Handler;
@@ -22,6 +21,7 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
     protected override RequestHandlerNameModel GetRequestNameModel(GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclaration,
         IReadOnlyList<AttributeModel> attributeModels,
+        IReadOnlyList<AttributeModel> classAttributes,
         CancellationToken cancellation) {
 
         var method = "POST";
@@ -36,6 +36,12 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
         if (string.IsNullOrEmpty(functionName)) {
             functionName = "/";
         }
+        
+        var basePath = classAttributes.FirstOrDefault(
+            a => a.TypeDefinition.Name == "BasePathAttribute")?
+            .Arguments.FirstOrDefault()?.Value?.ToString().Trim('"');
+        
+        functionName = basePath + functionName;
         
         return new RequestHandlerNameModel(functionName, method);
     }

@@ -1,5 +1,4 @@
 using CSharpAuthor;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SimpleRequest.SourceGenerator.Impl.Routing;
 

@@ -19,7 +19,7 @@ public class RoutingClassGenerator {
     public void GenerateRoutingClass(
         SourceProductionContext context,
         ModuleEntryPointModel moduleEntryPointModel, 
-        ImmutableArray<RequestHandlerModel> requestModels, 
+        IReadOnlyList<RequestHandlerModel> requestModels, 
         ClassDefinition rootClass) {
 
         var classDefinition = rootClass.AddClass(_routingClassName);

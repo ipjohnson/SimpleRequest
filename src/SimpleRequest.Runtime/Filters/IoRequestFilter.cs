@@ -55,6 +55,10 @@ public class IoRequestFilter(
                 await requestStream.DisposeAsync();
             }
             
+            if (requestChain.Context.ResponseData.Body != null) {
+                await requestChain.Context.ResponseData.Body.FlushAsync();
+            }
+            
             if (responseStream != null) {
                 await responseStream.DisposeAsync();
             }

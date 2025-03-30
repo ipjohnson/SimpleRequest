@@ -14,11 +14,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9124" />
-        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9124">
+        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9125" />
+        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9125">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
     </ItemGroup>
 
 </Project>

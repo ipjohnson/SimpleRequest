@@ -5,7 +5,6 @@ using SimpleRequest.Runtime.Cookies;
 using SimpleRequest.Runtime.Diagnostics;
 using SimpleRequest.Runtime.Logging;
 using SimpleRequest.Runtime.QueryParameters;
-using SimpleRequest.Runtime.Serializers;
 
 namespace SimpleRequest.Runtime.Invoke.Impl;
 

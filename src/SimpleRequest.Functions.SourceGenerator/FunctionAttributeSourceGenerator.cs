@@ -20,21 +20,25 @@ public class FunctionAttributeSourceGenerator : BaseRequestAttributeSourceGenera
         yield return KnownFunctionTypes.FunctionAttribute;
     }
 
-    protected override void GenerateRouteFile(SourceProductionContext context, 
-        (ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Left, ImmutableArray<RequestHandlerModel> Right) valueTuple) {
-        if (valueTuple.Left.Length == 0) {
+    protected override void GenerateRouteFile(SourceProductionContext context,
+        ((ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Left, ImmutableArray<RequestHandlerModel> Right) tuple) {
+        if (tuple.Left == null) {
             return;
         }
 
-        var configuration = valueTuple.Left.First().Right;
-        var entryPoint = valueTuple.Left.GetModel();
+        var configuration = tuple.Left.Value.configurationModel;
+        var entryPoint = tuple.Left.Value.model;
 
-        _routingWriter.WriteRouteFile(context, entryPoint, configuration, valueTuple.Right);
+        _routingWriter.WriteRouteFile(context, entryPoint, configuration, tuple.Right);
     }
     
     protected override void GenerateRequestFile(SourceProductionContext context,
-        (RequestHandlerModel Left, ImmutableArray<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> Right) modelData) {
-        _simpleRequestWriter.WriteRequestFile(context, modelData.Left, modelData.Right);
+        (RequestHandlerModel Left, (ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Right) valueTuple) {
+        if (valueTuple.Right == null) {
+            return;
+        }
+        
+        _simpleRequestWriter.WriteRequestFile(context, valueTuple.Left, valueTuple.Right.Value);
     }
 
     protected override IEqualityComparer<RequestHandlerModel> GetComparer() {

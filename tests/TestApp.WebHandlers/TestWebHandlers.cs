@@ -9,6 +9,5 @@ namespace TestApp.WebHandlers;
 [SimpleRequestWeb]
 [RoutingOrder(-1)]
 [RazorBladeRuntime]
-public partial class TestWebHandlers {
-    
-}
+[StaticContent(RequestPath = "/static-content/")]
+public partial class TestWebHandlers;

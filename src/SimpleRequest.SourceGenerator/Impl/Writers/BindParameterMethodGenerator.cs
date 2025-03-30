@@ -10,7 +10,7 @@ public class BindParameterMethodGenerator {
 
         var bindParameterInfoMethod = classDefinition.AddMethod("BindParameterInfo");
 
-        bindParameterInfoMethod.SetReturnType(TypeDefinition.Get(typeof(Task)));
+        bindParameterInfoMethod.SetReturnType(TypeDefinition.Get(typeof(ValueTask)));
         bindParameterInfoMethod.Modifiers |=
             ComponentModifier.Static | ComponentModifier.Private | ComponentModifier.Async;
 

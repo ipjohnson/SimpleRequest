@@ -13,6 +13,7 @@ public class FunctionRequestModelGenerator : BaseRequestModelGenerator {
     protected override RequestHandlerNameModel GetRequestNameModel(GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclaration,
         IReadOnlyList<AttributeModel> attributes,
+        IReadOnlyList<AttributeModel> classAttributes,
         CancellationToken cancellation) {
 
         var functionName = methodDeclaration.Identifier.Text;

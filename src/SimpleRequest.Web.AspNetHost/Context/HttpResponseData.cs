@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Primitives;
-using SimpleRequest.Runtime.Cookies;
 using SimpleRequest.Runtime.Invoke;
 using CookieOptions = SimpleRequest.Runtime.Cookies.CookieOptions;
 using IResponseCookies = SimpleRequest.Runtime.Cookies.IResponseCookies;

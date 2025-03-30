@@ -1,5 +1,3 @@
-using CSharpAuthor;
-
 namespace SimpleRequest.RazorBlade.SourceGenerator.Models;
 
 public record CshtmlFileModel(

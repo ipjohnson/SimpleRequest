@@ -34,7 +34,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9124">
+        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9125">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>

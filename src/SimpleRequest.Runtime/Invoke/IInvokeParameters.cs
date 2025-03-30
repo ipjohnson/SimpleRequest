@@ -72,3 +72,36 @@ public interface IInvokeParameters {
     /// <param name="index"></param>
     void Set(object? value, int index);
 }
+
+public class EmptyInvokeParameters : IInvokeParameters {
+    public static EmptyInvokeParameters Instance { get; } = new EmptyInvokeParameters();
+    
+    public bool TryGetParameter(string parameterName, out object? parameterValue) {
+        parameterValue = null;
+        return false;
+    }
+
+    public bool TrySetParameter(string parameterName, object parameterValue) {
+        return false;
+    }
+
+    public IReadOnlyList<IInvokeParameterInfo> Parameters => Array.Empty<IInvokeParameterInfo>();
+
+    public int ParameterCount => 0;
+
+    public IInvokeParameters Clone() => this;
+
+    public T? Get<T>(int index, T? defaultValue = default) {
+        return defaultValue;
+    }
+
+    public void Set(object? value, int index) {
+        throw new IndexOutOfRangeException("This request has no parameters.");
+    }
+    
+    public static ParametersCreationDelegate CreationDelegate { get; } = _ => new EmptyInvokeParameters();
+    
+    private static readonly ValueTask _completionTask = new ValueTask();
+    
+    public static BindParametersDelegate BindDelegate { get; } = _ => _completionTask;
+}

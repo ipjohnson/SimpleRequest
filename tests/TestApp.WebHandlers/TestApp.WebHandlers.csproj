@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9124" />
-        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9124">
+        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9125" />
+        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9125">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
@@ -22,5 +22,11 @@
       <ProjectReference Include="..\..\src\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj" />
       <ProjectReference Include="..\..\src\SimpleRequest.Web.Runtime\SimpleRequest.Web.Runtime.csproj" />
       <ProjectReference Include="..\..\src\SimpleRequest.Web.SourceGenerator\SimpleRequest.Web.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="static-content\index.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>

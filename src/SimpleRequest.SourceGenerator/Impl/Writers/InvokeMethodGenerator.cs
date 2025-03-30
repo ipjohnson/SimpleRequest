@@ -15,11 +15,7 @@ public class InvokeMethodGenerator {
 
         invokeMethod.AddUsingNamespace(KnownTypes.Microsoft.DependencyInjection.Namespace);
 
-        if (!string.IsNullOrEmpty(requestModel.ResponseInformation.TemplateName)) {
-            invokeMethod.Assign(
-                SyntaxHelpers.QuoteString(requestModel.ResponseInformation.TemplateName!)).
-                To(context.Property("ResponseData").Property("TemplateName"));
-        }
+        AssignResponseDataConstants(requestModel, invokeMethod, context);
         
         var handler = invokeMethod.Assign(
             context.Property("ServiceProvider")
@@ -44,6 +40,20 @@ public class InvokeMethodGenerator {
         }
         else {
             invokeMethod.Assign(invokeStatement).To(context.Property("ResponseData").Property("ResponseValue"));
+        }
+    }
+
+    private static void AssignResponseDataConstants(RequestHandlerModel requestModel, MethodDefinition invokeMethod, ParameterDefinition context) {
+        if (!string.IsNullOrEmpty(requestModel.ResponseInformation.TemplateName)) {
+            invokeMethod.Assign(
+                    SyntaxHelpers.QuoteString(requestModel.ResponseInformation.TemplateName!)).
+                To(context.Property("ResponseData").Property("TemplateName"));
+        }
+        var contentTypeAttribute = requestModel.Filters.FirstOrDefault(a => a.TypeDefinition.Name == "ContentTypeAttribute");
+        
+        if (contentTypeAttribute != null) {
+            invokeMethod.Assign(contentTypeAttribute.ArgumentString.Trim(' ')).
+                To(context.Property("ResponseData").Property("ContentType"));
         }
     }
 

@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Primitives;
 using SimpleRequest.Runtime.Cookies;
 using SimpleRequest.Runtime.Diagnostics;
-using SimpleRequest.Runtime.Invoke.Impl;
 using SimpleRequest.Runtime.QueryParameters;
 
 namespace SimpleRequest.Runtime.Invoke;

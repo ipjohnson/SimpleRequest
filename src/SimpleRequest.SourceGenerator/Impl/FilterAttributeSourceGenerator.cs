@@ -8,11 +8,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimpleRequest.SourceGenerator.Impl.Models;
 using SimpleRequest.SourceGenerator.Impl.Utils;
 using SimpleRequest.SourceGenerator.Impl.Writers;
-using ISourceGenerator = DependencyModules.SourceGenerator.Impl.ISourceGenerator;
 
 namespace SimpleRequest.SourceGenerator.Impl;
 
-public class FilterAttributeSourceGenerator : ISourceGenerator {
+public class FilterAttributeSourceGenerator : IDependencyModuleSourceGenerator {
     private readonly ITypeDefinition _entryPointAttributeType;
     private readonly string _uniqueName;
 

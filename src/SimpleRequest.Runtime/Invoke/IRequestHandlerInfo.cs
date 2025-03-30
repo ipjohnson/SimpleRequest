@@ -1,6 +1,6 @@
 namespace SimpleRequest.Runtime.Invoke;
 
-public delegate Task BindParametersDelegate(IRequestContext context);
+public delegate ValueTask BindParametersDelegate(IRequestContext context);
 
 public delegate IInvokeParameters ParametersCreationDelegate(IRequestContext context);
 

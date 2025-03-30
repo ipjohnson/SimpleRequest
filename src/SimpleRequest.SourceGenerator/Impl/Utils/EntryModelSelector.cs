@@ -1,10 +1,19 @@
-using System.Collections.Immutable;
 using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl.Models;
 
 namespace SimpleRequest.SourceGenerator.Impl.Utils;
 
 public static class EntryModelSelector {
+
+    public static string GetEntryPointBasePath(this ModuleEntryPointModel model) {
+        var basePathAttribute = model.AttributeModels.FirstOrDefault(a => a.TypeDefinition.Name == "BasePathAttribute");
+
+        if (basePathAttribute != null) {
+            return basePathAttribute.ArgumentString.Trim('"');
+        }
+        
+        return "";
+    }
 
     public static ModuleEntryPointModel GetModel(this IReadOnlyList<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> entryPoints) {
         foreach (var model in entryPoints) {

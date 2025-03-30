@@ -24,14 +24,20 @@ public abstract class BaseRequestModelGenerator {
         var response = GetResponseInformation(context, methodDeclaration);
         var filters = GetFilters(context, methodDeclaration, attributeModules, cancellationToken);
 
-        var nameModel = GetRequestNameModel(context, methodDeclaration, attributeModules, cancellationToken);
+        var (type, classAttributes) = GetInvokeHandlerType(context, methodDeclaration, cancellationToken);
+        var nameModel = GetRequestNameModel(
+            context, 
+            methodDeclaration, 
+            attributeModules,
+            classAttributes,
+            cancellationToken);
 
         return new RequestHandlerModel(
             nameModel,
             controllerType,
             methodName,
             ServiceModelUtility.GetConstructorInfo(context, cancellationToken),
-            GetInvokeHandlerType(context, methodDeclaration, cancellationToken),
+            type,
             GetParameters(context, methodDeclaration, nameModel, cancellationToken),
             response,
             filters);
@@ -40,9 +46,10 @@ public abstract class BaseRequestModelGenerator {
     protected abstract RequestHandlerNameModel GetRequestNameModel(GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclaration,
         IReadOnlyList<AttributeModel> attributeModules,
+        IReadOnlyList<AttributeModel> classAttributes,
         CancellationToken cancellation);
 
-    protected virtual ITypeDefinition GetInvokeHandlerType(
+    protected virtual (ITypeDefinition, IReadOnlyList<AttributeModel>) GetInvokeHandlerType(
         GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclaration,
         CancellationToken cancellation) {
@@ -50,6 +57,9 @@ public abstract class BaseRequestModelGenerator {
         var classDeclarationSyntax =
             methodDeclaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
 
+        var attributes = 
+            AttributeModelHelper.GetAttributeModels(context, classDeclarationSyntax, cancellation);
+        
         var namespaceSyntax = classDeclarationSyntax.Ancestors().OfType<BaseNamespaceDeclarationSyntax>().First();
 
         var className = classDeclarationSyntax.Identifier + "_" + methodDeclaration.Identifier.Text;
@@ -64,8 +74,9 @@ public abstract class BaseRequestModelGenerator {
             className += "_" + parameterString.Select(c => (int)c).Aggregate((total, c) => total + c);
         }
 
-
-        return TypeDefinition.Get(namespaceSyntax.Name.ToFullString().TrimEnd() + ".Generated", className);
+        var type = TypeDefinition.Get(namespaceSyntax.Name.ToFullString().TrimEnd() + ".Generated", className);
+        
+        return (type, attributes);
     }
 
     protected virtual IReadOnlyList<RequestParameterInformation> GetParameters(

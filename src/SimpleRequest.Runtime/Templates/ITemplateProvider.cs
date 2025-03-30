@@ -1,5 +1,3 @@
-using SimpleRequest.Runtime.Templates;
-
 namespace SimpleRequest.Runtime.Templates;
 
 public record TemplateInfo(

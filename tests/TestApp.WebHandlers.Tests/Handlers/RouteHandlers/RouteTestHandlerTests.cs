@@ -1,5 +1,4 @@
 using DependencyModules.xUnit.Attributes;
-using Microsoft.Extensions.Primitives;
 using SimpleRequest.Testing;
 using Xunit;
 
