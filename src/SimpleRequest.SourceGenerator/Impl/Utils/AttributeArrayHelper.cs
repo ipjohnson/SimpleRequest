@@ -9,10 +9,14 @@ public class AttributeArrayHelper {
         var attributeStatements = new List<object>();
 
         foreach (var attributeModel in attributes) {
-            var newStatement = New(attributeModel.TypeDefinition, attributeModel.ArgumentString);
+            var newStatement = New(attributeModel.TypeDefinition,
+                attributeModel.GetArguments().OfType<object>().ToArray());
 
             if (attributeModel.Properties.Count > 0) {
-                newStatement.AddInitValue(attributeModel.PropertyString);
+                foreach (var propertyValue in attributeModel.PropertyValues()) {
+                    
+                    newStatement.AddInitValue(propertyValue);
+                }
             }
             
             attributeStatements.Add(newStatement);

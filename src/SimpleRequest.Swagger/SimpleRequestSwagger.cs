@@ -5,10 +5,8 @@ using SimpleRequest.Web.Runtime;
 
 namespace SimpleRequest.Swagger;
 
-[DependencyModule]
+[DependencyModule(GenerateFactories = true)]
 [SimpleRequestWeb]
 [RoutingOrder(1000)]
 [SimpleRequestCaching]
-public partial class SimpleRequestSwagger {
-    
-}
+public partial class SimpleRequestSwagger;

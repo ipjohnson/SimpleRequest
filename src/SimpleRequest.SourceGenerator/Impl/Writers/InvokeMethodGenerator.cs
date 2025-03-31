@@ -52,7 +52,12 @@ public class InvokeMethodGenerator {
         var contentTypeAttribute = requestModel.Filters.FirstOrDefault(a => a.TypeDefinition.Name == "ContentTypeAttribute");
         
         if (contentTypeAttribute != null) {
-            invokeMethod.Assign(contentTypeAttribute.ArgumentString.Trim(' ')).
+            var quoteString =
+                SyntaxHelpers.QuoteString(
+                    contentTypeAttribute.Arguments.FirstOrDefault()?.Value?.ToString() ?? "");
+            
+            invokeMethod.Assign(
+                    CodeOutputComponent.Get(quoteString)).
                 To(context.Property("ResponseData").Property("ContentType"));
         }
     }

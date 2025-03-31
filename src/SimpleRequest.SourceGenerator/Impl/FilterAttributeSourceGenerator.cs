@@ -132,11 +132,11 @@ public class FilterAttributeSourceGenerator : IDependencyModuleSourceGenerator {
         
         return new AttributeFilterInfoModel(
             GetClassDefinition(context),
-            ServiceModelUtility.GetConstructorInfo(context, cancellation),
+            ServiceModelUtility.GetConstructorInfo(context, context.Node, cancellation),
             lifecycle,
             order,
             serviceModel,
-            classInfo.ConstructorParameters,
+            classInfo.ConstructorInfo.Parameters,
             classInfo.Properties
         );
     }

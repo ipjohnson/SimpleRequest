@@ -9,7 +9,7 @@ public static class EntryModelSelector {
         var basePathAttribute = model.AttributeModels.FirstOrDefault(a => a.TypeDefinition.Name == "BasePathAttribute");
 
         if (basePathAttribute != null) {
-            return basePathAttribute.ArgumentString.Trim('"');
+            return basePathAttribute.Arguments.FirstOrDefault()?.Value?.ToString() ?? "";
         }
         
         return "";

@@ -7,6 +7,6 @@ namespace SimpleRequest.Web.Runtime;
 
 public partial class SimpleRequestWebAttribute : ISimpleRequestEntryAttribute;
 
-[DependencyModule]
+[DependencyModule(GenerateFactories = true)]
 [SimpleRequestRuntime]
 public partial class SimpleRequestWeb;

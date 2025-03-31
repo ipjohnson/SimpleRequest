@@ -49,6 +49,10 @@ public class HttpRequestCookies(HttpRequest request) : IRequestCookies {
 }
 
 public class HttpRequestData : IRequestData {
+    private string _path;
+    private string _contentType;
+    private string _method;
+    private IDictionary<string, StringValues> _headers;
     private HttpRequest _request;
     private Stream? _body;
     private MachineTimestamp _timestamp = MachineTimestamp.Now;
@@ -56,6 +60,10 @@ public class HttpRequestData : IRequestData {
     public HttpRequestData(HttpRequest request, Stream? body = null, IPathTokenCollection? pathTokens = null) {
         _request = request;
         _body = body ?? request.Body;
+        _path = request.Path;
+        _method = request.Method;
+        _contentType = request.ContentType ?? string.Empty;
+        _headers = request.Headers;
         PathTokenCollection = pathTokens ?? new HttpPathToken(_request.RouteValues);
         QueryParameters = new HttpQueryParameters(_request.Query);
         Cookies = new HttpRequestCookies(_request);
@@ -63,7 +71,7 @@ public class HttpRequestData : IRequestData {
 
     public MachineTimestamp StartTime => _timestamp;
 
-    public string Path => _request.Path;
+    public string Path => _path;
 
     public string Method => _request.Method;
 
@@ -72,16 +80,16 @@ public class HttpRequestData : IRequestData {
         set => _body = value;
     }
 
-    public string ContentType=> _request.ContentType ?? string.Empty;
+    public string ContentType => _contentType;
 
-    public IDictionary<string, StringValues> Headers => _request.Headers;
+    public IDictionary<string, StringValues> Headers => _headers;
 
     public IQueryParametersCollection QueryParameters {
-        get;
+        get; private set;
     }
 
     public IRequestCookies Cookies {
-        get;
+        get; private set;
     }
 
     public IPathTokenCollection PathTokenCollection {
@@ -89,7 +97,16 @@ public class HttpRequestData : IRequestData {
         set;
     }
 
-    public IRequestData Clone() {
-        return new HttpRequestData(_request, _body, PathTokenCollection);
+    public IRequestData Clone(string? path = null, string? method = null, string? contentType = null, IDictionary<string, StringValues>? headers = null, IQueryParametersCollection? queryParameters = null, IRequestCookies? cookies = null,
+        IPathTokenCollection? pathTokenCollection = null) {
+        return new HttpRequestData(_request, _body, PathTokenCollection) {
+            _path = path ?? _path,
+            _method = method ?? _method,
+            _contentType = contentType ?? _contentType,
+            _headers = headers ?? Headers,
+            QueryParameters = queryParameters ?? QueryParameters,
+            Cookies = cookies ?? Cookies,
+            PathTokenCollection = pathTokenCollection ?? PathTokenCollection,
+        };
     }
 }

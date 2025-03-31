@@ -67,8 +67,18 @@ public class RequestData : IRequestData {
         set;
     }
 
-    public IRequestData Clone() {
-        return new RequestData(Path, Method, Body, ContentType, PathTokenCollection, Headers, QueryParameters, Cookies);
+    public IRequestData Clone(string? path = null, string? method = null, string? contentType = null, IDictionary<string, StringValues>? headers = null, IQueryParametersCollection? queryParameters = null, IRequestCookies? cookies = null,
+        IPathTokenCollection? pathTokenCollection = null) {
+
+        return new RequestData(
+            path ?? Path,
+            method ?? Method, 
+            Body,
+            contentType ?? ContentType,
+            pathTokenCollection ?? PathTokenCollection, 
+            headers ?? Headers,
+            queryParameters ?? QueryParameters,
+            cookies ?? Cookies);
     }
 }
 
@@ -136,8 +146,8 @@ public class ResponseData : IResponseData {
         get;
     }
 
-    public IResponseData Clone() {
-        return new ResponseData(Headers, Cookies) {
+    public IResponseData Clone(IDictionary<string, StringValues>? headers = null, IResponseCookies? cookies = null) {
+        return new ResponseData(headers ?? Headers, cookies ?? Cookies) {
             Body = Body,
             ContentType = ContentType,
             ExceptionValue = ExceptionValue,
@@ -226,16 +236,18 @@ public class RequestContext(IServiceProvider serviceProvider,
     public IRequestContextItems Items { get; } =
         requestContextItem ?? new RequestContextItem(ImmutableDictionary<object, object?>.Empty);
 
-    public IRequestContext Clone(IServiceProvider? serviceProvider = null) {
+    public IRequestContext Clone(IServiceProvider? serviceProvider = null, IRequestData? requestData = null, IResponseData? responseData = null, IRequestContextItems? items = null, IMetricLogger? metricLogger = null,
+        IRequestLogger? requestLogger = null, CancellationToken? cancellationToken = null) {
+
         return new RequestContext(
             serviceProvider ?? ServiceProvider, 
-            RequestData.Clone(),
-            ResponseData.Clone(),
-            MetricLogger.Clone(),
+            requestData ?? RequestData.Clone(),
+            responseData ?? ResponseData.Clone(),
+            metricLogger ?? MetricLogger.Clone(),
             RequestServices, 
-            CancellationToken,
-            RequestLogger,
-            Items.Clone()) {
+            cancellationToken ?? CancellationToken,
+            requestLogger ?? RequestLogger,
+            items ?? Items.Clone()) {
             RequestHandlerInfo = RequestHandlerInfo,
             InvokeParameters = InvokeParameters?.Clone(),
         };

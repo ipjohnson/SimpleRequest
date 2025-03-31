@@ -35,6 +35,11 @@ public interface IRequestContext {
     
     IRequestContextItems Items { get; } 
     
-    IRequestContext Clone(IServiceProvider? serviceProvider = null);
-    
+    IRequestContext Clone(IServiceProvider? serviceProvider = null,
+        IRequestData? requestData = null,
+        IResponseData? responseData = null,
+        IRequestContextItems? items = null,
+        IMetricLogger? metricLogger = null,
+        IRequestLogger? requestLogger = null,
+        CancellationToken? cancellationToken = null);
 }

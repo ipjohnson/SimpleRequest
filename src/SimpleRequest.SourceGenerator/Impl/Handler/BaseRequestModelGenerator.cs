@@ -31,12 +31,14 @@ public abstract class BaseRequestModelGenerator {
             attributeModules,
             classAttributes,
             cancellationToken);
+        
+        var classSyntax = methodDeclaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
 
         return new RequestHandlerModel(
             nameModel,
             controllerType,
             methodName,
-            ServiceModelUtility.GetConstructorInfo(context, cancellationToken),
+            ServiceModelUtility.GetConstructorInfo(context, classSyntax, cancellationToken),
             type,
             GetParameters(context, methodDeclaration, nameModel, cancellationToken),
             response,

@@ -30,6 +30,9 @@ public class HttpRequestContextItem(IDictionary<object,object?> items) : IReques
 
 public class HttpRequestContext : IRequestContext {
     private HttpContext _httpContext;
+    private IServiceProvider _serviceProvider;
+    private CancellationToken _cancellationToken;
+    private IRequestContextItems? _items;
 
     public HttpRequestContext(
         HttpContext httpContext, 
@@ -44,9 +47,11 @@ public class HttpRequestContext : IRequestContext {
         MetricLogger = metricLogger;
         RequestLogger = requestLogger;
         RequestServices = requestServices;
+        _serviceProvider = httpContext.RequestServices;
+        _cancellationToken = httpContext.RequestAborted;
     }
 
-    public IServiceProvider ServiceProvider => _httpContext.RequestServices;
+    public IServiceProvider ServiceProvider => _serviceProvider;
 
     public IRequestHandlerInfo? RequestHandlerInfo { get; set; }
 
@@ -62,18 +67,27 @@ public class HttpRequestContext : IRequestContext {
 
     public DataServices RequestServices { get; }
 
-    public CancellationToken CancellationToken => _httpContext.RequestAborted;
+    public CancellationToken CancellationToken => _cancellationToken;
 
-    public IRequestContextItems Items => new HttpRequestContextItem(_httpContext.Items);
+    public IRequestContextItems Items => _items ??= new HttpRequestContextItem(_httpContext.Items);
 
-    public IRequestContext Clone(IServiceProvider? serviceProvider = null) {
-        return new HttpRequestContext(
+    public IRequestContext Clone(IServiceProvider? serviceProvider = null, IRequestData? requestData = null, IResponseData? responseData = null, IRequestContextItems? items = null, IMetricLogger? metricLogger = null,
+        IRequestLogger? requestLogger = null, CancellationToken? cancellationToken = null) {
+
+        var context = new HttpRequestContext(
             _httpContext,
-            RequestData.Clone(),
-            ResponseData.Clone(),
-            MetricLogger.Clone(),
-            RequestLogger,
+            requestData ?? RequestData.Clone(),
+            responseData ?? ResponseData.Clone(),
+            metricLogger ?? MetricLogger.Clone(),
+            requestLogger ?? RequestLogger,
             RequestServices
-        );
+        ) {
+            _serviceProvider = serviceProvider ?? _serviceProvider,
+            InvokeParameters = InvokeParameters?.Clone(),
+            _cancellationToken = cancellationToken ?? _cancellationToken,
+            _items = items ?? _items,
+        };
+
+        return context;
     }
 }

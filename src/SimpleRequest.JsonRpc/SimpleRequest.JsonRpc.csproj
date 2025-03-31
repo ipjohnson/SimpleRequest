@@ -5,14 +5,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>True</IsPackable>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     </PropertyGroup>
 
     <Import Project="../../build-props/nuget.props"/>
     
     <ItemGroup>
-      <ProjectReference Include="..\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj" />
+        <ProjectReference Include="..\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -21,7 +19,6 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
     </ItemGroup>
-
-
 </Project>

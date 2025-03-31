@@ -29,5 +29,5 @@ public interface IResponseData {
     
     IResponseCookies Cookies { get; }
     
-    IResponseData Clone();
+    IResponseData Clone(IDictionary<string,StringValues>? headers = null, IResponseCookies? cookies = null);
 }

@@ -31,11 +31,13 @@ public class HttpResponseCookies(HttpResponse response) : IResponseCookies {
 
 public class HttpResponseData : IResponseData {
     private readonly HttpResponse _response;
+    private IDictionary<string, StringValues> _headers;
     private Stream? _body;
 
     public HttpResponseData(HttpResponse response, Stream? body = null) {
         _response = response;
         _body = body ?? _response.Body;
+        _headers = _response.Headers;
         Cookies = new HttpResponseCookies(_response);
     }
     public string? ContentType {
@@ -90,13 +92,16 @@ public class HttpResponseData : IResponseData {
         set;
     }
 
-    public IDictionary<string,StringValues> Headers => _response.Headers;
+    public IDictionary<string,StringValues> Headers => _headers;
 
     public IResponseCookies Cookies {
-        get;
+        get; private set;
     }
 
-    public IResponseData Clone() {
-        return new HttpResponseData(_response, _body);
+    public IResponseData Clone(IDictionary<string, StringValues>? headers = null, IResponseCookies? cookies = null) {
+        return new HttpResponseData(_response, _body) {
+            _headers = headers ?? Headers,
+            Cookies = cookies ?? Cookies,
+        };
     }
 }

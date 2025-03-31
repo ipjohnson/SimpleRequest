@@ -2,5 +2,5 @@
 
 namespace SimpleRequest.RazorBlade;
 
-[DependencyModule]
+[DependencyModule(GenerateFactories = true)]
 public partial class RazorBladeRuntime { }

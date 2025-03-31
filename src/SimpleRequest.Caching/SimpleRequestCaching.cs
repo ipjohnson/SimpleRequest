@@ -2,5 +2,5 @@
 
 namespace SimpleRequest.Caching;
 
-[DependencyModule]
+[DependencyModule(GenerateFactories = true)]
 public partial class SimpleRequestCaching { }

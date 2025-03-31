@@ -6,6 +6,6 @@ namespace SimpleRequest.Functions.Runtime;
 
 public partial class SimpleRequestFunctionsAttribute : ISimpleRequestEntryAttribute;
 
-[DependencyModule]
+[DependencyModule(GenerateFactories = true)]
 [SimpleRequestRuntime]
 public partial class SimpleRequestFunctions;

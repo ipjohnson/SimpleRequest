@@ -26,5 +26,12 @@ public interface IRequestData {
     
     IPathTokenCollection PathTokenCollection { get; }
     
-    IRequestData Clone();
+    IRequestData Clone(
+        string? path = null, 
+        string? method = null, 
+        string? contentType = null,
+        IDictionary<string,StringValues>? headers = null,
+        IQueryParametersCollection? queryParameters = null,
+        IRequestCookies? cookies = null,
+        IPathTokenCollection? pathTokenCollection = null);
 }
