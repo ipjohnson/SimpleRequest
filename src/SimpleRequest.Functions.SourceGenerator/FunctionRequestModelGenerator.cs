@@ -63,20 +63,4 @@ public class FunctionRequestModelGenerator : BaseRequestModelGenerator {
         yield return "Function";
         yield return "FunctionAttribute";
     }
-
-    private static RequestParameterInformation GetParameterInfoWithBinding(
-        GeneratorSyntaxContext generatorSyntaxContext,
-        ParameterSyntax parameter,
-        ParameterBindType bindingType,
-        string bindingName,
-        int parameterIndex) {
-        var parameterType = parameter.Type?.GetTypeDefinition(generatorSyntaxContext)!;
-
-        return CreateRequestParameterInformation(parameter,
-            parameterType,
-            bindingType,
-            parameterIndex,
-            null,
-            bindingName);
-    }
 }

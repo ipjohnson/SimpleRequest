@@ -1,5 +1,4 @@
 using SimpleRequest.Runtime.Invoke;
-using SimpleRequest.Runtime.StaticContent;
 
 namespace SimpleRequest.Web.Runtime.StaticContentImpl;
 

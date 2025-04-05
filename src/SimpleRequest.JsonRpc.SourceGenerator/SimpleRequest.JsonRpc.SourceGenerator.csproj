@@ -57,9 +57,4 @@
         </Compile>
     </ItemGroup>
 
-
-    <ItemGroup>
-      <Folder Include="Impl\" />
-    </ItemGroup>
-
 </Project>

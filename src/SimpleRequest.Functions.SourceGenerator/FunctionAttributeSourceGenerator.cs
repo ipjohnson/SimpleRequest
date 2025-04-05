@@ -4,7 +4,6 @@ using DependencyModules.SourceGenerator.Impl.Models;
 using Microsoft.CodeAnalysis;
 using SimpleRequest.SourceGenerator.Impl;
 using SimpleRequest.SourceGenerator.Impl.Models;
-using SimpleRequest.SourceGenerator.Impl.Utils;
 using SimpleRequest.SourceGenerator.Impl.Writers;
 
 namespace SimpleRequest.Functions.SourceGenerator;

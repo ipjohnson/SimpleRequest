@@ -83,9 +83,11 @@ public class RequestContextSerializer : IRequestContextSerializer {
         if (serializer != null && context.ResponseData.Body != null) {
             context.ResponseData.ContentType = serializer.ContentType;
 
-            await serializer.Serialize(
+            await serializer.SerializeAsync(
                 context.ResponseData.Body,
-                context.ResponseData.ResponseValue!);
+                context.ResponseData.ResponseValue!,
+                context.ResponseData.Headers,
+                context.CancellationToken);
         }
         else {
             // log error

@@ -1,13 +1,18 @@
 using System.Collections;
 using System.Text;
 using DependencyModules.Runtime.Attributes;
+using Microsoft.Extensions.Primitives;
 
 namespace SimpleRequest.Runtime.Serializers.String;
 
 [SingletonService]
 public class StringSerializer : IContentSerializer {
 
-    public async Task Serialize(Stream stream, object value, CancellationToken cancellationToken = default) {
+    public int Order => 1_000_000_000;
+
+    public SupportedSerializerFeature Features => SupportedSerializerFeature.All;
+
+    public async Task SerializeAsync(Stream stream, object value, IDictionary<string,StringValues>? headers = null, CancellationToken cancellationToken = default) {
         await using var writer = new StreamWriter(stream, Encoding.UTF8, 1024, true);
         
         if (value is string stringValue) {
@@ -37,7 +42,7 @@ public class StringSerializer : IContentSerializer {
         return value?.ToString() ?? string.Empty;
     }
 
-    public async ValueTask<object?> Deserialize(Stream stream, Type type, CancellationToken cancellationToken = default) {
+    public async ValueTask<object?> DeserializeAsync(Stream stream, Type type, IDictionary<string,StringValues>? headers = null, CancellationToken cancellationToken = default) {
         var stringValue = 
             await new StreamReader(
                 stream,
@@ -48,7 +53,7 @@ public class StringSerializer : IContentSerializer {
         return new ValueTask<object?>(stringValue);
     }
 
-    public async ValueTask<T?> Deserialize<T>(Stream stream, CancellationToken cancellationToken = default) {
+    public async ValueTask<T?> DeserializeAsync<T>(Stream stream, IDictionary<string,StringValues>? headers = null, CancellationToken cancellationToken = default) {
         if (typeof(T) == typeof(string)) {
             var stringValue = 
                 await new StreamReader(

@@ -26,7 +26,7 @@ public class RequestHarness(
     
     public IServiceProvider ServiceProvider => serviceProvider;
 
-    public async Task<ResponseModel> Invoke(string method, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) {
+    public async Task<IResponseModel> Invoke(string method, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) {
         var headerDictionary =new Dictionary<string, StringValues>();
         if (headers != null) {
             foreach (var tuple in headers) {
@@ -60,7 +60,7 @@ public class RequestHarness(
                 }
             }
             
-            await serializer.Serialize(requestStreamReservation.Item, payload);
+            await serializer.SerializeAsync( requestStreamReservation.Item, payload);
             
             requestStreamReservation.Item.Position = 0;
         }
@@ -173,18 +173,18 @@ public class RequestHarness(
 }
 
 public static class RequestHarnessExtensions {
-    public static Task<ResponseModel> Post(this RequestHarness harness, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) => 
+    public static Task<IResponseModel> Post(this RequestHarness harness, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) => 
         harness.Invoke("POST", path, payload, headers);
    
-    public static Task<ResponseModel> Put(this RequestHarness harness, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) => 
+    public static Task<IResponseModel> Put(this RequestHarness harness, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) => 
         harness.Invoke("PUT", path, payload, headers);
     
-    public static Task<ResponseModel> Patch(this RequestHarness harness, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) => 
+    public static Task<IResponseModel> Patch(this RequestHarness harness, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) => 
         harness.Invoke("PATCH", path, payload, headers);
     
-    public static Task<ResponseModel> Get(this RequestHarness harness, string path, List<ValueTuple<string, StringValues>>? headers = null) => 
+    public static Task<IResponseModel> Get(this RequestHarness harness, string path, List<ValueTuple<string, StringValues>>? headers = null) => 
         harness.Invoke("GET", path, null, headers);
     
-    public static Task<ResponseModel> Delete(this RequestHarness harness, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) => 
+    public static Task<IResponseModel> Delete(this RequestHarness harness, string path, object? payload = null, List<ValueTuple<string, StringValues>>? headers = null) => 
         harness.Invoke("DELETE", path, payload, headers);
 }

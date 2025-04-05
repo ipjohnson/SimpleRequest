@@ -22,7 +22,7 @@ public static class ContentSerializerManagerExtensions {
             throw new ArgumentException("No request body was provided.");
         }
 
-        return serializer.Deserialize<T>(context.RequestData.Body!, context.CancellationToken);
+        return serializer.DeserializeAsync<T>(context.RequestData.Body!, context.RequestData.Headers, context.CancellationToken);
     }
 }
 
@@ -32,7 +32,12 @@ public class ContentSerializerManager : IContentSerializerManager {
     private readonly IContentSerializer? _defaultSerializer;
 
     public ContentSerializerManager(IEnumerable<IContentSerializer> serializers) {
-        _serializers = serializers.ToList();
+        var list = serializers.ToList();
+        
+        list.Sort((x, y) => x.Order.CompareTo(y.Order));
+        
+        _serializers = list;
+        
         _defaultSerializer = _serializers.FirstOrDefault(x => x.IsDefault);
     }
 

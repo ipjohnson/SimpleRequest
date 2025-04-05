@@ -5,7 +5,7 @@ using SimpleRequest.Testing;
 namespace TestApp.WebHandlers.Tests.Handlers.Templates;
 
 public static class HtmlTestExtensions {
-    public static IHtmlDocument ParseHtml(this ResponseModel response) {
+    public static IHtmlDocument ParseHtml(this IResponseModel response) {
         var htmlParser = new HtmlParser();
         var streamReader = new StreamReader(response.Body);
         var htmlString = streamReader.ReadToEnd();

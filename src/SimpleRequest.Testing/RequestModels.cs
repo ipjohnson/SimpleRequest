@@ -13,12 +13,42 @@ public record RequestModel(
     Stream Body
     );
 
+public interface IResponseModel {
+    int StatusCode {
+        get;
+    }
+
+    Stream Body {
+        get;
+    }
+
+    string ContentType {
+        get;
+    }
+
+    IDictionary<string, StringValues> Headers {
+        get;
+    }
+
+    IResponseCookies Cookies {
+        get;
+    }
+
+    void AssertOk() {
+        if (StatusCode is < 200 or >= 300) {
+            throw new Exception("Status code is invalid: " + StatusCode);
+        }
+    }
+
+    Task<T> Get<T>();
+}
+
 public class ResponseModel(
     IStreamCompressionService streamCompressionService,
     IServiceProvider serviceProvider,
     IResponseData responseData,
     IContentSerializerManager contentSerializerManager
-) {
+) : IResponseModel {
     public int StatusCode => responseData.Status ?? 200;
     
     public Stream Body => responseData.Body!;
@@ -28,12 +58,6 @@ public class ResponseModel(
     public IDictionary<string, StringValues> Headers => responseData.Headers;
     
     public IResponseCookies Cookies => responseData.Cookies;
-    
-    public void AssertOk() {
-        if (responseData.Status is < 200 or >= 300) {
-            throw new Exception("Status code is invalid: " + responseData.Status);
-        }
-    }
 
     public async Task<T> Get<T>() {
         var serializer = contentSerializerManager.GetSerializer(responseData.ContentType ?? "application/json");
@@ -54,6 +78,10 @@ public class ResponseModel(
                 streamCompressionService.GetStream(body, value.ToString(), CompressionMode.Decompress) ?? body;
         }
 
-        return (await serializer.Deserialize<T>(body))!;
+        return await DeserializeBody<T>(serializer, body);
+    }
+
+    protected virtual async Task<T> DeserializeBody<T>(IContentSerializer serializer, Stream body) {
+        return (await serializer.DeserializeAsync<T>(body))!;
     }
 }

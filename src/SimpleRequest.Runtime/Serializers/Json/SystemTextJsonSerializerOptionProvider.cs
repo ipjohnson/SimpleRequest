@@ -14,9 +14,14 @@ public class SystemTextJsonSerializerOptionProvider(
     IReadOnlyList<ISystemTextJsonConfiguration> configurations,
     IEnumerable<IJsonTypeInfoResolver> resolvers) :
     ISystemTextJsonSerializerOptionProvider {
+    private JsonSerializerOptions? _options; 
     private readonly IReadOnlyList<IJsonTypeInfoResolver> _resolvers = resolvers.ToList();
 
     public JsonSerializerOptions GetOptions() {
+        if (_options != null) {
+            return _options;
+        }
+        
         var options = new JsonSerializerOptions() {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
@@ -31,6 +36,6 @@ public class SystemTextJsonSerializerOptionProvider(
             configuration.ConfigureJson(options);
         }
         
-        return options;
+        return _options = options;
     }
 }

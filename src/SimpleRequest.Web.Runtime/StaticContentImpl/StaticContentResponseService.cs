@@ -1,6 +1,5 @@
 using System.IO.Compression;
 using System.IO.Hashing;
-using System.Text;
 using DependencyModules.Runtime.Attributes;
 using SimpleRequest.Runtime.Compression;
 using SimpleRequest.Runtime.Invoke;

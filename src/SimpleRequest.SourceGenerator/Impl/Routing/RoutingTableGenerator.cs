@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl.Models;
 using SimpleRequest.SourceGenerator.Impl.Models;
