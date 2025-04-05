@@ -32,8 +32,9 @@ public class NewLineDelimitedJsonSerializer  : IContentSerializer {
         }
 
         await foreach (var obj in asyncEnumerable.WithCancellation(cancellationToken)) {
-            await JsonSerializer.SerializeAsync(stream, obj, cancellationToken: cancellationToken);
-            await stream.WriteStringAsync("\n", cancellationToken: cancellationToken);
+            JsonSerializer.Serialize(stream, obj);
+            stream.Write("\n"u8);
+            await stream.FlushAsync(cancellationToken);
         }
     }
 

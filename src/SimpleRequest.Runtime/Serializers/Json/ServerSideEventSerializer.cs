@@ -3,11 +3,13 @@ using System.Text.Json;
 using DependencyModules.Runtime.Attributes;
 using Microsoft.Extensions.Primitives;
 using SimpleRequest.Runtime.Models;
+using SimpleRequest.Runtime.Pools;
 
 namespace SimpleRequest.Runtime.Serializers.Json;
 
 [SingletonService]
 public class ServerSideEventSerializer(
+    IMemoryStreamPool memoryStreamPool,
     ISystemTextJsonSerializerOptionProvider serializerOptionProvider) : IContentSerializer {
 
     public int Order => 1_000_000_001;
@@ -49,63 +51,98 @@ public class ServerSideEventSerializer(
     }
 
     private async Task SerializeObject(Stream stream, object value, CancellationToken cancellationToken) {
-        await stream.WriteStringAsync("data: ", cancellationToken);
+        stream.WriteString("data: ");
         await JsonSerializer.SerializeAsync(
             stream, value, serializerOptionProvider.GetOptions(), cancellationToken);
-        await stream.WriteStringAsync("\n\n", cancellationToken);
+        stream.WriteString("\n\n");
+        await stream.FlushAsync(cancellationToken);
     }
 
-    private async Task SerializeServerSideEventModel(Stream stream, ServerSideEventModel eventModel, CancellationToken cancellationToken) {
+    private void WriteServerSideEventModel(Stream stream, ServerSideEventModel eventModel) {
+                
         if (!string.IsNullOrEmpty(eventModel.EventName)) {
-            await stream.WriteStringAsync(
-                "event: " + eventModel.EventName + "\n", cancellationToken);
+            stream.WriteString(
+                "event: " + eventModel.EventName + "\n");
         }
             
-        await stream.WriteStringAsync("data: ", cancellationToken);
-        await JsonSerializer.SerializeAsync(
-            stream, eventModel.Data, serializerOptionProvider.GetOptions(), cancellationToken);
-        await stream.WriteStringAsync("\n", cancellationToken);
+        stream.WriteString("data: ");
+        JsonSerializer.Serialize(stream, eventModel.Data, serializerOptionProvider.GetOptions());
+        
+        stream.WriteString("\n");
 
         if (!string.IsNullOrEmpty(eventModel.Id)) {
-            await stream.WriteStringAsync("id: " + eventModel.Id + "\n", cancellationToken);
+            stream.WriteString("id: " + eventModel.Id + "\n");
         }
 
         if (eventModel.Retry.HasValue) {
-            await stream.WriteStringAsync("retry: " + eventModel.Retry.Value + "\n", cancellationToken);
+            stream.WriteString("retry: " + eventModel.Retry.Value + "\n");
         }
             
-        await stream.WriteStringAsync("\n", cancellationToken);
+        stream.WriteString("\n");
+    }
+    
+    private async Task SerializeServerSideEventModel(Stream stream, ServerSideEventModel eventModel, CancellationToken cancellationToken) {
+        WriteServerSideEventModel(stream, eventModel);
+        
         await stream.FlushAsync(cancellationToken);
     }
 
     private async Task SerializeObjectEnumerable(
         Stream stream, IAsyncEnumerable<object> objectValues, CancellationToken cancellationToken) {
+        using var memoryStreamRes = memoryStreamPool.Get();
+        
+        var memoryStream = memoryStreamRes.Item;
+        var utf8Writer = new Utf8JsonWriter(memoryStream);
         
         await foreach (var eventModel in objectValues.WithCancellation(cancellationToken)) {
-            await stream.WriteStringAsync("data: ", cancellationToken);
-            await JsonSerializer.SerializeAsync(
-                stream, eventModel, serializerOptionProvider.GetOptions(), cancellationToken);
+            memoryStream.SetLength(0);
+            utf8Writer.Reset();
             
-            await stream.WriteStringAsync("\n\n", cancellationToken);
+            memoryStream.WriteString("data: ");
+            
+            JsonSerializer.Serialize(utf8Writer, eventModel, serializerOptionProvider.GetOptions());
+            
+            utf8Writer.Flush();
+            
+            stream.WriteString("\n\n");
+            stream.Position = 0;
+            
+            await memoryStream.CopyToAsync(stream, cancellationToken);
             await stream.FlushAsync(cancellationToken);
         }
     }
 
     private async Task SerializeEventEnumerable(Stream stream, IAsyncEnumerable<ServerSideEventModel> eventEnumerable, CancellationToken cancellationToken) {
+        using var memoryStreamRes = memoryStreamPool.Get();
+        var memoryStream = memoryStreamRes.Item;
         
         await foreach (var eventModel in eventEnumerable.WithCancellation(cancellationToken)) {
-            await SerializeServerSideEventModel(stream, eventModel, cancellationToken);
+            memoryStream.SetLength(0);
+            
+            WriteServerSideEventModel(memoryStream, eventModel);
+            
+            memoryStream.Position = 0;
+            
+            await stream.CopyToAsync(stream, cancellationToken);
+            await stream.FlushAsync(cancellationToken);
         }
     }
 
     private async Task SerializeAsyncString(Stream stream, IAsyncEnumerable<string> stringValue, CancellationToken cancellationToken) {
-        await using var writer = new StreamWriter(stream);
+        using var memoryStreamRes = memoryStreamPool.Get();
+        var memoryStream = memoryStreamRes.Item;
         
         await foreach (var enumeratedStringValue in stringValue.WithCancellation(cancellationToken)) {
-            await writer.WriteAsync("data: ");
-            await writer.WriteAsync(enumeratedStringValue);
-            await writer.WriteAsync("\n\n");
-            await writer.FlushAsync(cancellationToken);
+            memoryStream.SetLength(0);
+            memoryStream.WriteString("data: ");
+            
+            memoryStream.WriteString(enumeratedStringValue);
+            memoryStream.WriteString("\n\n");
+            
+            memoryStream.Position = 0;
+            
+            await stream.CopyToAsync(stream, cancellationToken);
+            await stream.FlushAsync(cancellationToken);
         }
     }
 

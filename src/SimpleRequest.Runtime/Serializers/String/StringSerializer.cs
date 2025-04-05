@@ -8,7 +8,7 @@ namespace SimpleRequest.Runtime.Serializers.String;
 [SingletonService]
 public class StringSerializer : IContentSerializer {
 
-    public int Order => 1_000_000_000;
+    public int Order => 1_000_000_010;
 
     public SupportedSerializerFeature Features => SupportedSerializerFeature.All;
 
@@ -18,9 +18,9 @@ public class StringSerializer : IContentSerializer {
         if (value is string stringValue) {
             await writer.WriteAsync(stringValue);
         }
-        else if (value is IAsyncEnumerable<string> asyncEnumerable) {
+        else if (value is IAsyncEnumerable<object> asyncEnumerable) {
             await foreach (var enumeratedStringValue in asyncEnumerable.WithCancellation(cancellationToken)) {
-                await writer.WriteAsync(enumeratedStringValue);
+                await writer.WriteAsync(enumeratedStringValue.ToString());
             }
         }
         else if (value is IEnumerable enumerable) {
@@ -32,6 +32,9 @@ public class StringSerializer : IContentSerializer {
                     await writer.WriteAsync(obj.ToString());
                 }
             }
+        }
+        else {
+            await writer.WriteAsync(value.ToString());
         }
     }
 
