@@ -5,16 +5,14 @@ using SimpleRequest.Runtime.Invoke.Impl;
 
 namespace SimpleRequest.JsonRpc.Impl;
 
-
-
 public class JsonRpcRoutingHandlerInfo : IRequestHandlerInfo {
-    private readonly string _tag;
     private readonly bool _processInParallel;
+    private readonly string[] _tags;
     private IJsonRpcRequestProcessor? _processor;
     
-    public JsonRpcRoutingHandlerInfo(string path, string tag, bool processInParallel) {
-        _tag = tag;
+    public JsonRpcRoutingHandlerInfo(string path, bool processInParallel, string[] tags) {
         _processInParallel = processInParallel;
+        _tags = tags;
         Path = path;
         InvokeInfo = new RequestHandlerInfoMethods(
             "Invoke",
@@ -29,7 +27,7 @@ public class JsonRpcRoutingHandlerInfo : IRequestHandlerInfo {
     private Task InvokeHandler(IRequestContext context) {
         _processor ??= context.ServiceProvider.GetRequiredService<IJsonRpcRequestProcessor>();
         
-        return _processor.HandleRequest(context, _tag, _processInParallel);
+        return _processor.HandleRequest(context, _processInParallel, _tags);
     }
 
     public string Path {

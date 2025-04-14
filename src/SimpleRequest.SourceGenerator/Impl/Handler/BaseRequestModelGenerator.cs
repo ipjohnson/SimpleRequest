@@ -47,7 +47,7 @@ public abstract class BaseRequestModelGenerator {
 
     protected abstract RequestHandlerNameModel GetRequestNameModel(GeneratorSyntaxContext context,
         MethodDeclarationSyntax methodDeclaration,
-        IReadOnlyList<AttributeModel> attributeModules,
+        IReadOnlyList<AttributeModel> attributeModels,
         IReadOnlyList<AttributeModel> classAttributes,
         CancellationToken cancellation);
 

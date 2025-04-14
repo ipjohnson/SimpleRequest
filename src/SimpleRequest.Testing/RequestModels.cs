@@ -41,6 +41,8 @@ public interface IResponseModel {
     }
 
     Task<T> Get<T>();
+    
+    IResponseData ResponseData { get; }
 }
 
 public class ResponseModel(
@@ -58,6 +60,8 @@ public class ResponseModel(
     public IDictionary<string, StringValues> Headers => responseData.Headers;
     
     public IResponseCookies Cookies => responseData.Cookies;
+    
+    public IResponseData ResponseData => responseData;
 
     public async Task<T> Get<T>() {
         var serializer = contentSerializerManager.GetSerializer(responseData.ContentType ?? "application/json");

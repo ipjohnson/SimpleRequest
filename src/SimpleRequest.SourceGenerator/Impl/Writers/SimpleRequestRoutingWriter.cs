@@ -15,11 +15,10 @@ public class SimpleRequestRoutingWriter {
     private readonly RoutingClassGenerator _routingClassGenerator;
     private readonly string _routingClassName;
 
-    public SimpleRequestRoutingWriter(ITypeDefinition entryPointAttributeType, string routingClassName) {
+    public SimpleRequestRoutingWriter(ITypeDefinition entryPointAttributeType, string routingClassName, string handlerType) {
         _entryPointAttributeType = entryPointAttributeType;
         _routingClassName = routingClassName;
-        _routingClassGenerator = new RoutingClassGenerator(routingClassName);
-  
+        _routingClassGenerator = new RoutingClassGenerator(routingClassName, handlerType);
     }
 
     public void WriteRouteFile(
@@ -72,10 +71,10 @@ public class SimpleRequestRoutingWriter {
     }
 
     private List<ServiceModel> GenerateServiceModels(IReadOnlyList<RequestHandlerModel> requestModels) {
-        var handlerTypes = new Dictionary<ITypeDefinition, ConstructorInfoModel>();
+        var handlerTypes = new Dictionary<ITypeDefinition, ConstructorInfoModel?>();
         foreach (var requestModel in requestModels) {
             if (!handlerTypes.ContainsKey(requestModel.HandlerType)) {
-                handlerTypes[ requestModel.HandlerType] = requestModel.ConstructorInfo;
+                handlerTypes[requestModel.HandlerType] = requestModel.ConstructorInfo;
             }
         }
 

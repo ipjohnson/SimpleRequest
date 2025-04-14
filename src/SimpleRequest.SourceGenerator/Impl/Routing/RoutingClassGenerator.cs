@@ -10,9 +10,9 @@ public class RoutingClassGenerator {
     private readonly string _routingClassName;
     private readonly FieldDefinition _factory = new (KnownRequestTypes.IRequestHandlerFactory, "_handlerFactory");
 
-    public RoutingClassGenerator(string routingClassName) {
+    public RoutingClassGenerator(string routingClassName, string handlerType) {
         _routingClassName = routingClassName;
-        _routingTableGenerator = new (_factory);
+        _routingTableGenerator = new (_factory, handlerType);
     }
 
     public void GenerateRoutingClass(

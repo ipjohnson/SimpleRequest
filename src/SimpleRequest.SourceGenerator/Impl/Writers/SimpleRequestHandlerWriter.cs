@@ -43,7 +43,7 @@ public class SimpleRequestHandlerWriter {
 
     private void GenerateHandlerClass(CSharpFileDefinition outputFile, RequestHandlerModel requestModel) {
         var classDefinition = outputFile.AddClass(requestModel.GenerateInvokeType.Name);
-        classDefinition.Modifiers |= ComponentModifier.Static;
+        classDefinition.Modifiers |= ComponentModifier.Static | ComponentModifier.Internal;
         classDefinition.WrapInPragma("1998");
 
         var requestParameterType =

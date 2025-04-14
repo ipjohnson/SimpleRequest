@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Text.Json;
 using DependencyModules.Runtime.Attributes;
 using Microsoft.Extensions.Primitives;
@@ -12,7 +11,7 @@ public class ServerSideEventSerializer(
     IMemoryStreamPool memoryStreamPool,
     ISystemTextJsonSerializerOptionProvider serializerOptionProvider) : IContentSerializer {
 
-    public int Order => 1_000_000_001;
+    public int Order => 1;
     
     public SupportedSerializerFeature Features => SupportedSerializerFeature.SerializeAsync;
 
@@ -45,6 +44,7 @@ public class ServerSideEventSerializer(
             return;
         }
         
+        headers["Content-Type"] = "text/event-stream";
         headers["Cache-Control"] = "no-cache";
         headers["Connection"] = "keep-alive";
         headers["Transfer-Encoding"] = "chunked";
@@ -92,21 +92,18 @@ public class ServerSideEventSerializer(
         using var memoryStreamRes = memoryStreamPool.Get();
         
         var memoryStream = memoryStreamRes.Item;
-        var utf8Writer = new Utf8JsonWriter(memoryStream);
         
         await foreach (var eventModel in objectValues.WithCancellation(cancellationToken)) {
+
             memoryStream.SetLength(0);
-            utf8Writer.Reset();
-            
+
             memoryStream.WriteString("data: ");
-            
-            JsonSerializer.Serialize(utf8Writer, eventModel, serializerOptionProvider.GetOptions());
-            
-            utf8Writer.Flush();
-            
-            stream.WriteString("\n\n");
-            stream.Position = 0;
-            
+
+            JsonSerializer.Serialize(memoryStream, eventModel, serializerOptionProvider.GetOptions());
+
+            memoryStream.WriteString("\n\n");
+            memoryStream.Position = 0;
+
             await memoryStream.CopyToAsync(stream, cancellationToken);
             await stream.FlushAsync(cancellationToken);
         }
@@ -123,7 +120,7 @@ public class ServerSideEventSerializer(
             
             memoryStream.Position = 0;
             
-            await stream.CopyToAsync(stream, cancellationToken);
+            await memoryStream.CopyToAsync(stream, cancellationToken);
             await stream.FlushAsync(cancellationToken);
         }
     }
@@ -141,7 +138,7 @@ public class ServerSideEventSerializer(
             
             memoryStream.Position = 0;
             
-            await stream.CopyToAsync(stream, cancellationToken);
+            await memoryStream.CopyToAsync(stream, cancellationToken);
             await stream.FlushAsync(cancellationToken);
         }
     }

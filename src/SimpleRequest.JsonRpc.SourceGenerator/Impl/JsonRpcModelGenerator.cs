@@ -1,4 +1,8 @@
+using System.Collections.Immutable;
+using CSharpAuthor;
+using DependencyModules.SourceGenerator.Impl;
 using DependencyModules.SourceGenerator.Impl.Models;
+using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimpleRequest.SourceGenerator.Impl.Handler;
@@ -7,18 +11,41 @@ using SimpleRequest.SourceGenerator.Impl.Models;
 namespace SimpleRequest.JsonRpc.SourceGenerator.Impl;
 
 public class JsonRpcModelGenerator : BaseRequestModelGenerator {
+    private static readonly string[] _attributeNames = {
+        "JsonRpcFunction", "JsonRpcFunctionAttribute"
+    };
 
-    protected override RequestHandlerNameModel GetRequestNameModel(GeneratorSyntaxContext context, MethodDeclarationSyntax methodDeclaration, IReadOnlyList<AttributeModel> attributeModules, IReadOnlyList<AttributeModel> classAttributes,
+
+    protected override RequestHandlerNameModel GetRequestNameModel(
+        GeneratorSyntaxContext context,
+        MethodDeclarationSyntax methodDeclaration,
+        IReadOnlyList<AttributeModel> attributeModels,
+        IReadOnlyList<AttributeModel> classAttributes,
         CancellationToken cancellation) {
-        throw new NotImplementedException();
+        var functionName = methodDeclaration.Identifier.Text;
+        var attribute = attributeModels.FirstOrDefault(a => _attributeNames.Contains(a.TypeDefinition.Name));
+
+        if (attribute != null) {
+            functionName = attribute.Arguments.FirstOrDefault()?.Value?.ToString() ?? functionName;
+        }
+
+        return new RequestHandlerNameModel( functionName, "POST");
     }
 
-    protected override RequestParameterInformation? GetParameterInfoFromAttributes(GeneratorSyntaxContext generatorSyntaxContext, MethodDeclarationSyntax methodDeclarationSyntax, RequestHandlerNameModel requestHandlerNameModel,
+    protected override RequestParameterInformation? GetParameterInfoFromAttributes(GeneratorSyntaxContext generatorSyntaxContext, MethodDeclarationSyntax methodDeclarationSyntax,
+        RequestHandlerNameModel requestHandlerNameModel,
         ParameterSyntax parameter, IReadOnlyList<AttributeModel> attributeModels, int parameterIndex) {
-        throw new NotImplementedException();
+        return null;
     }
 
-    protected override IEnumerable<string> AttributeNames() {
-        throw new NotImplementedException();
+    protected override IEnumerable<string> AttributeNames() => _attributeNames;
+
+    protected override bool IsFilterAttribute(string attributeName) {
+
+        if (attributeName.Contains("DependencyModule")) {
+            return false;
+        }
+        
+        return true;
     }
 }

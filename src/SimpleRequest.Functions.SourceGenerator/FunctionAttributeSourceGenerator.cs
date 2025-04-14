@@ -13,7 +13,7 @@ public class FunctionAttributeSourceGenerator : BaseRequestAttributeSourceGenera
     private readonly FunctionRequestModelGenerator _modelGenerator = new ();
     private readonly SimpleRequestHandlerWriter _simpleRequestWriter = new ();
     private readonly SimpleRequestRoutingWriter _routingWriter = 
-        new (KnownFunctionTypes.SimpleRequestFunctionsModuleAttribute, "FunctionRouting");
+        new (KnownFunctionTypes.SimpleRequestFunctionsModuleAttribute, "FunctionRouting", "FunctionHandler");
     
     protected override IEnumerable<ITypeDefinition> AttributeTypes() {
         yield return KnownFunctionTypes.FunctionAttribute;

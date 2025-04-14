@@ -11,7 +11,7 @@ public class RequestHandlerFactory : IRequestHandlerFactory {
         _requestFilterManagementService = requestFilterManagementService;
     }
 
-    public IRequestHandler GetHandler(IRequestHandlerInfo requestHandlerInfo) {
+    public IRequestHandler GetHandler(IRequestHandlerInfo requestHandlerInfo, string handlerType) {
         return new RequestHandler(requestHandlerInfo, _requestFilterManagementService.GetFilters(requestHandlerInfo));
     }
 }

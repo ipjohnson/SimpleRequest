@@ -1,58 +1,59 @@
-using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using DependencyModules.Runtime.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleRequest.JsonRpc.Models;
 using SimpleRequest.Runtime.Invoke;
 
 namespace SimpleRequest.JsonRpc.Impl;
 
+
+public record JsonRequest(string JsonRpc, string Method, JsonNode? Params, object? Id);
+
 public interface IJsonRpcRequestProcessor {
 
-    Task HandleRequest(IRequestContext context, string jsonRpcTag, bool processInParallel);
+    Task HandleRequest(IRequestContext context, bool processInParallel, string[] tags);
 }
 
+[SingletonService]
 public class JsonRpcRequestProcessor(
     IJsonRpcParameterBinder binder,
     IJsonRpcHandlerLocator rpcHandlerLocator) : IJsonRpcRequestProcessor {
-    private ConcurrentDictionary<string, IReadOnlyList<IRequestHandlerProvider>> _handlers = new();
     
-    public async Task HandleRequest(IRequestContext context, string jsonRpcTag, bool processInParallel) {
-        var handlers = _handlers.GetOrAdd(jsonRpcTag, 
-            s => context.ServiceProvider.GetKeyedServices<IRequestHandlerProvider>(s).ToList());
-
+    public async Task HandleRequest(IRequestContext context, bool processInParallel, string[] tags) {
         var jsonRpcRequest = await ParseJsonRequest(context);
         
         if (jsonRpcRequest == null) {
             await RespondWithInvalidJsonError(context);
         }
         else if (jsonRpcRequest.GetValueKind() == JsonValueKind.Array) {
-            await HandleBatchRequest(context, jsonRpcRequest);
+            await HandleBatchRequest(context, jsonRpcRequest, processInParallel, tags);
         }
         else if (jsonRpcRequest.GetValueKind() == JsonValueKind.Object) {
-            await HandleSingleRequest(context, jsonRpcRequest);
+            await HandleSingleRequest(context, jsonRpcRequest, tags);
         }
         else {
             await RespondWithInvalidJsonError(context);
         }
     }
 
-    private async Task HandleBatchRequest(IRequestContext context, JsonNode jsonRpcRequest) {
+    private async Task HandleBatchRequest(IRequestContext context, JsonNode jsonRpcRequest, bool processInParallel, string[] tags) {
         var responseList = new List<JsonRpcResponseModel>();
         
         foreach (var jsonNode in jsonRpcRequest.AsArray()) {
             if (jsonNode?.GetValueKind() == JsonValueKind.Object) {
-                var response = await InvokeJsonRpcMethod(context, jsonNode.AsObject(), true);
+                var response = await InvokeJsonRpcMethod(context, jsonNode.AsObject(), true, tags);
                 responseList.Add(response);
             }
             else {
-                
+                // log error
             }
         }
     }
 
-    private async Task HandleSingleRequest(IRequestContext context, JsonNode jsonRpcRequest) {
-        context.ResponseData.ResponseValue = await InvokeJsonRpcMethod(context, jsonRpcRequest.AsObject(), false);
+    private async Task HandleSingleRequest(IRequestContext context, JsonNode jsonRpcRequest, string[] tags) {
+        context.ResponseData.ResponseValue =
+            await InvokeJsonRpcMethod(context, jsonRpcRequest.AsObject(), false, tags);
     }
 
     private async Task RespondWithInvalidJsonError(IRequestContext context) {
@@ -62,7 +63,7 @@ public class JsonRpcRequestProcessor(
         };
     }
 
-    private async Task<JsonRpcResponseModel> InvokeJsonRpcMethod(IRequestContext context, JsonObject jsonNode, bool useNewScope) {
+    private async Task<JsonRpcResponseModel> InvokeJsonRpcMethod(IRequestContext context, JsonObject jsonNode, bool useNewScope, string[] tags) {
         
         var jsonRequest = GetJsonRequest(context, jsonNode);
 
@@ -84,7 +85,9 @@ public class JsonRpcRequestProcessor(
         }
         
         var cloneContext = CloneContext(context, serviceProvider, jsonRequest);
-        var handler = rpcHandlerLocator.Locate(cloneContext);
+        var path = string.IsNullOrEmpty(context.RequestData.Path) ? "/" : context.RequestData.Path;
+        
+        var handler = rpcHandlerLocator.Locate(path, cloneContext, jsonRequest, tags);
 
         if (handler == null) {
             return new JsonRpcResponseModel {
@@ -105,6 +108,8 @@ public class JsonRpcRequestProcessor(
                 },
             };
         }
+        
+        cloneContext.ResponseData.Body = null;
         
         await handler.Invoke(cloneContext);
         
@@ -140,7 +145,6 @@ public class JsonRpcRequestProcessor(
         return clone;
     }
 
-    private record JsonRequest(string JsonRpc, string Method, JsonNode? Params, object? Id);
     
     private JsonRequest? GetJsonRequest(IRequestContext context, JsonObject jsonObject) {
         if (!jsonObject.TryGetPropertyValue("jsonrpc", out var jsonVersion) || 

@@ -50,6 +50,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRequest.JsonRpc", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleRequest.JsonRpc.SourceGenerator", "src\SimpleRequest.JsonRpc.SourceGenerator\SimpleRequest.JsonRpc.SourceGenerator.csproj", "{F104527B-4D15-4255-9EFF-128C6F87A405}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp.JsonHandlers", "tests\TestApp.JsonHandlers\TestApp.JsonHandlers.csproj", "{63D211AC-F4AB-4853-A613-7CC58F1F60D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp.AspNet.JsonRpc", "tests\TestApp.AspNet.JsonRpc\TestApp.AspNet.JsonRpc.csproj", "{65167A8B-6A45-4D97-9CAC-2D7D0324017B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp.JsonHandlers.Tests", "tests\TestApp.JsonHandlers.Tests\TestApp.JsonHandlers.Tests.csproj", "{F37E8FC7-1E28-4437-ACA0-11C8287264DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +85,9 @@ Global
 		{E1662A70-FBA8-45A3-B5A5-3CB9D963D60A} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
 		{5806FB4B-B931-4AEB-AB23-EBFB6DC18A68} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
 		{F104527B-4D15-4255-9EFF-128C6F87A405} = {E0609A0A-248C-4EE5-ABCE-C0793145ECE3}
+		{63D211AC-F4AB-4853-A613-7CC58F1F60D6} = {076C405E-76A1-4B9E-B9CC-53EF01868D62}
+		{65167A8B-6A45-4D97-9CAC-2D7D0324017B} = {076C405E-76A1-4B9E-B9CC-53EF01868D62}
+		{F37E8FC7-1E28-4437-ACA0-11C8287264DC} = {076C405E-76A1-4B9E-B9CC-53EF01868D62}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{73169202-4EE1-442A-AEB6-688421F83095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -173,5 +182,17 @@ Global
 		{F104527B-4D15-4255-9EFF-128C6F87A405}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F104527B-4D15-4255-9EFF-128C6F87A405}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F104527B-4D15-4255-9EFF-128C6F87A405}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63D211AC-F4AB-4853-A613-7CC58F1F60D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63D211AC-F4AB-4853-A613-7CC58F1F60D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63D211AC-F4AB-4853-A613-7CC58F1F60D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63D211AC-F4AB-4853-A613-7CC58F1F60D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65167A8B-6A45-4D97-9CAC-2D7D0324017B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65167A8B-6A45-4D97-9CAC-2D7D0324017B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65167A8B-6A45-4D97-9CAC-2D7D0324017B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65167A8B-6A45-4D97-9CAC-2D7D0324017B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F37E8FC7-1E28-4437-ACA0-11C8287264DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F37E8FC7-1E28-4437-ACA0-11C8287264DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F37E8FC7-1E28-4437-ACA0-11C8287264DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F37E8FC7-1E28-4437-ACA0-11C8287264DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

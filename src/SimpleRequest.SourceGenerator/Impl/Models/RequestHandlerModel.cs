@@ -32,7 +32,6 @@ public class RequestHandlerModelComparer : IEqualityComparer<RequestHandlerModel
         return x.Name.Equals(y.Name) && 
                x.HandlerType.Equals(y.HandlerType) && 
                x.HandlerMethod == y.HandlerMethod && 
-               x.ConstructorInfo.Equals(y.ConstructorInfo) &&
                x.GenerateInvokeType.Equals(y.GenerateInvokeType) && 
                x.RequestParameterInformationList.Equals(y.RequestParameterInformationList) && 
                x.ResponseInformation.Equals(y.ResponseInformation) && 

@@ -12,9 +12,11 @@ public class RoutingTableGenerator {
     private readonly ParameterDefinition _index = new(TypeDefinition.Get(typeof(int)), "index");
     private readonly ParameterDefinition _context = new(KnownRequestTypes.IRequestContext, "context");
     private readonly FieldDefinition _factoryField;
+    private readonly string _handlerType;
 
-    public RoutingTableGenerator(FieldDefinition factory) {
+    public RoutingTableGenerator(FieldDefinition factory, string handlerType) {
         _factoryField = factory;
+        _handlerType = handlerType;
     }
 
     private record RoutingTableContext(
@@ -426,7 +428,8 @@ public class RoutingTableGenerator {
             _factoryField.Instance.Invoke("GetHandler",
                 new StaticPropertyStatement(leafNode.Value.GenerateInvokeType, "HandlerInfo") {
                     Indented = false
-                }
+                },
+                QuoteString(_handlerType)
             )
         );
 

@@ -1,15 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
-    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9136" />
@@ -18,7 +14,7 @@
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
     </ItemGroup>
-    
+
     <ItemGroup>
         <ProjectReference Include="..\..\src\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj" />
         <ProjectReference Include="..\..\src\SimpleRequest.SwaggerUi\SimpleRequest.SwaggerUi.csproj" />
@@ -26,6 +22,6 @@
         <ProjectReference Include="..\..\src\SimpleRequest.Web.AspNetHost\SimpleRequest.Web.AspNetHost.csproj" />
         <ProjectReference Include="..\..\src\SimpleRequest.Web.Runtime\SimpleRequest.Web.Runtime.csproj" />
         <ProjectReference Include="..\..\src\SimpleRequest.Web.SourceGenerator\SimpleRequest.Web.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-        <ProjectReference Include="..\TestApp.WebHandlers\TestApp.WebHandlers.csproj" />
+        <ProjectReference Include="..\TestApp.JsonHandlers\TestApp.JsonHandlers.csproj" />
     </ItemGroup>
 </Project>

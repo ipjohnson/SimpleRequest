@@ -14,7 +14,7 @@ public class WebAttributeSourceGenerator : BaseRequestAttributeSourceGenerator {
     private readonly WebRequestModelGenerator _webRequestModelGenerator = new();
 
     private readonly SimpleRequestRoutingWriter _routingWriter =
-        new(KnownWebTypes.SimpleRequestWebModuleAttribute, "FunctionRouting");
+        new(KnownWebTypes.SimpleRequestWebModuleAttribute, "FunctionRouting", "WebHandler");
 
     protected override IEnumerable<ITypeDefinition> AttributeTypes() {
         yield return KnownWebTypes.Attributes.Delete;
