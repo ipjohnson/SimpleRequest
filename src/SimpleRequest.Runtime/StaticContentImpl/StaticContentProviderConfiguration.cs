@@ -1,4 +1,4 @@
-namespace SimpleRequest.Web.Runtime.StaticContentImpl;
+namespace SimpleRequest.Runtime.StaticContentImpl;
 
 public record StaticContentProviderConfiguration(string ContentRootPath,
     string RequestPath,

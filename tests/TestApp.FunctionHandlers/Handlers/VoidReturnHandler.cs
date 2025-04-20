@@ -1,4 +1,6 @@
-using SimpleRequest.Functions.Runtime.Attributes;
+
+
+using SimpleRequest.Models.Attributes;
 
 namespace TestApp.FunctionHandlers.Handlers;
 

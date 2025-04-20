@@ -1,8 +1,8 @@
 ﻿using DependencyModules.Runtime.Attributes;
-using SimpleRequest.Functions.Runtime;
+using SimpleRequest.Runtime;
 
 namespace TestApp.FunctionHandlers;
 
 [DependencyModule]
-[SimpleRequestFunctions]
+[SimpleRequestRuntime]
 public partial class TestFunctionHandlers { }

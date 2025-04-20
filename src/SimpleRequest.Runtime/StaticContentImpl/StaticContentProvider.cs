@@ -4,7 +4,7 @@ using SimpleRequest.Runtime.Filters;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Invoke.Impl;
 
-namespace SimpleRequest.Web.Runtime.StaticContentImpl;
+namespace SimpleRequest.Runtime.StaticContentImpl;
 
 public class StaticContentProvider(
     IServiceProvider serviceProvider,

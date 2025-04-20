@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SimpleRequest.Runtime.Filters;
 using SimpleRequest.Runtime.Invoke;
-using SimpleRequest.Web.Runtime.StaticContentImpl;
+using SimpleRequest.Runtime.StaticContentImpl;
 
-namespace SimpleRequest.Web.Runtime;
+namespace SimpleRequest.Runtime;
 
 [DependencyModule(OnlyRealm = true)]
 public partial class StaticContent : IServiceCollectionConfiguration {
@@ -52,6 +52,7 @@ public partial class StaticContent : IServiceCollectionConfiguration {
     }
 
     public override int GetHashCode() {
-        return ContentRootPath.GetHashCode() ^ RequestPath.GetHashCode();
+        // ReSharper disable NonReadonlyMemberInGetHashCode
+        return (ContentRootPath?.GetHashCode() ?? 13) ^ (RequestPath?.GetHashCode() ?? 39);
     }
 }

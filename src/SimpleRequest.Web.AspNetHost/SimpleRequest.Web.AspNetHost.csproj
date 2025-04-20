@@ -18,7 +18,6 @@
     
     <ItemGroup>
       <ProjectReference Include="..\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj" />
-      <ProjectReference Include="..\SimpleRequest.Web.Runtime\SimpleRequest.Web.Runtime.csproj" />
     </ItemGroup>
     
 </Project>

@@ -1,12 +1,12 @@
 ﻿using DependencyModules.Runtime.Attributes;
 using SimpleRequest.RazorBlade;
+using SimpleRequest.Runtime;
 using SimpleRequest.Runtime.Attributes;
-using SimpleRequest.Web.Runtime;
 
 namespace TestApp.WebHandlers;
 
 [DependencyModule]
-[SimpleRequestWeb]
+[SimpleRequestRuntime]
 [RoutingOrder(-1)]
 [RazorBladeRuntime]
 [StaticContent(RequestPath = "/static-content/")]

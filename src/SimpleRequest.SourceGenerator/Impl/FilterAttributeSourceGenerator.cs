@@ -12,11 +12,10 @@ using SimpleRequest.SourceGenerator.Impl.Writers;
 namespace SimpleRequest.SourceGenerator.Impl;
 
 public class FilterAttributeSourceGenerator : IDependencyModuleSourceGenerator {
-    private readonly ITypeDefinition _entryPointAttributeType;
+
     private readonly string _uniqueName;
 
-    public FilterAttributeSourceGenerator(ITypeDefinition entryPointAttributeType, string uniqueName) {
-        _entryPointAttributeType = entryPointAttributeType;
+    public FilterAttributeSourceGenerator(string uniqueName) {
         _uniqueName = uniqueName;
     }
     
@@ -25,7 +24,7 @@ public class FilterAttributeSourceGenerator : IDependencyModuleSourceGenerator {
         IncrementalValuesProvider<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> incrementalValueProvider) {
         
         var methodSelector = new SyntaxSelector<ClassDeclarationSyntax>(
-            KnownRequestTypes.RequestFilterAttribute
+            KnownRequestTypes.Attributes.RequestFilterAttribute
         );
 
         var requestModelProvider = context.SyntaxProvider.CreateSyntaxProvider(
@@ -147,7 +146,7 @@ public class FilterAttributeSourceGenerator : IDependencyModuleSourceGenerator {
         int? order = null;
 
         foreach (var attributeModel in attributes) {
-            if (attributeModel.TypeDefinition.Equals(KnownRequestTypes.RequestFilterAttribute)) {
+            if (attributeModel.TypeDefinition.Equals(KnownRequestTypes.Attributes.RequestFilterAttribute)) {
                 foreach (var property in attributeModel.Properties) {
                     if (property.Name == "Order" && property.Value is int intValue) {
                         order = intValue;

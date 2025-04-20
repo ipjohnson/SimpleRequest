@@ -6,7 +6,7 @@ using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Pools;
 using SimpleRequest.Runtime.Serializers;
 
-namespace SimpleRequest.Web.Runtime.StaticContentImpl;
+namespace SimpleRequest.Runtime.StaticContentImpl;
 
 public class StaticContentStorage {
     public StaticContentStorage(string filePath) {

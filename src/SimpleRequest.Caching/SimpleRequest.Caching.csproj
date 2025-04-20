@@ -8,8 +8,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SimpleRequest.Runtime\SimpleRequest.Runtime.csproj"/>      
-        <ProjectReference Include="..\SimpleRequest.Functions.SourceGenerator\SimpleRequest.Functions.SourceGenerator.csproj"
-                          OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+        <ProjectReference Include="..\SimpleRequest.SourceGenerator\SimpleRequest.SourceGenerator.csproj" 
+                          OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>      
     </ItemGroup>
 
     <ItemGroup>

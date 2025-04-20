@@ -339,7 +339,12 @@ public abstract class BaseRequestModelGenerator {
                 "text/plain";
         }
 
-        return new ResponseInformationModel(isAsync, returnType, template, null, rawResponse);
+        return new ResponseInformationModel(
+            isAsync, 
+            returnType, 
+            template,
+            null,
+            rawResponse);
     }
 
     protected virtual IReadOnlyList<AttributeModel> GetFilters(GeneratorSyntaxContext context,

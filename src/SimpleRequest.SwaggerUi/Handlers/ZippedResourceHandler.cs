@@ -1,8 +1,8 @@
 using SimpleRequest.Caching;
+using SimpleRequest.Models.Attributes;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Models;
 using SimpleRequest.SwaggerUi.Services;
-using SimpleRequest.Web.Runtime.Attributes;
 
 namespace SimpleRequest.SwaggerUi.Handlers;
 

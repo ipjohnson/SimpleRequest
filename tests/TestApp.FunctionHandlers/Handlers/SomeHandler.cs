@@ -1,4 +1,4 @@
-using SimpleRequest.Functions.Runtime.Attributes;
+using SimpleRequest.Models.Attributes;
 using TestApp.FunctionHandlers.Filters;
 using TestApp.FunctionHandlers.Models;
 

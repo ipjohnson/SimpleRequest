@@ -1,12 +1,12 @@
 ﻿using DependencyModules.Runtime.Attributes;
 using SimpleRequest.Caching;
+using SimpleRequest.Runtime;
 using SimpleRequest.Runtime.Attributes;
-using SimpleRequest.Web.Runtime;
 
 namespace SimpleRequest.Swagger;
 
 [DependencyModule(GenerateFactories = true)]
-[SimpleRequestWeb]
+[SimpleRequestRuntime]
 [RoutingOrder(1000)]
 [SimpleRequestCaching]
 public partial class SimpleRequestSwagger;

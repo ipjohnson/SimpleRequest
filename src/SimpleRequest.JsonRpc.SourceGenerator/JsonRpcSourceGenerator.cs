@@ -12,7 +12,6 @@ public class JsonRpcSourceGenerator : BaseSourceGenerator {
     protected override IEnumerable<IDependencyModuleSourceGenerator> AttributeSourceGenerators() {
         yield return new JsonRpcAttributeSourceGenerator();
         yield return new FilterAttributeSourceGenerator(
-            KnownTypesJsonRpc.JsonRpcFunctionAttribute,
             "JsonRpc"
         );
     }

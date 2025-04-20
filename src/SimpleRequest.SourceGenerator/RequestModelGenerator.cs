@@ -1,12 +1,13 @@
 using DependencyModules.SourceGenerator.Impl.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SimpleRequest.SourceGenerator.Impl;
 using SimpleRequest.SourceGenerator.Impl.Handler;
 using SimpleRequest.SourceGenerator.Impl.Models;
 
-namespace SimpleRequest.Web.SourceGenerator;
+namespace SimpleRequest.SourceGenerator;
 
-public class WebRequestModelGenerator : BaseRequestModelGenerator {
+public class RequestModelGenerator : BaseRequestModelGenerator {
     private static string[] _attributeNames = {
         "Get",
         "GetAttribute",   
@@ -15,7 +16,11 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
         "Put",
         "PutAttribute",
         "Delete",
-        "DeleteAttribute"
+        "DeleteAttribute",
+        "Function",
+        "FunctionAttribute",
+        "Http",
+        "HttpAttribute",
     };
     
     protected override RequestHandlerNameModel GetRequestNameModel(GeneratorSyntaxContext context,
@@ -29,8 +34,17 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
         var attribute = attributeModels.FirstOrDefault(a => _attributeNames.Contains(a.TypeDefinition.Name));
 
         if (attribute != null) {
-            method = attribute.TypeDefinition.Name.Replace("Attribute", "").ToUpperInvariant();
-            functionName = attribute.Arguments.FirstOrDefault()?.Value?.ToString() ?? "/";
+            if (attribute.TypeDefinition.Equals(KnownRequestTypes.Attributes.Function)) {
+                functionName = attribute.Properties.FirstOrDefault()?.Value?.ToString() ?? functionName;
+            }
+            else if (attribute.TypeDefinition.Equals(KnownRequestTypes.Attributes.Http)) {
+                method = attribute.Arguments.FirstOrDefault()?.Value?.ToString() ?? "POST";
+                functionName = attribute.Arguments.LastOrDefault()?.Value?.ToString() ?? "/";
+            }
+            else {
+                method = attribute.TypeDefinition.Name.Replace("Attribute", "").ToUpperInvariant();
+                functionName = attribute.Arguments.FirstOrDefault()?.Value?.ToString() ?? "/";
+            }
         }
 
         if (string.IsNullOrEmpty(functionName)) {
@@ -38,7 +52,7 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
         }
         
         var basePath = classAttributes.FirstOrDefault(
-            a => a.TypeDefinition.Name == "BasePathAttribute")?
+                a => a.TypeDefinition.Name == "BasePathAttribute")?
             .Arguments.FirstOrDefault()?.Value?.ToString().Trim('"');
         
         functionName = basePath + functionName;
@@ -58,4 +72,5 @@ public class WebRequestModelGenerator : BaseRequestModelGenerator {
     }
 
     protected override IEnumerable<string> AttributeNames() => _attributeNames;
+    
 }

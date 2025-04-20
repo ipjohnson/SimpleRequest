@@ -1,6 +1,6 @@
 using SimpleRequest.Runtime.Invoke;
 
-namespace SimpleRequest.Web.Runtime.StaticContentImpl;
+namespace SimpleRequest.Runtime.StaticContentImpl;
 
 public class StaticHandlerInfo : IRequestHandlerInfo {
     public StaticHandlerInfo(string path,

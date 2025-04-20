@@ -1,9 +1,9 @@
 using System.Text;
 using Microsoft.OpenApi.Writers;
 using SimpleRequest.Caching;
+using SimpleRequest.Models.Attributes;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Swagger.Services;
-using SimpleRequest.Web.Runtime.Attributes;
 
 namespace SimpleRequest.Swagger.Handlers;
 

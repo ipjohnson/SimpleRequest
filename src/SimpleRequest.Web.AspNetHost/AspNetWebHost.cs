@@ -1,13 +1,13 @@
 ﻿using DependencyModules.Runtime;
 using DependencyModules.Runtime.Attributes;
 using DependencyModules.Runtime.Interfaces;
+using SimpleRequest.Runtime;
 using SimpleRequest.Runtime.Attributes;
-using SimpleRequest.Web.Runtime;
 
 namespace SimpleRequest.Web.AspNetHost;
 
 [DependencyModule]
-[SimpleRequestWeb]
+[SimpleRequestRuntime]
 public partial class AspNetWebHost {
     public partial class Attribute : ISimpleRequestEntryAttribute { }
 

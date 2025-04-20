@@ -11,12 +11,10 @@ using SimpleRequest.SourceGenerator.Impl.Utils;
 namespace SimpleRequest.SourceGenerator.Impl.Writers;
 
 public class SimpleRequestRoutingWriter {
-    private readonly ITypeDefinition _entryPointAttributeType;
     private readonly RoutingClassGenerator _routingClassGenerator;
     private readonly string _routingClassName;
 
-    public SimpleRequestRoutingWriter(ITypeDefinition entryPointAttributeType, string routingClassName, string handlerType) {
-        _entryPointAttributeType = entryPointAttributeType;
+    public SimpleRequestRoutingWriter( string routingClassName, string handlerType) {
         _routingClassName = routingClassName;
         _routingClassGenerator = new RoutingClassGenerator(routingClassName, handlerType);
     }

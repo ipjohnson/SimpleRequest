@@ -7,12 +7,30 @@ public static class KnownRequestTypes {
     public const string InvokeNamespace = "SimpleRequest.Runtime.Invoke";
     public const string SerializersNamespace = "SimpleRequest.Runtime.Serializers";
     public const string AttributeNamespace = "SimpleRequest.Runtime.Attributes";
+    public const string ModelAttributeNamespace = "SimpleRequest.Models.Attributes";
     
-    public static readonly ITypeDefinition RequestFilterAttribute =
-        TypeDefinition.Get(
-            TypeDefinitionEnum.ClassDefinition, 
-            AttributeNamespace, 
-            "RequestFilterAttribute");
+    public static class Attributes {
+        
+        public static readonly ITypeDefinition RequestFilterAttribute =
+            TypeDefinition.Get(
+                TypeDefinitionEnum.ClassDefinition, 
+                AttributeNamespace, 
+                "RequestFilterAttribute");
+        
+        public static readonly ITypeDefinition Delete = TypeDefinition.Get(ModelAttributeNamespace, "DeleteAttribute");
+        
+        public static readonly ITypeDefinition Get = TypeDefinition.Get(ModelAttributeNamespace, "GetAttribute");
+        
+        public static readonly ITypeDefinition Patch = TypeDefinition.Get(ModelAttributeNamespace, "PatchAttribute");
+        
+        public static readonly ITypeDefinition Post = TypeDefinition.Get(ModelAttributeNamespace, "PostAttribute");
+        
+        public static readonly ITypeDefinition Put = TypeDefinition.Get(ModelAttributeNamespace, "PutAttribute");
+        
+        public static readonly ITypeDefinition Function = TypeDefinition.Get(ModelAttributeNamespace, "FunctionAttribute");
+
+        public static readonly ITypeDefinition Http = TypeDefinition.Get(ModelAttributeNamespace, "HttpAttribute");
+    }
     
     public static readonly ITypeDefinition RoutingOrderAttribute =
         TypeDefinition.Get(

@@ -1,4 +1,4 @@
-namespace SimpleRequest.Runtime.Attributes;
+namespace SimpleRequest.Models.Attributes;
 
 public class FromServicesAttribute : Attribute {
     

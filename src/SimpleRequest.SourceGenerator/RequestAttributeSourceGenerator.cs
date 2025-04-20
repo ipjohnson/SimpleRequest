@@ -6,19 +6,24 @@ using SimpleRequest.SourceGenerator.Impl;
 using SimpleRequest.SourceGenerator.Impl.Models;
 using SimpleRequest.SourceGenerator.Impl.Writers;
 
-namespace SimpleRequest.Functions.SourceGenerator;
+namespace SimpleRequest.SourceGenerator;
 
-public class FunctionAttributeSourceGenerator : BaseRequestAttributeSourceGenerator {
+public class RequestAttributeSourceGenerator : BaseRequestAttributeSourceGenerator {
+    private ITypeDefinition[] attributes = new[] {
+        KnownRequestTypes.Attributes.Get,
+        KnownRequestTypes.Attributes.Put,
+        KnownRequestTypes.Attributes.Post,
+        KnownRequestTypes.Attributes.Patch,
+        KnownRequestTypes.Attributes.Delete,
+        KnownRequestTypes.Attributes.Function
+    };
     private readonly IEqualityComparer<RequestHandlerModel> _comparer = new RequestHandlerModelComparer();
-    private readonly FunctionRequestModelGenerator _modelGenerator = new ();
+    private readonly RequestModelGenerator _modelGenerator = new ();
     private readonly SimpleRequestHandlerWriter _simpleRequestWriter = new ();
     private readonly SimpleRequestRoutingWriter _routingWriter = 
-        new (KnownFunctionTypes.SimpleRequestFunctionsModuleAttribute, "FunctionRouting", "FunctionHandler");
-    
-    protected override IEnumerable<ITypeDefinition> AttributeTypes() {
-        yield return KnownFunctionTypes.FunctionAttribute;
-    }
+        new ("RequestRouting", "StandardHandler");
 
+    protected override IEnumerable<ITypeDefinition> AttributeTypes() => attributes;
     protected override void GenerateRouteFile(SourceProductionContext context,
         ((ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Left, ImmutableArray<RequestHandlerModel> Right) tuple) {
         if (tuple.Left == null) {
