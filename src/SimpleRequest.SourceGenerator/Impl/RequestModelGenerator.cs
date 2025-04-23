@@ -1,14 +1,13 @@
 using DependencyModules.SourceGenerator.Impl.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SimpleRequest.SourceGenerator.Impl;
 using SimpleRequest.SourceGenerator.Impl.Handler;
 using SimpleRequest.SourceGenerator.Impl.Models;
 
-namespace SimpleRequest.SourceGenerator;
+namespace SimpleRequest.SourceGenerator.Impl;
 
 public class RequestModelGenerator : BaseRequestModelGenerator {
-    private static string[] _attributeNames = {
+    internal static string[] AttributeNamesList = {
         "Get",
         "GetAttribute",   
         "Post",
@@ -31,7 +30,7 @@ public class RequestModelGenerator : BaseRequestModelGenerator {
 
         var method = "POST";
         var functionName = methodDeclaration.Identifier.Text;
-        var attribute = attributeModels.FirstOrDefault(a => _attributeNames.Contains(a.TypeDefinition.Name));
+        var attribute = attributeModels.FirstOrDefault(a => AttributeNamesList.Contains(a.TypeDefinition.Name));
 
         if (attribute != null) {
             if (attribute.TypeDefinition.Equals(KnownRequestTypes.Attributes.Function)) {
@@ -71,6 +70,6 @@ public class RequestModelGenerator : BaseRequestModelGenerator {
         return null;
     }
 
-    protected override IEnumerable<string> AttributeNames() => _attributeNames;
+    protected override IEnumerable<string> AttributeNames() => AttributeNamesList;
     
 }

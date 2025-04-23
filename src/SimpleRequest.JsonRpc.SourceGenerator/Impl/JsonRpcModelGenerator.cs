@@ -39,13 +39,4 @@ public class JsonRpcModelGenerator : BaseRequestModelGenerator {
     }
 
     protected override IEnumerable<string> AttributeNames() => _attributeNames;
-
-    protected override bool IsFilterAttribute(string attributeName) {
-
-        if (attributeName.Contains("DependencyModule")) {
-            return false;
-        }
-        
-        return true;
-    }
 }

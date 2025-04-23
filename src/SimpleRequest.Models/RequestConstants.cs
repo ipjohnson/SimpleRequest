@@ -8,5 +8,6 @@ public static class RequestConstants {
         public const string Put = "PUT";
         public const string Delete = "DELETE";
         public const string Patch = "PATCH";
+        public const string Head = "HEAD";
     }
 }

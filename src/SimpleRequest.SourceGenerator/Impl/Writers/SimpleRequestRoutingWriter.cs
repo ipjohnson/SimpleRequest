@@ -13,9 +13,11 @@ namespace SimpleRequest.SourceGenerator.Impl.Writers;
 public class SimpleRequestRoutingWriter {
     private readonly RoutingClassGenerator _routingClassGenerator;
     private readonly string _routingClassName;
+    private readonly string _uniqueId;
 
-    public SimpleRequestRoutingWriter( string routingClassName, string handlerType) {
+    public SimpleRequestRoutingWriter(string routingClassName, string handlerType, string uniqueId) {
         _routingClassName = routingClassName;
+        _uniqueId = uniqueId;
         _routingClassGenerator = new RoutingClassGenerator(routingClassName, handlerType);
     }
 
@@ -59,12 +61,12 @@ public class SimpleRequestRoutingWriter {
         using var fileLogger = new FileLogger(dependencyModuleConfiguration, "SimpleRequestModule");
         var dependencyFileWriter = new DependencyFileWriter(fileLogger);
         var output =
-            dependencyFileWriter.Write(entryPointModel, dependencyModuleConfiguration, serviceModels, "SimpleRequest");
+            dependencyFileWriter.Write(entryPointModel, dependencyModuleConfiguration, serviceModels, "SimpleRequest" + _uniqueId);
 
         context.AddSource(
             entryPointModel.EntryPointType.GetFileNameHint(
                 dependencyModuleConfiguration.RootNamespace,
-                "RequestDeps"
+                "RequestDeps." +_uniqueId
                 ),           output);
     }
 
@@ -116,7 +118,7 @@ public class SimpleRequestRoutingWriter {
         context.AddSource(
             entryPointModel.EntryPointType.GetFileNameHint(
                 dependencyModuleConfiguration.RootNamespace,
-                "Routing"),
+                "Routing" + _uniqueId),
             output);
     }
 

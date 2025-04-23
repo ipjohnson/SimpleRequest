@@ -21,7 +21,7 @@ public record RequestParameterInformation(
     ITypeDefinition ParameterType,
     string Name,
     bool Required,
-    string? DefaultValue,
+    object? DefaultValue,
     ParameterBindType BindingType,
     string BindingName,
     int ParameterIndex,

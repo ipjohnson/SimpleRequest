@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl;
 using DependencyModules.SourceGenerator.Impl.Models;
 using DependencyModules.SourceGenerator.Impl.Utilities;
@@ -7,34 +6,40 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimpleRequest.SourceGenerator.Impl.Models;
 using SimpleRequest.SourceGenerator.Impl.Utils;
+using SimpleRequest.SourceGenerator.Impl.Writers;
 
 namespace SimpleRequest.SourceGenerator.Impl;
 
-public abstract class BaseRequestAttributeSourceGenerator : IDependencyModuleSourceGenerator {
+public class OperationsHandlerAttributeSourceGenerator : IDependencyModuleSourceGenerator {
+    private readonly IEqualityComparer<RequestHandlerModel> _comparer = new RequestHandlerModelComparer();
 
-    protected abstract IEnumerable<ITypeDefinition> AttributeTypes();
-
-    protected abstract void GenerateRouteFile(SourceProductionContext context,
-        ((ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Left, ImmutableArray<RequestHandlerModel> Right) tuple);
+    private readonly SimpleRequestHandlerWriter _simpleRequestWriter = new ();
+    private readonly SimpleRequestRoutingWriter _routingWriter = 
+        new ("OperationHandlerRouting", "StandardHandler", "Handler");
     
-    protected abstract void GenerateRequestFile(SourceProductionContext context, 
-        (RequestHandlerModel Left, (ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Right) valueTuple);
-
-    protected abstract IEqualityComparer<RequestHandlerModel> GetComparer();
-
-    protected abstract RequestHandlerModel GenerateAttributeModel(GeneratorSyntaxContext context, CancellationToken token);
-
-    public void SetupGenerator(IncrementalGeneratorInitializationContext context, 
+    public void SetupGenerator(
+        IncrementalGeneratorInitializationContext context,
         IncrementalValuesProvider<(ModuleEntryPointModel Left, DependencyModuleConfigurationModel Right)> incrementalValueProvider) {
-        var methodSelector = new ClassMethodSelector(AttributeTypes().ToArray());
+        var classSelect = new SyntaxSelector<ClassDeclarationSyntax>(KnownRequestTypes.Attributes.OperationsHandler);
 
         var selectedProvider = incrementalValueProvider.Collect().Select(SelectOneEntryPoint);
-        
-        var requestModelProvider = context.SyntaxProvider.CreateSyntaxProvider(
-            methodSelector.Where,
-            GenerateAttributeModel
-        ).WithComparer(GetComparer());
 
+        var classRequestModelGenerator = new RequestHandlerCollectionModelGenerator();
+
+        var requestModelProvider = context.SyntaxProvider.CreateSyntaxProvider(
+            classSelect.Where,
+            classRequestModelGenerator.GenerateModel
+        ).SelectMany((collection,token) => {
+            token.ThrowIfCancellationRequested();
+            
+            return collection.RequestHandlers;
+        }).WithComparer(_comparer);
+        
+        context.RegisterSourceOutput(
+            requestModelProvider.Combine(selectedProvider).Select(AdjustBasePath),
+            GenerateRequestFile
+        );
+        
         var collection =
             requestModelProvider.Collect();
         
@@ -42,13 +47,29 @@ public abstract class BaseRequestAttributeSourceGenerator : IDependencyModuleSou
             selectedProvider.Combine(collection).Select(AdjustBasePath),
             GenerateRouteFile
         );
-
-        context.RegisterSourceOutput(
-            requestModelProvider.Combine(selectedProvider).Select(AdjustBasePath),
-            GenerateRequestFile
-        );
     }
+    
+    protected void GenerateRouteFile(SourceProductionContext context,
+        ((ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Left, ImmutableArray<RequestHandlerModel> Right) tuple) {
+        if (tuple.Left == null) {
+            return;
+        }
 
+        var configuration = tuple.Left.Value.configurationModel;
+        var entryPoint = tuple.Left.Value.model;
+
+        _routingWriter.WriteRouteFile(context, entryPoint, configuration, tuple.Right);
+    }
+    
+    protected void GenerateRequestFile(SourceProductionContext context,
+        (RequestHandlerModel Left, (ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Right) valueTuple) {
+        if (valueTuple.Right == null) {
+            return;
+        }
+        
+        _simpleRequestWriter.WriteRequestFile(context, valueTuple.Left, valueTuple.Right.Value);
+    }
+    
     private (RequestHandlerModel Left, (ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Right) 
         AdjustBasePath((RequestHandlerModel Left, (ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Right) data, CancellationToken cancellationToken) {
 
@@ -125,4 +146,5 @@ public abstract class BaseRequestAttributeSourceGenerator : IDependencyModuleSou
         
         return (entryPoint, configuration);
     }
+
 }

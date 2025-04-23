@@ -117,38 +117,6 @@ public abstract class BaseRequestModelGenerator {
         return parameters;
     }
 
-    protected virtual RequestParameterInformation? DefaultGetParameterFromAttribute(
-        AttributeModel attributeModel,
-        GeneratorSyntaxContext generatorSyntaxContext,
-        ParameterSyntax parameter,
-        int parameterIndex,
-        IReadOnlyList<AttributeModel> parameterAttributes) {
-        var parameterType = parameter.Type?.GetTypeDefinition(generatorSyntaxContext)!;
-        var name = parameter.Identifier.Text;
-
-        if (!attributeModel.ImplementedInterfaces.Contains(KnownRequestTypes.IInvokeParameterValueProvider)) {
-            return null;
-        }
-
-        string? defaultValue = null;
-
-        if (parameter.Default != null) {
-            defaultValue = parameter.Default.Value.ToFullString();
-        }
-
-        return new RequestParameterInformation(
-            parameterType,
-            name,
-            !parameterType.IsNullable,
-            defaultValue,
-            ParameterBindType.CustomAttribute,
-            "",
-            parameterIndex,
-            parameterAttributes
-        );
-    }
-
-
     protected virtual RequestParameterInformation GetParameterInfo(GeneratorSyntaxContext generatorSyntaxContext,
         MethodDeclarationSyntax methodDeclarationSyntax,
         RequestHandlerNameModel requestHandlerNameModel,
@@ -323,11 +291,9 @@ public abstract class BaseRequestModelGenerator {
 
         var isAsync = false;
 
-        if (returnType is GenericTypeDefinition genericType) {
-            isAsync = genericType.Name.Equals("Task") || genericType.Name.Equals("ValueTask");
-        }
-        else if (returnType?.Name == "Task") {
-            isAsync = true;
+        if (returnType != null) {
+            isAsync = returnType.Namespace.Equals("System.Threading.Tasks") && 
+                      returnType.Name.EndsWith("Task");
         }
 
         var rawResponse = "";
@@ -353,8 +319,7 @@ public abstract class BaseRequestModelGenerator {
         CancellationToken cancellationToken) {
         var filterList = new List<AttributeModel>();
 
-        filterList.AddRange(
-            attributeModules.Where(a => IsFilterAttribute(a.TypeDefinition.Name)));
+        filterList.AddRange(attributeModules);
         filterList.AddRange(GetFiltersForClass(context,
             methodDeclarationSyntax.Ancestors().OfType<ClassDeclarationSyntax>().FirstOrDefault(),
             cancellationToken));
@@ -373,18 +338,6 @@ public abstract class BaseRequestModelGenerator {
         return GetFiltersFromAttributes(context, parent.AttributeLists, cancellationToken);
     }
 
-    protected virtual bool IsFilterAttribute(string attributeName) {
-
-        if (attributeName.Contains("DependencyModule")) {
-            return false;
-        }
-
-        if (attributeName.Contains(".Attribute")) {
-            return false;
-        }
-
-        return !AttributeNames().Contains(attributeName);
-    }
 
     protected abstract IEnumerable<string> AttributeNames();
 
@@ -404,7 +357,6 @@ public abstract class BaseRequestModelGenerator {
         return AttributeModelHelper.GetAttributes(
             context,
             attributeListSyntax,
-            cancellationToken,
-            a => IsFilterAttribute(a.Name.ToString()));
+            cancellationToken);
     }
 }

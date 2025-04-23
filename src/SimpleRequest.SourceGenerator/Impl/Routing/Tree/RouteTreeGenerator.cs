@@ -221,6 +221,6 @@ public class RouteTreeGenerator<T> {
             return (stringBuilder.ToString(), tokenList);
         }
 
-        return (pathTemplate, Array.Empty<string>());
+        return (pathTemplate.ToLower(), Array.Empty<string>());
     }
 }

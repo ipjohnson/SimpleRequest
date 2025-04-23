@@ -10,7 +10,9 @@ public static class KnownRequestTypes {
     public const string ModelAttributeNamespace = "SimpleRequest.Models.Attributes";
     
     public static class Attributes {
-        
+        public static readonly ITypeDefinition OperationsHandler = 
+            TypeDefinition.Get(ModelAttributeNamespace, "OperationsHandlerAttribute");
+
         public static readonly ITypeDefinition RequestFilterAttribute =
             TypeDefinition.Get(
                 TypeDefinitionEnum.ClassDefinition, 
@@ -21,6 +23,8 @@ public static class KnownRequestTypes {
         
         public static readonly ITypeDefinition Get = TypeDefinition.Get(ModelAttributeNamespace, "GetAttribute");
         
+        public static readonly ITypeDefinition Head = TypeDefinition.Get(ModelAttributeNamespace, "HeadAttribute");
+
         public static readonly ITypeDefinition Patch = TypeDefinition.Get(ModelAttributeNamespace, "PatchAttribute");
         
         public static readonly ITypeDefinition Post = TypeDefinition.Get(ModelAttributeNamespace, "PostAttribute");
@@ -30,6 +34,14 @@ public static class KnownRequestTypes {
         public static readonly ITypeDefinition Function = TypeDefinition.Get(ModelAttributeNamespace, "FunctionAttribute");
 
         public static readonly ITypeDefinition Http = TypeDefinition.Get(ModelAttributeNamespace, "HttpAttribute");
+        
+        public static readonly ITypeDefinition FromServices = TypeDefinition.Get(ModelAttributeNamespace, "FromServicesAttribute");
+
+        public static readonly ITypeDefinition FromBody = TypeDefinition.Get(ModelAttributeNamespace, "FromBodyAttribute");
+        
+        public static readonly ITypeDefinition FromQuery = TypeDefinition.Get(ModelAttributeNamespace, "FromQueryAttribute");
+        public static readonly ITypeDefinition FromHeader = TypeDefinition.Get(ModelAttributeNamespace, "FromHeaderAttribute");
+        public static readonly ITypeDefinition FromCookie = TypeDefinition.Get(ModelAttributeNamespace, "FromCookieAttribute");
     }
     
     public static readonly ITypeDefinition RoutingOrderAttribute =

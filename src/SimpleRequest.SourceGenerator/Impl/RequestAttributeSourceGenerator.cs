@@ -9,21 +9,22 @@ using SimpleRequest.SourceGenerator.Impl.Writers;
 namespace SimpleRequest.SourceGenerator;
 
 public class RequestAttributeSourceGenerator : BaseRequestAttributeSourceGenerator {
-    private ITypeDefinition[] attributes = new[] {
+    internal static ITypeDefinition[] RequestAttributeTypes = new[] {
         KnownRequestTypes.Attributes.Get,
         KnownRequestTypes.Attributes.Put,
         KnownRequestTypes.Attributes.Post,
         KnownRequestTypes.Attributes.Patch,
         KnownRequestTypes.Attributes.Delete,
-        KnownRequestTypes.Attributes.Function
+        KnownRequestTypes.Attributes.Function,
+        KnownRequestTypes.Attributes.Http
     };
     private readonly IEqualityComparer<RequestHandlerModel> _comparer = new RequestHandlerModelComparer();
     private readonly RequestModelGenerator _modelGenerator = new ();
     private readonly SimpleRequestHandlerWriter _simpleRequestWriter = new ();
     private readonly SimpleRequestRoutingWriter _routingWriter = 
-        new ("RequestRouting", "StandardHandler");
+        new ("RequestRouting", "StandardHandler", "Attr");
 
-    protected override IEnumerable<ITypeDefinition> AttributeTypes() => attributes;
+    protected override IEnumerable<ITypeDefinition> AttributeTypes() => RequestAttributeTypes;
     protected override void GenerateRouteFile(SourceProductionContext context,
         ((ModuleEntryPointModel model, DependencyModuleConfigurationModel configurationModel)? Left, ImmutableArray<RequestHandlerModel> Right) tuple) {
         if (tuple.Left == null) {

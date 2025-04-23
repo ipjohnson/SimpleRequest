@@ -72,7 +72,14 @@ public class ParameterTypeGenerator {
                 "ParameterBindType." + Enum.GetName(typeof(ParameterBindType), parameter.BindingType));
 
             if (parameter.DefaultValue != null) {
-                parameterInfo.AddArgument(QuoteString(parameter.DefaultValue));
+                if (parameter.DefaultValue is string parameterDefaultValue) {
+                    
+                    parameterInfo.AddArgument(QuoteString(parameterDefaultValue));
+                }
+                else {
+                    
+                    parameterInfo.AddArgument(parameter.DefaultValue);
+                }
             }
             else {
                 parameterInfo.AddArgument(Null());

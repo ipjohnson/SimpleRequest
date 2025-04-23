@@ -86,7 +86,20 @@ public class SimpleRoutingTreeTests {
 
         var routeTree = generator.GenerateTree(routes);
     }
-    
+
+
+    [Fact]
+    public void SimpleRouteTypedNotes() {
+        var routes = new List<RouteTreeGenerator<int>.Entry> {
+            new("/Typed/notes", "GET", 1),
+            new("/Typed/notes/{id}", "GET", 2),
+        };
+
+        var generator = new RouteTreeGenerator<int>();
+
+        var routeTree = generator.GenerateTree(routes);
+    }
+
     [Fact]
     public void SimpleRouteMoreOverlap() {
         var routes = new List<RouteTreeGenerator<int>.Entry> {

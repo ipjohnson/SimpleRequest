@@ -10,6 +10,9 @@ public class PostAttribute(string path = "/") : HttpAttribute(RequestConstants.H
 
 public class DeleteAttribute(string path = "/") : HttpAttribute(RequestConstants.HttpVerbs.Delete, path);
 
+
+public class HeadAttribute(string path = "/") : HttpAttribute(RequestConstants.HttpVerbs.Head, path);
+
 public class HttpAttribute(string verb, string path) : BaseFunctionAttribute {
     public string Verb {
         get;

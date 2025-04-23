@@ -12,5 +12,6 @@ public class RequestSourceGenerator : BaseSourceGenerator {
         yield return new FilterAttributeSourceGenerator(
             "RequestFilters"
         );
+        yield return new OperationsHandlerAttributeSourceGenerator();
     }
 }
