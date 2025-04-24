@@ -109,6 +109,7 @@ public class RequestHandlerCollectionModelGenerator {
 
         var implementationMethodDeclaration = GetImplementationMethodDeclaration(classDeclarationSyntax, interfaceMethodSymbol);
 
+        bool found = false;
         foreach (var attributeData in attributes) {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -124,7 +125,21 @@ public class RequestHandlerCollectionModelGenerator {
 
             if (handler != null) {
                 handlers.Add(handler);
+                found = true;
             }
+        }
+
+        if (!found) {
+            var handler = GetRequestHandlerFromSymbol(
+                context,
+                classDeclarationSyntax,
+                handlerType,
+                classAttributeModels,
+                interfaceType,
+                implementationMethodDeclaration,
+                interfaceMethodSymbol,
+                null,
+                null);
         }
     }
 
@@ -172,19 +187,28 @@ public class RequestHandlerCollectionModelGenerator {
         ITypeDefinition interfaceType,
         MethodDeclarationSyntax implementationMethodDeclaration,
         IMethodSymbol interfaceMethodSymbol,
-        AttributeData attributeData,
-        ITypeDefinition attributeType) {
+        AttributeData? attributeData,
+        ITypeDefinition? attributeType) {
 
-        var modelName = GetModelName(interfaceMethodSymbol, attributeData, attributeType);
+        var modelName = attributeData == null ? 
+            GetModelFromInterfaceName(interfaceType, interfaceMethodSymbol) :
+            GetModelName(interfaceMethodSymbol, attributeData, attributeType!);
+        
         return new RequestHandlerModel(
             modelName,
             handlerType,
             interfaceMethodSymbol.Name,
             null,
             TypeDefinition.Get(handlerType.Namespace + ".Generated", handlerType.Name + "_" + interfaceMethodSymbol.Name),
-            GetRequestParameters(modelName, interfaceMethodSymbol, attributeData),
-            GetResponseModel(context, interfaceMethodSymbol, attributeData),
+            GetRequestParameters(modelName, interfaceMethodSymbol),
+            GetResponseModel(context, interfaceMethodSymbol),
             GetAllHandlerAttributes(classDeclarationSyntax, implementationMethodDeclaration, interfaceMethodSymbol, classAttributeModels)
+        );
+    }
+
+    private RequestHandlerNameModel GetModelFromInterfaceName(ITypeDefinition interfaceType, IMethodSymbol interfaceMethodSymbol) {
+        return new RequestHandlerNameModel(
+            $"/{interfaceType.Name}/{interfaceMethodSymbol.Name}", "POST"
         );
     }
 
@@ -193,7 +217,7 @@ public class RequestHandlerCollectionModelGenerator {
         return classAttributeModels;
     }
 
-    private ResponseInformationModel GetResponseModel(GeneratorSyntaxContext context, IMethodSymbol interfaceMethodSymbol, AttributeData attributeData) {
+    private ResponseInformationModel GetResponseModel(GeneratorSyntaxContext context, IMethodSymbol interfaceMethodSymbol) {
         var returnType = interfaceMethodSymbol.ReturnType.GetTypeDefinition();
 
         return new ResponseInformationModel(
@@ -206,7 +230,7 @@ public class RequestHandlerCollectionModelGenerator {
         );
     }
 
-    private IReadOnlyList<RequestParameterInformation> GetRequestParameters(RequestHandlerNameModel modelName, IMethodSymbol interfaceMethodSymbol, AttributeData attributeData) {
+    private IReadOnlyList<RequestParameterInformation> GetRequestParameters(RequestHandlerNameModel modelName, IMethodSymbol interfaceMethodSymbol) {
         var parameterInfos = new List<RequestParameterInformation>();
 
         if (interfaceMethodSymbol.Parameters == null) {
