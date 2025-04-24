@@ -9,10 +9,10 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="AngleSharp" Version="1.3.0-beta.468" />
-        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9138" />
-        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9138" />
-        <PackageReference Include="DependencyModules.xUnit" Version="1.0.0-RC9138" />
-        <PackageReference Include="DependencyModules.xUnit.NSubstitute" Version="1.0.0-RC9138" />
+        <PackageReference Include="DependencyModules.Runtime" Version="1.0.0-RC9141" />
+        <PackageReference Include="DependencyModules.SourceGenerator" Version="1.0.0-RC9141" />
+        <PackageReference Include="DependencyModules.xUnit" Version="1.0.0-RC9141" />
+        <PackageReference Include="DependencyModules.xUnit.NSubstitute" Version="1.0.0-RC9141" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="3.0.0">
             <PrivateAssets>all</PrivateAssets>
