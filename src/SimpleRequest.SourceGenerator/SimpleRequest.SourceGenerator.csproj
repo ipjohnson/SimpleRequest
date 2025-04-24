@@ -10,28 +10,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <Import Project="../../build-props/nuget.props"/>
-
-    <ItemGroup>
-        <None Remove="Package\SimpleRequest.*"/>
-        <Content Include="Package\SimpleRequest.*">
-            <Pack>true</Pack>
-            <PackagePath>build\</PackagePath>
-            <PackageCopyToOutput>true</PackageCopyToOutput>
-        </Content>
-        <Content Include="**\*.cs" Exclude="**\obj\**;**\bin\**" Visible="true">
-            <Pack>true</Pack>
-            <PackagePath>src\SimpleRequest.SourceGenerator\</PackagePath>
-            <PackageCopyToOutput>true</PackageCopyToOutput>
-        </Content>
-    </ItemGroup>
     
     <PropertyGroup>
         <PackageDependencyModuleIncludeSource>true</PackageDependencyModuleIncludeSource>
     </PropertyGroup>
-
-    <PropertyGroup>
-        <PackageCSharpAuthorIncludeSource>true</PackageCSharpAuthorIncludeSource>
-    </PropertyGroup>
+    
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+    </ItemGroup>
     
     <ItemGroup>
         <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9138">
