@@ -8,6 +8,7 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsPackable>True</IsPackable>
         <Nullable>enable</Nullable>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
     <Import Project="../../build-props/nuget.props"/>
     
