@@ -2,18 +2,16 @@
 using DependencyModules.Runtime.Attributes;
 using DependencyModules.Runtime.Interfaces;
 using SimpleRequest.Runtime;
-using SimpleRequest.Runtime.Attributes;
 
 namespace SimpleRequest.Web.AspNetHost;
 
 [DependencyModule]
 [SimpleRequestRuntime]
 public partial class AspNetWebHost {
-    public partial class Attribute : ISimpleRequestEntryAttribute { }
 
     public static void Run<T>(bool useAspNetRouting = true, bool slim = false, string[]? args = null) 
         where T : IDependencyModule, new() {
-        Run(useAspNetRouting, slim, args ?? Array.Empty<string>(), new T());
+        Run(useAspNetRouting, slim, args ?? [], new T());
     }
 
     public static void Run(bool useAspNetRouting, bool slim, string[] args, params IDependencyModule[] modules) {

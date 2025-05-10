@@ -13,7 +13,14 @@ public class DeleteAttribute(string path = "/") : HttpAttribute(RequestConstants
 
 public class HeadAttribute(string path = "/") : HttpAttribute(RequestConstants.HttpVerbs.Head, path);
 
-public class HttpAttribute(string verb, string path) : BaseFunctionAttribute {
+public interface IHttpAttribute {
+    string Verb { get; }
+    string Path { get; }
+    
+    HttpMethod HttpMethod { get; }
+}
+
+public class HttpAttribute(string verb, string path) : BaseFunctionAttribute, IHttpAttribute {
     public string Verb {
         get;
     } = verb;
@@ -21,4 +28,6 @@ public class HttpAttribute(string verb, string path) : BaseFunctionAttribute {
     public string Path {
         get;
     } = path;
+
+    HttpMethod IHttpAttribute.HttpMethod { get; } = HttpMethod.Parse(verb);
 }

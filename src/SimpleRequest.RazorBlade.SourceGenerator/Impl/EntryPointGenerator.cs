@@ -24,7 +24,10 @@ public class EntryPointGenerator {
 
         var csharpFile = GenerateCSharpFile(entryPoint, valueTuple.Right, context.CancellationToken);
 
-        var output = new OutputContext();
+        var output = new OutputContext(new OutputContextOptions {
+            TypeOutputMode = TypeOutputMode.Global,
+            BreakInvokeLines = true
+        });
 
         csharpFile.WriteOutput(output);
 

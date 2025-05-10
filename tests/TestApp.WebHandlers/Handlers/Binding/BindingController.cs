@@ -1,5 +1,4 @@
 using SimpleRequest.Models.Attributes;
-using SimpleRequest.Runtime.Attributes;
 
 namespace TestApp.WebHandlers.Handlers.Binding;
 

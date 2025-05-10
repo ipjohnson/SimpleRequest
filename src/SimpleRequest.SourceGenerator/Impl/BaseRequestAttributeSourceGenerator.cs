@@ -2,9 +2,7 @@ using System.Collections.Immutable;
 using CSharpAuthor;
 using DependencyModules.SourceGenerator.Impl;
 using DependencyModules.SourceGenerator.Impl.Models;
-using DependencyModules.SourceGenerator.Impl.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SimpleRequest.SourceGenerator.Impl.Models;
 using SimpleRequest.SourceGenerator.Impl.Utils;
 

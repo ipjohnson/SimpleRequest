@@ -18,9 +18,7 @@ public class FilterAttributeClassGenerator {
 
         GenerateFilterAttributeClass(csharpFile, dataLeft);
         
-        var output = new OutputContext(new OutputContextOptions {
-            TypeOutputMode = TypeOutputMode.Global,
-        });
+        var output = new OutputContext(OutputContextDefault.Instance);
         
         csharpFile.WriteOutput(output);
         

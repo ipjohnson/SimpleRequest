@@ -134,11 +134,7 @@ public class JsonRpcModuleGenerator {
     private void WriteFile(SourceProductionContext context, ModuleEntryPointModel entryPointModel, DependencyModuleConfigurationModel dependencyModuleConfiguration, CSharpFileDefinition csharpFile) {
         context.CancellationToken.ThrowIfCancellationRequested();
 
-        var outputContext = new OutputContext(
-            new OutputContextOptions {
-                TypeOutputMode = TypeOutputMode.Global
-            }
-        );
+        var outputContext = new OutputContext(OutputContextDefault.Instance);
 
         csharpFile.WriteOutput(outputContext);
 

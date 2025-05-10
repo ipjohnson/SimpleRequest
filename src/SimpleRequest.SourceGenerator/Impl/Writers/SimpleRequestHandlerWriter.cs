@@ -31,7 +31,9 @@ public class SimpleRequestHandlerWriter {
         DependencyModuleConfigurationModel configurationModel,
         CSharpFileDefinition outputFile) {
 
-        var outputContext = new OutputContext();
+        var outputContext = new OutputContext(
+            OutputContextDefault.Instance
+            );
 
         outputFile.WriteOutput(outputContext);
 

@@ -22,7 +22,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9141">
+        <PackageReference Include="DependencyModules.SourceGenerator.Impl" Version="1.0.0-RC9148">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
@@ -43,13 +43,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CSharpAuthor" Version="1.1.1002">
+        <PackageReference Include="CSharpAuthor" Version="1.1.1005">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>build</IncludeAssets>
         </PackageReference>
     </ItemGroup>
-
-
+    
     <ItemGroup>
         <Compile Include="../SimpleRequest.SourceGenerator/Impl/**/*">
             <Link>SourceGeneratorImpl\%(RecursiveDir)/%(FileName)%(Extension)</Link>

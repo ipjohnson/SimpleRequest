@@ -1,3 +1,6 @@
 namespace SimpleRequest.Models.Attributes;
 
-public class OperationsHandlerAttribute : Attribute;
+[AttributeUsage(AttributeTargets.Class)]
+public class OperationsHandlerAttribute : Attribute {
+    public string[]? Tags { get; set; }
+}

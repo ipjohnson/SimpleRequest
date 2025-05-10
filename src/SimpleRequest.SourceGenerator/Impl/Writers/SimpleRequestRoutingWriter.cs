@@ -107,9 +107,7 @@ public class SimpleRequestRoutingWriter {
         ModuleEntryPointModel entryPointModel,
         CSharpFileDefinition csharpFile) {
         var outputContext = new OutputContext(
-            new OutputContextOptions {
-                TypeOutputMode = TypeOutputMode.Global
-            }
+            OutputContextDefault.Instance
         );
 
         csharpFile.WriteOutput(outputContext);

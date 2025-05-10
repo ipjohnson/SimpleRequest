@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using SimpleRequest.Runtime.Compression;
 using SimpleRequest.Runtime.Invoke;
 using SimpleRequest.Runtime.Serializers;

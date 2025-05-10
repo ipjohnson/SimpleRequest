@@ -126,7 +126,8 @@ public static class JsonRpcMethodRoutingGenerator {
         ModuleEntryPointModel sharedEntryPoint) {
 
         var outputContext = new OutputContext(new OutputContextOptions {
-            TypeOutputMode = TypeOutputMode.Global
+            TypeOutputMode = TypeOutputMode.Global,
+            BreakInvokeLines = true
         });
 
         csharpFile.WriteOutput(outputContext);
