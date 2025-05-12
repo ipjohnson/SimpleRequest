@@ -6,7 +6,7 @@ using SimpleRequest.Models.Operations;
 namespace SimpleRequest.Client.Impl;
 
 public delegate Task<T> InvokeDelegate<T>(
-    IServiceProvider serviceProvider, string finalPath, IOperationParameters parameters);
+    IServiceProvider serviceProvider, IOperationParameters parameters);
 
 public interface IInvokeStrategyBuilder<TRequest,TResponse> {
     InvokeDelegate<T?> Build<T>(string channelName, IOperationInfo operation, IContentSerializer serializer);
@@ -67,15 +67,15 @@ public class InvokeStrategyBuilder<TRequest,TResponse> : IInvokeStrategyBuilder<
         var invokeInfo = new InvokeDelegateInfo<TRequest, TResponse>(
             channelName,
             operation,
+            new PathBuilder(operation),
             serializer,
             operationFilters.ToArray(),
             transportFilters.ToArray()
         );
         
-        return (provider, finalPath, parameters) => _handler.InvokeDelegate<T>(
+        return (provider, parameters) => _handler.InvokeDelegate<T>(
             invokeInfo,
             provider,
-            finalPath,
             parameters
         );
     }

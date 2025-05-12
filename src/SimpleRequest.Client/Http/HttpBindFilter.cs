@@ -1,4 +1,6 @@
+using System.Text;
 using DependencyModules.Runtime.Attributes;
+using Microsoft.Extensions.ObjectPool;
 using SimpleRequest.Client.Filters;
 using SimpleRequest.Models.Attributes;
 using SimpleRequest.Models.Operations;
@@ -7,6 +9,7 @@ namespace SimpleRequest.Client.Http;
 
 [SingletonService]
 public class HttpBindFilter(
+    ObjectPool<StringBuilder> stringBuilderPool,
     IHttpMessageFactory httpMessageFactory,
     IHttpHeaderBinder headerBinder,
     IHttpRequestBodyBinder requestBodyBinder,
@@ -40,6 +43,8 @@ public class HttpBindFilter(
         var httpMessage = 
             context.TransportRequest ??= httpMessageFactory.GenerateRequestMessage(context);
 
+        BuildRequestUri(context, httpMessage);
+
         for (int i = 0; i < context.OperationRequest.Operation.Attributes.Count; i++) {
             var attribute = context.OperationRequest.Operation.Attributes[i];
 
@@ -66,5 +71,15 @@ public class HttpBindFilter(
         }
     }
 
-
+    private void BuildRequestUri(ITransportFilterContext<HttpRequestMessage, HttpResponseMessage> context, HttpRequestMessage httpMessage) {
+        var builder = stringBuilderPool.Get();
+        
+        httpMessage.RequestUri = new Uri(context.PathBuilder.BuildPath(
+            context.OperationRequest.Parameters,
+            builder,
+            true
+        ));
+        
+        stringBuilderPool.Return(builder);
+    }
 }

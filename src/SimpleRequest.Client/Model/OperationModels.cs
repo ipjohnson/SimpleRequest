@@ -6,18 +6,14 @@ namespace SimpleRequest.Client.Model;
 public class OperationRequest {
     public OperationRequest(
         IOperationInfo operation,
-        string path,
         IOperationParameters parameters,
         IDictionary<string, StringValues> headers) {
         Operation = operation;
-        Path = path;
         Parameters = parameters;
         Headers = headers;
     }
 
     public IOperationInfo Operation { get; set; }
-
-    public string Path { get; set; }
 
     public IOperationParameters Parameters { get; set; }
 

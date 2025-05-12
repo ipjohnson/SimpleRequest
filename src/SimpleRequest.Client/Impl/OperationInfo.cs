@@ -3,7 +3,7 @@ using SimpleRequest.Models.Operations;
 namespace SimpleRequest.Client.Impl;
 
 public record OperationInfo(
-    string Path,
+    PathDefinition Path,
     string Method, 
     Type HandlerType, 
     int? SuccessStatus,

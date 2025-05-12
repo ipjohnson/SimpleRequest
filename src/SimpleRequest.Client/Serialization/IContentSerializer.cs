@@ -13,5 +13,5 @@ public interface IContentSerializer {
     
     ValueTask<object?> DeserializeAsync(Type responseType, string contentType, Stream stream, CancellationToken cancellationToken = default);
     
-    Task SerializeAsync(string contentType, object value, Stream stream, CancellationToken cancellationToken = default);
+    Task SerializeAsync(object value, Stream stream, CancellationToken cancellationToken = default);
 }

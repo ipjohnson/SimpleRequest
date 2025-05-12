@@ -10,6 +10,7 @@ namespace SimpleRequest.Client.Impl;
 public record InvokeDelegateInfo<TRequest, TResponse>(
     string ChannelName,
     IOperationInfo Operation,
+    IPathBuilder PathBuilder,
     IContentSerializer Serializer,
     IOperationFilter[] OperationFilters,
     ITransportFilter<TRequest, TResponse>[] TransportFilters);
@@ -18,7 +19,6 @@ public interface IOperationInvokeHandler<TRequest, TResponse> {
     Task<T?> InvokeDelegate<T>(
         InvokeDelegateInfo<TRequest, TResponse> info,
         IServiceProvider serviceProvider,
-        string path,
         IOperationParameters parameters);
 }
 
@@ -28,12 +28,10 @@ public class OperationInvokeHandler<TRequest, TResponse> : IOperationInvokeHandl
     public async Task<T?> InvokeDelegate<T>(
         InvokeDelegateInfo<TRequest, TResponse> info,
         IServiceProvider serviceProvider,
-        string path,
         IOperationParameters parameters) {
 
         var operationRequest = new OperationRequest(
             info.Operation,
-            path, 
             parameters, 
             new Dictionary<string, StringValues>());
 
@@ -42,6 +40,7 @@ public class OperationInvokeHandler<TRequest, TResponse> : IOperationInvokeHandl
         
         var context = new FilterContext<TRequest, TResponse>(
             info.ChannelName,
+            info.PathBuilder,
             info.Serializer,
             serviceProvider, 
             operationRequest,

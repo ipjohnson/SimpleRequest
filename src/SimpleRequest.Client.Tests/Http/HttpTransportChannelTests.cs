@@ -4,6 +4,7 @@ using NSubstitute;
 using SimpleRequest.Client.Filters;
 using SimpleRequest.Client.Http;
 using SimpleRequest.Client.Impl;
+using SimpleRequest.Models.Operations;
 using Xunit;
 
 namespace SimpleRequest.Client.Tests.Http;
@@ -12,10 +13,11 @@ public class HttpTransportChannelTests {
     [ModuleTest]
     public async Task BuildTransportChannelTest(
         IServiceProvider serviceProvider,
-        [InjectValues("Channel")]HttpTransportChannel channel,
+        [InjectValues("HttpChannel")]HttpTransportChannel channel,
         [Mock] IHttpClientSendService sendService) {
+        
         var operationInfo = new OperationInfo(
-            "/info",
+            new PathDefinition("/path",[]),
             "GET",
             typeof(HttpTransportChannelTests),
             null,
@@ -43,7 +45,7 @@ public class HttpTransportChannelTests {
             Arg.Any<ITransportFilterContext<HttpRequestMessage, HttpResponseMessage>>()).Returns(
             Task.FromResult(httpResponse));
 
-        var result = await invokeDelegate(serviceProvider, "/path", new OperationParameters([]));
+        var result = await invokeDelegate(serviceProvider, new OperationParameters([]));
         
         Assert.Equal("Hello World", result);
     }

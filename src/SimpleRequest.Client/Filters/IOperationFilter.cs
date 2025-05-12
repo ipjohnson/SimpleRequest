@@ -1,3 +1,4 @@
+using SimpleRequest.Client.Impl;
 using SimpleRequest.Client.Model;
 using SimpleRequest.Client.Serialization;
 using SimpleRequest.Models.Operations;
@@ -8,6 +9,8 @@ public interface IOperationFilterContext {
     string ChannelName { get; }
     
     IContentSerializer ContentSerializer { get; }
+    
+    IPathBuilder PathBuilder { get; }
     
     OperationRequest OperationRequest { get; }
     

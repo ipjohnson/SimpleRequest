@@ -1,3 +1,4 @@
+using SimpleRequest.Client.Impl;
 using SimpleRequest.Client.Model;
 using SimpleRequest.Client.Serialization;
 
@@ -5,6 +6,7 @@ namespace SimpleRequest.Client.Filters;
 
 public class FilterContext<TChannelRequest, TChannelResponse>(
     string channelName,
+    IPathBuilder pathBuilder,
     IContentSerializer contentSerializer,
     IServiceProvider serviceProvider,
     OperationRequest operationRequest,
@@ -17,6 +19,10 @@ public class FilterContext<TChannelRequest, TChannelResponse>(
     public string ChannelName {
         get;
     } = channelName;
+
+    public IPathBuilder PathBuilder {
+        get;
+    } = pathBuilder;
 
     public IContentSerializer ContentSerializer {
         get;

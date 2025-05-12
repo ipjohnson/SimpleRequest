@@ -31,7 +31,7 @@ public class JsonContentSerializer : IContentSerializer {
         return JsonSerializer.DeserializeAsync(stream, responseType);
     }
 
-    public Task SerializeAsync(string contentType, object value, Stream stream, CancellationToken cancellationToken = default) {
+    public Task SerializeAsync(object value, Stream stream, CancellationToken cancellationToken = default) {
         return JsonSerializer.SerializeAsync(stream, value);
     }
 }

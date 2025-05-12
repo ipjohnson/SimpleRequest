@@ -1,7 +1,7 @@
 namespace SimpleRequest.Models.Operations;
 
 public interface IOperationInfo {
-    string Path { get; }
+    PathDefinition Path { get; }
 
     string Method { get; }
 

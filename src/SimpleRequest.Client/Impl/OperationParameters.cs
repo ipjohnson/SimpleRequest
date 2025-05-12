@@ -6,6 +6,8 @@ public class OperationParameters : IOperationParameters {
     private readonly object?[] _values;
     private readonly IReadOnlyList<IOperationParameterInfo> _parameters;
 
+    public static OperationParameters Empty { get; } = new ([]);
+    
     public OperationParameters(IReadOnlyList<IOperationParameterInfo> parameters) {
         _parameters = parameters;
         _values = new object?[_parameters.Count];
