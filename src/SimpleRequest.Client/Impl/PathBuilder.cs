@@ -43,7 +43,7 @@ public class PathBuilder(IOperationInfo operationInfo) : IPathBuilder {
 
                         builder.Append(part.ParameterInfo.BindingName);
                         builder.Append('=');
-                        builder.Append(part.Value);
+                        builder.Append(parameters.Get<object>(part.ParameterInfo.Index));
                     }
                     break;
             }

@@ -58,33 +58,21 @@ public class PathBuilderTests {
             "stringId",
             0,
             "stringId",
-            ParameterBindType.Path,
-            null,
-            true,
-            []);
-
-        var intParam = new OperationParameterInfo<int>(
-            "id",
-            1,
-            "id",
-            ParameterBindType.Path,
+            ParameterBindType.QueryString,
             null,
             true,
             []);
         
         operation.Path.Returns(new PathDefinition("/path/{stringId}/{id}", [
             new PathPart("/path/", PathPartType.Constant, null),
-            new PathPart("stringId", PathPartType.Path, stringParam),
-            new PathPart("/", PathPartType.Constant, null),
-            new PathPart("id", PathPartType.Path, intParam),
+            new PathPart("stringId", PathPartType.QueryString, stringParam),
         ]));
 
-        var parameters = new OperationParameters([stringParam, intParam]);
+        var parameters = new OperationParameters([stringParam]);
         parameters.Set("category", 0);
-        parameters.Set(456, 1);
 
         var path = sut.BuildPath(parameters, stringBuilder);
 
-        Assert.Equal("/path/category/456", path);
+        Assert.Equal("/path/?stringId=category", path);
     }
 }
