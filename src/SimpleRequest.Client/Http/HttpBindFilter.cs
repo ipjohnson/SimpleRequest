@@ -73,13 +73,19 @@ public class HttpBindFilter(
 
     private void BuildRequestUri(ITransportFilterContext<HttpRequestMessage, HttpResponseMessage> context, HttpRequestMessage httpMessage) {
         var builder = stringBuilderPool.Get();
-        
-        httpMessage.RequestUri = new Uri(context.PathBuilder.BuildPath(
-            context.OperationRequest.Parameters,
-            builder,
-            true
-        ));
-        
+        string uri = "";
+        try {
+            uri = context.PathBuilder.BuildPath(
+                context.OperationRequest.Parameters,
+                builder,
+                true
+            );
+            
+            httpMessage.RequestUri = new Uri(uri);
+        }
+        catch (Exception ex) {
+            throw new Exception($"Failed to build request uri. {ex.Message}, uri: {uri}", ex);
+        }
         stringBuilderPool.Return(builder);
     }
 }
